@@ -32,7 +32,7 @@ public class JuniorApplication implements CommandLineRunner {
 		//UserService service = new UserService();
 
 		userService.createUser(sexo);
-
+		
 		System.out.println(sexo.getNome());
 	}
 
