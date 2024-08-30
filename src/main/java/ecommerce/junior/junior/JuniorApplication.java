@@ -8,6 +8,7 @@ public class JuniorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(JuniorApplication.class, args);
+		System.out.println("fix");
 	}
 
 }
