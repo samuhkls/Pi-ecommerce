@@ -1,0 +1,9 @@
+package ecommerce.junior.repository;
+
+import ecommerce.junior.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+
+public interface UserRepository extends JpaRepository <User, Long> {
+
+}
