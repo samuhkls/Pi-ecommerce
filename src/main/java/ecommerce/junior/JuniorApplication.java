@@ -20,20 +20,13 @@ public class JuniorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		User sexo = new User();
+		User user = new User();
+		user.setNome("liro");
+		user.setCpf("12345678909");
+		user.setEmail("liro@penris.com");
+		user.setSenha("password");
+		user.setTipo(Grupo.ADMINISTRADOR);
 
-		sexo.setNome("breakpoint");
-		sexo.setCpf("123123");
-		sexo.setEmail("lucas@email");
-		sexo.setSenha("senha");
-		sexo.setTipo(Grupo.ESTOQUISTA);
-		System.out.println(sexo.getTipo());
-
-		//UserService service = new UserService();
-
-		userService.createUser(sexo);
-		
-		System.out.println(sexo.getNome());
+		userService.createUser(user, "password");
 	}
-
 }
