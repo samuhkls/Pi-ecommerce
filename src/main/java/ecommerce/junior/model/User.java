@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "usuario")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,7 +14,15 @@ public class User {
     private String email;
     private String senha;
     private Grupo tipo;
+    private boolean ativo = true;
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
 
     public Long getId() {
         return id;
