@@ -9,6 +9,7 @@ import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -18,63 +19,89 @@ public class UserService {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getUsersByName(String nome) {
+        if (nome == null || nome.isEmpty()) {
+            return userRepository.findAll();
+        } else {
+            return userRepository.findByNomeContaining(nome);
+        }
     }
 
-    public void createUser(User user, String senhaConfirmacao) throws Exception {
+    public void createUser(User user, String senhaConfirmacao) throws IllegalArgumentException {
         if (!user.getSenha().equals(senhaConfirmacao)) {
-            throw new Exception("As senhas não coincidem.");
+            throw new IllegalArgumentException("As senhas não coincidem.");
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new Exception("Email já cadastrado.");
+            throw new IllegalArgumentException("Email já cadastrado.");
         }
 
+        // Valida o CPF
         CPFValidator cpfValidator = new CPFValidator();
         try {
             cpfValidator.assertValid(user.getCpf());
         } catch (InvalidStateException e) {
-            throw new Exception("CPF inválido.");
+            throw new IllegalArgumentException("CPF inválido.");
         }
 
         user.setSenha(passwordEncoder.encode(user.getSenha()));
         user.setAtivo(true);
+
         userRepository.save(user);
     }
 
     public void updateUser(User user, String senhaConfirmacao, User loggedInUser) throws Exception {
-        User existingUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new Exception("Usuário não encontrado."));
-
-        if (!existingUser.getEmail().equals(user.getEmail())) {
-            throw new Exception("Não é permitido alterar o email.");
+        if (!user.getId().equals(loggedInUser.getId())) {
+            throw new SecurityException("Você não tem permissão para atualizar este usuário.");
         }
 
-        if (!user.getSenha().equals(senhaConfirmacao)) {
-            throw new Exception("As senhas não coincidem.");
+        if (senhaConfirmacao != null && !senhaConfirmacao.isEmpty()) {
+            if (!passwordEncoder.matches(senhaConfirmacao, loggedInUser.getSenha())) {
+                throw new Exception("Senha de confirmação incorreta.");
+            }
+            if (user.getSenha() != null && !user.getSenha().isEmpty()) {
+                user.setSenha(passwordEncoder.encode(user.getSenha())); // Codifica a nova senha
+            } else {
+                user.setSenha(loggedInUser.getSenha());
+            }
+        } else {
+            user.setSenha(loggedInUser.getSenha());
         }
 
-        CPFValidator cpfValidator = new CPFValidator();
-        try {
-            cpfValidator.assertValid(user.getCpf());
-        } catch (InvalidStateException e) {
-            throw new Exception("CPF inválido.");
-        }
-
-        existingUser.setNome(user.getNome());
-        existingUser.setCpf(user.getCpf());
-        existingUser.setSenha(passwordEncoder.encode(user.getSenha()));
-
-        if (!loggedInUser.getId().equals(user.getId())) {
-            existingUser.setTipo(user.getTipo());
-        }
-
-        userRepository.save(existingUser);
+        // Atualiza o usuário no repositório
+        userRepository.save(user);
     }
 
     public User getUserById(Long id) throws Exception {
         return userRepository.findById(id)
                 .orElseThrow(() -> new Exception("Usuário não encontrado."));
+    }
+
+    public void alterarStatus(Long id) {
+        User user = userRepository.findById(id).orElseThrow();
+        user.setAtivo(!user.isAtivo());
+        userRepository.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public List<User> findUsersByName(String nome) {
+        return userRepository.findByNomeContainingIgnoreCase(nome);
+    }
+
+    public User findByNome(String nome) {
+        return userRepository.findByNome(nome);
+    }
+
+    public User findById(Long id) throws Exception {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new Exception("Usuário não encontrado."));
+    }
+
+    public Long findIdByNome(String nome) throws Exception {
+        Optional<Long> userId = userRepository.findIdByNome(nome);
+        return userId.orElseThrow(() -> new Exception("Usuário não encontrado pelo nome."));
     }
 }

@@ -1,62 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Usuário</title>
+    <title>Lista de Usuários</title>
     <link rel="stylesheet" href="/css/style.css">
-    <script>
-        function showEditForm(userId, userName, userEmail, userStatus ) {
-            document.getElementById('editUserId').value = userId;
-            document.getElementById('editNome').value = userName;
-            document.getElementById('editEmail').value = userEmail;
-            document.getElementById('editStatus').value = userStatus;
-            document.getElementById('editForm').style.display = 'block';
-        }
-    </script>
 </head>
 <body>
 <div class="container">
-    <div class="section" id="lista-usuario">
-        <h2>Lista de Usuário</h2>
-        <table>
-            <tr>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Perfil</th>
-                <th>Editar</th>
-                <th>Excluir</th>
-            </tr>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.nome}">Nome</td>
-                <td th:text="${user.email}">Email</td>
-                <td th:text="${user.ativo}">Status</td>
-                <td><button onclick="showEditForm([[${user.id}]], '[[${user.nome}]]', '[[${user.email}]]', '[[${user.ativo}]]')">Editar</button></td>
-                <td><button>Excluir</button></td>
-            </tr>
-        </table>
-        <div class="buttons">
-            <button>Adicionar</button>
-            <button>Editar</button>
-            <button>Ativar/Desativar</button>
-        </div>
-        <div id="editForm" style="display:none;">
-            <h3>Alterar Usuário</h3>
-            <form action="/update-user" method="post">
-                <input type="hidden" id="editUserId" name="id">
-                <label for="editNome">Nome:</label>
-                <input type="text" id="editNome" name="nome"><br>
-                <label for="editEmail">Email:</label>
-                <input type="text" id="editEmail" name="email"><br>
-                <label for="editStatus">Status:</label>
-                <input type="text" id="editStatus" name="status"><br>
-                <label for="editSenha">Senha:</label>
-                <input type="password" id="editSenha" name="senha"><br>
-                <label for="editSenhaConfirmacao">Confirme a Senha:</label>
-                <input type="password" id="editSenhaConfirmacao" name="senhaConfirmacao"><br>
-                <button type="submit">OK</button>
-                <button type="button" onclick="document.getElementById('editForm').style.display='none'">Cancelar</button>
-            </form>
-        </div>
+    <h2>Lista de Usuários</h2>
+    <!-- Formulário de filtragem -->
+    <form action="#" th:action="@{/listar-usuario}" method="get">
+        <input type="text" name="nome" placeholder="Filtrar por nome" th:value="${param.nome}">
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <!-- Tabela de usuários -->
+    <table>
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Editar</th>
+            <th>Ativar/Desativar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.nome}">Nome</td>
+            <td th:text="${user.email}">Email</td>
+            <td th:text="${user.ativo ? 'Ativo' : 'Inativo'}">Status</td>
+            <td>
+                <a th:href="@{/editar/{id}(id=${user.id})}">
+                    <button type="button">Editar</button>
+                </a>
+            </td>
+            <td>
+                <form th:action="@{/usuarios/alterar-status/{id}(id=${user.id})}" method="post">
+                    <button type="submit" th:text="${user.ativo ? 'Desativar' : 'Ativar'}">Ativar/Desativar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Botão para adicionar usuário -->
+    <div class="buttons">
+        <a href="/usuarios/cadastrar"><button type="button">Adicionar Usuário</button></a>
     </div>
 </div>
 </body>
