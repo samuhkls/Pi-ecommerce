@@ -19,6 +19,11 @@ public class SecurityConfig {
                                 .requestMatchers("/h2-console/**").permitAll()  // Permitir acesso ao H2 Console
                                 .anyRequest().authenticated()
                 )
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login")  // Custom login page URL
+                        .defaultSuccessUrl("/principal", true)  // Redirect to /principal after login
+                        .permitAll()
+                )
                 .formLogin(formLogin -> formLogin.permitAll())
                 .logout(logout -> logout.permitAll())
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));  // Usando o Customizer para desabilitar frameOptions
