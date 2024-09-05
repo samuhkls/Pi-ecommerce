@@ -2,6 +2,7 @@ package ecommerce.junior.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,14 +18,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/h2-console/**").permitAll()  // Permitir acesso ao H2 Console
-                                .anyRequest().authenticated()
+                                .requestMatchers(HttpMethod.POST, "/**").permitAll()  // Permitir POST para todos os endpoints
+                                .anyRequest().authenticated()  // Outros endpoints precisam de autenticação
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")  // Custom login page URL
                         .defaultSuccessUrl("/principal", true)  // Redirect to /principal after login
                         .permitAll()
                 )
-                .formLogin(formLogin -> formLogin.permitAll())
                 .logout(logout -> logout.permitAll())
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));  // Usando o Customizer para desabilitar frameOptions
 
