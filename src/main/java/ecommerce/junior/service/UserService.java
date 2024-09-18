@@ -36,7 +36,6 @@ public class UserService {
             throw new IllegalArgumentException("Email já cadastrado.");
         }
 
-        // Valida o CPF
         CPFValidator cpfValidator = new CPFValidator();
         try {
             cpfValidator.assertValid(user.getCpf());
@@ -50,25 +49,24 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateUser(User user, String senhaConfirmacao, User loggedInUser) throws Exception {
-        if (!user.getId().equals(loggedInUser.getId())) {
-            throw new SecurityException("Você não tem permissão para atualizar este usuário.");
+    public void updateUser(User user, String senhaConfirmacao, User currentUser) throws Exception {
+        if (!user.getId().equals(currentUser.getId())) {
+            throw new Exception("Você não tem permissão para atualizar este usuário.");
         }
 
         if (senhaConfirmacao != null && !senhaConfirmacao.isEmpty()) {
-            if (!passwordEncoder.matches(senhaConfirmacao, loggedInUser.getSenha())) {
+            if (!passwordEncoder.matches(senhaConfirmacao, currentUser.getSenha())) {
                 throw new Exception("Senha de confirmação incorreta.");
             }
             if (user.getSenha() != null && !user.getSenha().isEmpty()) {
-                user.setSenha(passwordEncoder.encode(user.getSenha())); // Codifica a nova senha
+                user.setSenha(passwordEncoder.encode(user.getSenha()));
             } else {
-                user.setSenha(loggedInUser.getSenha());
+                user.setSenha(currentUser.getSenha());
             }
         } else {
-            user.setSenha(loggedInUser.getSenha());
+            user.setSenha(currentUser.getSenha());
         }
 
-        // Atualiza o usuário no repositório
         userRepository.save(user);
     }
 
@@ -77,8 +75,9 @@ public class UserService {
                 .orElseThrow(() -> new Exception("Usuário não encontrado."));
     }
 
-    public void alterarStatus(Long id) {
-        User user = userRepository.findById(id).orElseThrow();
+    public void alterarStatus(Long id) throws Exception {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new Exception("Usuário não encontrado."));
         user.setAtivo(!user.isAtivo());
         userRepository.save(user);
     }

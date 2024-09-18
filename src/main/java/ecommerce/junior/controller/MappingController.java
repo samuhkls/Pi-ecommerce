@@ -3,8 +3,6 @@ package ecommerce.junior.controller;
 import ecommerce.junior.model.User;
 import ecommerce.junior.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,10 +41,9 @@ public class MappingController {
     }
 
     @GetMapping("/editar/{id}")
-    public String editUser(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    public String editUser(@PathVariable Long id, Model model) {
         try {
             User user = userService.findById(id);
-            User loggedInUser = userService.findByNome(userDetails.getUsername());
 
             if (user == null) {
                 model.addAttribute("errorMessage", "Usuário não encontrado");
@@ -54,34 +51,23 @@ public class MappingController {
             }
 
             model.addAttribute("user", user);
-            model.addAttribute("loggedInUser", loggedInUser);
             return "editar-usuario";
         } catch (Exception e) {
-            // Log the exception and handle it appropriately
             e.printStackTrace();
             model.addAttribute("errorMessage", "Ocorreu um erro ao processar a solicitação.");
             return "error-page";
         }
     }
 
-
-
-
     @PostMapping("/updateDetails")
-    public String updateUser(@RequestParam Long id, @RequestParam String nome, @RequestParam String email,
-                             @RequestParam String senha, @RequestParam String senhaConfirmacao,
-                             @AuthenticationPrincipal UserDetails userDetails,
+    public String updateUser(@RequestParam Long id, @RequestParam String nome, @RequestParam String email, @RequestParam String senhaConfirmacao,
                              Model model) {
         try {
             User user = userService.getUserById(id);
             user.setNome(nome);
             user.setEmail(email);
 
-            // Obtém o usuário logado usando o UserDetails
-            User loggedInUser = userService.findByNome(userDetails.getUsername());
-
-            // Atualiza o usuário com o usuário logado
-            userService.updateUser(user, senhaConfirmacao, loggedInUser);
+            userService.updateUser(user, senhaConfirmacao, user);
 
             model.addAttribute("message", "Usuário atualizado com sucesso!");
         } catch (Exception e) {
@@ -91,21 +77,15 @@ public class MappingController {
     }
 
     @PostMapping("/alterar-status/{id}")
-    public String alterarStatus(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public String alterarStatus(@PathVariable Long id) {
         try {
             User user = userService.getUserById(id);
-            user.setAtivo(!user.isAtivo()); // Alterna o status
+            user.setAtivo(!user.isAtivo());
 
-            // Obtém o usuário logado usando o UserDetails
-            User loggedInUser = userService.findByNome(userDetails.getUsername());
-
-            // Atualiza o usuário com o usuário logado
-            userService.updateUser(user, loggedInUser.getSenha(), loggedInUser);
-
+            userService.updateUser(user, user.getSenha(), user);
             return "redirect:/listar-usuario";
         } catch (Exception e) {
-            // Adicione algum tratamento de erro apropriado aqui
-            return "redirect:/listar-usuario"; // Redireciona em caso de erro
+            return "redirect:/listar-usuario";
         }
     }
 }
