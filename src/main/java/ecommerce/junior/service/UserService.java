@@ -23,20 +23,10 @@ public class UserService {
     }
 
     public void createUser(User user, String senhaConfirmacao) throws Exception {
-        if (!user.getSenha().equals(senhaConfirmacao)) {
-            throw new Exception("As senhas não coincidem.");
-        }
 
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new Exception("Email já cadastrado.");
-        }
-
-        CPFValidator cpfValidator = new CPFValidator();
-        try {
-            cpfValidator.assertValid(user.getCpf());
-        } catch (InvalidStateException e) {
-            throw new Exception("CPF inválido.");
-        }
+        validarSenhas(user.getSenha(), senhaConfirmacao);
+        validarEmailUnico(user.getEmail());
+        validarCpf(user.getCpf());
 
         user.setSenha(passwordEncoder.encode(user.getSenha()));
         user.setAtivo(true);
@@ -51,16 +41,8 @@ public class UserService {
             throw new Exception("Não é permitido alterar o email.");
         }
 
-        if (!user.getSenha().equals(senhaConfirmacao)) {
-            throw new Exception("As senhas não coincidem.");
-        }
-
-        CPFValidator cpfValidator = new CPFValidator();
-        try {
-            cpfValidator.assertValid(user.getCpf());
-        } catch (InvalidStateException e) {
-            throw new Exception("CPF inválido.");
-        }
+        validarSenhas(user.getSenha(), senhaConfirmacao);
+        validarCpf(user.getCpf());
 
         existingUser.setNome(user.getNome());
         existingUser.setCpf(user.getCpf());
@@ -76,5 +58,26 @@ public class UserService {
     public User getUserById(Long id) throws Exception {
         return userRepository.findById(id)
                 .orElseThrow(() -> new Exception("Usuário não encontrado."));
+    }
+
+    private void validarSenhas(String senha, String senhaConfirmacao){
+        if(!senha.equals(senhaConfirmacao)){
+            throw new IllegalArgumentException("As senhas não coincidem");
+        }
+    }
+
+    private void validarEmailUnico(String email){
+        if(userRepository.existsByEmail(email)){
+            throw new IllegalArgumentException("Email já cadastrado");
+        }
+    }
+
+    private void validarCpf(String cpf) throws  IllegalArgumentException {
+        CPFValidator cpfValidator = new CPFValidator();
+        try{
+            cpfValidator.assertValid(cpf);
+        } catch (InvalidStateException e) {
+            throw new IllegalArgumentException("CPF inválido");
+        }
     }
 }
