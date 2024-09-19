@@ -2,14 +2,96 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Usuário</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${user.id == null ? 'Adicionar Usuário' : 'Editar Usuário'}">Editar Usuário</title>
     <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[readonly] {
+            background-color: #f0f0f0;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button[type="submit"], button[type="button"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        button[type="button"] {
+            background-color: #FF5722;
+            color: white;
+        }
+
+        button[type="button"]:hover {
+            background-color: #E64A19;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+    </style>
 </head>
 <body>
 <div class="container">
     <h2 th:text="${user.id == null ? 'Adicionar Usuário' : 'Editar Usuário'}"></h2>
-    <form th:action="@{${user.id == null ? '/usuarios/register' : '/usuarios/update'}}" method="post">
 
+    <form th:action="@{${user.id == null ? '/usuarios/register' : '/usuarios/update'}}" method="post">
         <input type="hidden" name="id" th:value="${user.id}">
 
         <label for="nome">Nome:</label>
@@ -22,32 +104,45 @@
         <input type="text" id="status" name="status" th:value="${user.ativo ? 'Ativo' : 'Inativo'}" readonly><br>
 
         <label for="senha">Senha:</label>
-        <input type="password" id="senha" name="senha"><br>
-        <script>
-
-            document.querySelector('form').addEventListener('submit', function(event) {
-                const senha = document.getElementById('senha').value;
-                const senhaConfirmacao = document.getElementById('senhaConfirmacao').value;
-
-                if (senha !== senhaConfirmacao) {
-                    alert("As senhas não correspondem. Por favor, confirme a senha corretamente.");
-                    event.preventDefault();  // Impede o envio do formulário
-                }
-
-                // Caso deseje garantir que ambos os campos senha sejam obrigatórios
-                if (senha === '' || senhaConfirmacao === '') {
-                    alert("Por favor, preencha os campos de senha.");
-                    event.preventDefault();
-                }
-            });
-        </script>
+        <input type="password" id="senha" name="senha" placeholder="Digite uma nova senha"><br>
 
         <label for="senhaConfirmacao">Confirme a Senha:</label>
-        <input type="password" id="senhaConfirmacao" name="senhaConfirmacao"><br>
+        <input type="password" id="senhaConfirmacao" name="senhaConfirmacao" placeholder="Confirme a nova senha"><br>
+        <span id="error-message" class="error" style="display: none;">As senhas não correspondem. Por favor, tente novamente.</span>
 
-        <button type="submit">Salvar</button>
-        <a href="/usuarios"><button type="button">Cancelar</button></a>
+        <div class="button-group">
+            <button type="submit">Salvar</button>
+            <a href="/usuarios"><button type="button">Cancelar</button></a>
+        </div>
     </form>
 </div>
+
+<script>
+    const form = document.querySelector('form');
+    const senha = document.getElementById('senha');
+    const senhaConfirmacao = document.getElementById('senhaConfirmacao');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', function(event) {
+        const senhaValue = senha.value;
+        const senhaConfirmacaoValue = senhaConfirmacao.value;
+
+        // Verifica se os campos de senha foram preenchidos
+        if (senhaValue || senhaConfirmacaoValue) {
+            // Verifica se as senhas correspondem
+            if (senhaValue !== senhaConfirmacaoValue) {
+                errorMessage.style.display = 'block'; // Exibe a mensagem de erro
+                event.preventDefault();  // Impede o envio do formulário
+            } else {
+                errorMessage.style.display = 'none'; // Oculta a mensagem de erro se as senhas corresponderem
+            }
+        }
+    });
+
+    // Oculta a mensagem de erro ao digitar nos campos de senha
+    senha.addEventListener('input', () => errorMessage.style.display = 'none');
+    senhaConfirmacao.addEventListener('input', () => errorMessage.style.display = 'none');
+</script>
+
 </body>
 </html>

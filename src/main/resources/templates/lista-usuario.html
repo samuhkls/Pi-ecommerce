@@ -2,12 +2,106 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Usuários</title>
     <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 300px;
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        button[type="button"] {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button[type="button"]:hover {
+            background-color: #0056b3;
+        }
+        .buttons {
+            text-align: center;
+        }
+        .buttons a {
+            text-decoration: none;
+        }
+        .status-button {
+            background-color: #FF5722;
+            border: none;
+            padding: 8px 16px;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .status-button:hover {
+            background-color: #E64A19;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <h2>Lista de Usuários</h2>
+
     <!-- Formulário de filtragem -->
     <form action="#" th:action="@{/listar-usuario}" method="get">
         <input type="text" name="nome" placeholder="Filtrar por nome" th:value="${param.nome}">
@@ -36,9 +130,10 @@
                 </a>
             </td>
             <td>
-                <form th:action="@{/usuarios/status/{id}(id=${user.id})}" method="post">
-                    <button type="submit" th:text="${user.ativo ? 'Desativar' : 'Ativar'}">Ativar/Desativar</button>
-                </form>
+                <button type="button" class="status-button"
+                        th:onclick="'openPopup(' + ${user.id} + ', \'' + ${user.ativo ? 'Desativar' : 'Ativar'} + '\')'"
+                        th:text="${user.ativo ? 'Desativar' : 'Ativar'}">
+                </button>
             </td>
         </tr>
         </tbody>
@@ -49,5 +144,33 @@
         <a href="/usuarios/cadastrar"><button type="button">Adicionar Usuário</button></a>
     </div>
 </div>
-</body>
+    <!-- Popup de Confirmação -->
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup">
+            <p id="popupMessage">Tem certeza que deseja realizar esta ação?</p>
+            <button id="confirmButton" class="popup-confirm" onclick="confirmAction()">Confirmar</button>
+            <button class="popup-cancel" onclick="closePopup()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        let userId = null;
+        let actionType = '';
+
+        function openPopup(id, action) {
+            userId = id;
+            actionType = action;
+            document.getElementById('popupMessage').textContent = `Tem certeza que deseja ${actionType} o usuário?`;
+            document.getElementById('popupOverlay').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
+        function confirmAction() {
+            window.location.href = `/usuarios/status/${userId}`;
+            closePopup();
+        }
+    </script>
 </html>
