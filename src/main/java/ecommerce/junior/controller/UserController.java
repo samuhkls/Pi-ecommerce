@@ -42,6 +42,7 @@ public class UserController {
             userService.createUser(user, senhaConfirmacao);
             return "redirect:/listar-usuario";
         } catch (Exception e) {
+            e.printStackTrace();
             model.addAttribute("error", e.getMessage());
             return "listar";
         }

@@ -2,53 +2,65 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Lista de Produtos - Admin</title>
-  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
 <h1>Lista de Produtos</h1>
 
-<!-- Botão para criar novo produto -->
-<a href="/admin/produtos/novo">Novo Produto</a>
+<!-- Botão para cadastrar novo produto -->
+<a href="/admin/produtos/novo">Novo Produto +</a>
 
-<table border="1">
+<!-- Formulário de busca -->
+<form th:action="@{/admin/produtos}" method="get">
+  <input type="text" name="nome" th:value="${nome}" placeholder="Buscar por nome">
+  <button type="submit">Buscar</button>
+</form>
+
+<!-- Tabela de produtos -->
+<table>
   <thead>
   <tr>
     <th>ID</th>
     <th>Nome</th>
-    <th>Preço</th>
     <th>Quantidade em Estoque</th>
-    <th>Descrição Detalhada</th>
+    <th>Valor</th>
     <th>Status</th>
-    <th>Imagens</th> <!-- Nova coluna para exibir as imagens -->
     <th>Ações</th>
   </tr>
   </thead>
   <tbody>
-  <!-- Laço para iterar sobre a lista de produtos -->
-  <tr th:each="produto : ${produtos}">
+  <tr th:each="produto : ${produtos.content}">
     <td th:text="${produto.id}"></td>
     <td th:text="${produto.nome}"></td>
-    <td th:text="${#numbers.formatDecimal(produto.preco, 1, 2)}"></td>
     <td th:text="${produto.quantidadeEmEstoque}"></td>
-    <td th:text="${produto.descricaoDetalhada}"></td>
+    <td th:text="${produto.preco}"></td>
     <td th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></td>
     <td>
-      <div th:if="${produto.imagem != null}">
-        <img th:src="@{'/imagens/' + ${produto.id}}" alt="Imagem do produto" width="100" height="100"/>
-      </div>
-    </td>
-
-    <!-- Botão para alterar o status do produto -->
-    <td>
-      <form th:action="@{/admin/produtos/alterar-status/{id}(id=${produto.id})}" method="post">
-        <button type="submit" th:text="${produto.ativo ? 'Desativar' : 'Ativar'}"></button>
+      <!-- Ações de cada produto: Visualizar, Alterar, Inativar/Reativar -->
+      <a th:href="@{/admin/produtos/visualizar/{id}(id=${produto.id})}">Visualizar</a> |
+      <a th:href="@{/admin/produtos/alterar/{id}(id=${produto.id})}">Alterar</a> |
+      <form th:action="@{/admin/produtos/alterar-status/{id}(id=${produto.id})}" method="post" style="display:inline">
+        <button type="submit" th:text="${produto.ativo ? 'Inativar' : 'Reativar'}"></button>
       </form>
-      <!-- Link para editar o produto -->
-      <a th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a>
     </td>
   </tr>
   </tbody>
 </table>
+
+<!-- Barra de paginação -->
+<div>
+  <ul>
+    <li th:if="${produtos.hasPrevious()}">
+      <a th:href="@{/admin/produtos(page=${produtos.number - 1}, nome=${nome})}">Anterior</a>
+    </li>
+    <li th:each="i : ${#numbers.sequence(1, produtos.totalPages)}" th:classappend="${i == produtos.number + 1} ? 'active'">
+      <a th:href="@{/admin/produtos(page=${i - 1}, nome=${nome})}" th:text="${i}"></a>
+    </li>
+    <li th:if="${produtos.hasNext()}">
+      <a th:href="@{/admin/produtos(page=${produtos.number + 1}, nome=${nome})}">Próximo</a>
+    </li>
+  </ul>
+</div>
 
 </body>
 </html>

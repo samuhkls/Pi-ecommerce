@@ -3,12 +3,14 @@ package ecommerce.junior.service;
 import ecommerce.junior.model.Produto;
 import ecommerce.junior.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProdutoService {
@@ -21,15 +23,25 @@ public class ProdutoService {
         return produtoRepository.save(produto);
     }
 
-    public List<Produto> getAllProdutos() {
-        return produtoRepository.findAll();
+    public Page<Produto> getAllProdutos(Pageable pageable) {
+        return produtoRepository.findAll(pageable);
     }
 
+    public Page<Produto> buscarPorNomeParcial(String nome, Pageable pageable) {
+        return produtoRepository.findByNomeContainingIgnoreCase(nome, pageable);
+    }
+
+
+
+    public Optional<Produto> getProdutoById(Long id) {
+        return produtoRepository.findById(id);
+    }
+
+    @Transactional
     public void alterarStatus(Long id) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
-        produto.setAtivo(!produto.isAtivo());  // Agora, o método isAtivo() será reconhecido
+        produto.setAtivo(!produto.isAtivo());  // Alterna o status ativo/inativo
         produtoRepository.save(produto);
     }
-
 }

@@ -38,7 +38,7 @@ public class ImagemController {
                 InputStreamResource resource = new InputStreamResource(inputStream);
 
                 HttpHeaders headers = new HttpHeaders();
-                headers.set(HttpHeaders.CONTENT_TYPE, "image/jpeg");  // Defina o tipo MIME correto
+                headers.set(HttpHeaders.CONTENT_TYPE, "image/jpeg");
                 headers.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(imagem.length));
 
                 return new ResponseEntity<>(resource, headers, HttpStatus.OK);

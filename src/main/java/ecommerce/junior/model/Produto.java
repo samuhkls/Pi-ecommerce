@@ -79,7 +79,6 @@ public class Produto {
         this.ativo = ativo;
     }
 
-    // Este é o método que provavelmente faltava
     public boolean isAtivo() {
         return ativo;
     }
