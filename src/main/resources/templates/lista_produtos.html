@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Lista de Produtos - Admin</title>
+  <meta charset="UTF-8">
+</head>
+<body>
+<h1>Lista de Produtos</h1>
+
+<!-- Botão para criar novo produto -->
+<a href="/admin/produtos/novo">Novo Produto</a>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Nome</th>
+    <th>Preço</th>
+    <th>Quantidade em Estoque</th>
+    <th>Descrição Detalhada</th>
+    <th>Status</th>
+    <th>Ações</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- Laço para iterar sobre a lista de produtos -->
+  <tr th:each="produto : ${produtos}">
+    <td th:text="${produto.id}"></td>
+    <td th:text="${produto.nome}"></td>
+    <td th:text="${#numbers.formatDecimal(produto.preco, 1, 2)}"></td>
+    <td th:text="${produto.quantidadeEmEstoque}"></td>
+    <td th:text="${produto.descricaoDetalhada}"></td>
+    <td th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></td>
+    <td>
+      <!-- Botão para alterar o status do produto -->
+      <form th:action="@{/admin/produtos/status(id=${produto.id})}" method="post">
+        <button type="submit" th:text="${produto.ativo ? 'Desativar' : 'Ativar'}"></button>
+      </form>
+      <!-- Link para editar o produto -->
+      <a th:href="@{/admin/produtos/editar(id=${produto.id})}">Editar</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
