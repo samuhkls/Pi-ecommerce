@@ -77,7 +77,7 @@ public class UserController {
 
             User currentUser = userService.getUserById(currentUserId);
             if(!user.getId().equals(currentUser.getId())){
-                throw new Exception("Você não tem permissão de alterar o status dos oto");
+                throw new Exception("Você não tem permissão de alterar o status dos outros usuários.");
             }
 
             user.setAtivo(!user.isAtivo());

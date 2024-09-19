@@ -23,6 +23,24 @@
 
         <label for="senha">Senha:</label>
         <input type="password" id="senha" name="senha"><br>
+        <script>
+
+            document.querySelector('form').addEventListener('submit', function(event) {
+                const senha = document.getElementById('senha').value;
+                const senhaConfirmacao = document.getElementById('senhaConfirmacao').value;
+
+                if (senha !== senhaConfirmacao) {
+                    alert("As senhas não correspondem. Por favor, confirme a senha corretamente.");
+                    event.preventDefault();  // Impede o envio do formulário
+                }
+
+                // Caso deseje garantir que ambos os campos senha sejam obrigatórios
+                if (senha === '' || senhaConfirmacao === '') {
+                    alert("Por favor, preencha os campos de senha.");
+                    event.preventDefault();
+                }
+            });
+        </script>
 
         <label for="senhaConfirmacao">Confirme a Senha:</label>
         <input type="password" id="senhaConfirmacao" name="senhaConfirmacao"><br>
