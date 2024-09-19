@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Lista de Produtos - Admin</title>
+  <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+<h1>Lista de Produtos</h1>
+<a href="/admin/produtos/novo">Novo Produto</a>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Nome</th>
+    <th>Quantidade em Estoque</th>
+    <th>Valor</th>
+    <th>Status</th>
+    <th>Ações</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="produto : ${produtos}">
+    <td th:text="${produto.id}"></td>
+    <td th:text="${produto.nome}"></td>
+    <td th:text="${produto.quantidadeEmEstoque}"></td>
+    <td th:text="${produto.preco}"></td> <!-- Corrigido de valor para preco -->
+    <td th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></td> <!-- Corrigido de status para ativo -->
+    <td>
+      <a th:href="@{/admin/produtos/status(id=${produto.id})}">Alterar Status</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

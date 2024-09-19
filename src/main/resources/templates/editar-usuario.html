@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuário</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h2 th:text="${user.id == null ? 'Adicionar Usuário' : 'Editar Usuário'}"></h2>
+    <form th:action="@{${user.id == null ? '/usuarios/register' : '/usuarios/update'}}" method="post">
+
+        <input type="hidden" name="id" th:value="${user.id}">
+
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" th:value="${user.nome}" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" th:value="${user.email}" required><br>
+
+        <label for="status">Status:</label>
+        <input type="text" id="status" name="status" th:value="${user.ativo ? 'Ativo' : 'Inativo'}" readonly><br>
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha"><br>
+        <script>
+
+            document.querySelector('form').addEventListener('submit', function(event) {
+                const senha = document.getElementById('senha').value;
+                const senhaConfirmacao = document.getElementById('senhaConfirmacao').value;
+
+                if (senha !== senhaConfirmacao) {
+                    alert("As senhas não correspondem. Por favor, confirme a senha corretamente.");
+                    event.preventDefault();  // Impede o envio do formulário
+                }
+
+                // Caso deseje garantir que ambos os campos senha sejam obrigatórios
+                if (senha === '' || senhaConfirmacao === '') {
+                    alert("Por favor, preencha os campos de senha.");
+                    event.preventDefault();
+                }
+            });
+        </script>
+
+        <label for="senhaConfirmacao">Confirme a Senha:</label>
+        <input type="password" id="senhaConfirmacao" name="senhaConfirmacao"><br>
+
+        <button type="submit">Salvar</button>
+        <a href="/usuarios"><button type="button">Cancelar</button></a>
+    </form>
+</div>
+</body>
+</html>

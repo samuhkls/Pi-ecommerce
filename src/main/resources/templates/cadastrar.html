@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Usuário</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>Adicionar Usuário</h2>
+
+    <!-- Formulário de adição de usuário -->
+    <form action="/usuarios/cadastrar" method="post">
+        <div class="form-group">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required placeholder="Digite o nome">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required placeholder="Digite o email">
+        </div>
+
+        <div class="form-group">
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" required placeholder="Digite o CPF">
+        </div>
+
+        <div class="form-group">
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required placeholder="Digite a senha">
+        </div>
+
+        <div class="form-group">
+            <label for="senhaConfirmacao">Confirmar Senha:</label>
+            <input type="password" id="senhaConfirmacao" name="senhaConfirmacao" required placeholder="Confirme a senha">
+        </div>
+
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="tipo">
+            <option value="ESTOQUISTA">Estoquista</option>
+            <option value="ADMINISTRADOR">Administrador</option>
+        </select>
+        <br>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <!-- Botão para voltar à lista de usuários -->
+    <div class="buttons">
+        <a href="/listar-usuario"><button type="button">Voltar à Lista</button></a>
+    </div>
+</div>
+</body>
+</html>

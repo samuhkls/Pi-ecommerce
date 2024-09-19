@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Usuários</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>Lista de Usuários</h2>
+    <!-- Formulário de filtragem -->
+    <form action="#" th:action="@{/listar-usuario}" method="get">
+        <input type="text" name="nome" placeholder="Filtrar por nome" th:value="${param.nome}">
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <!-- Tabela de usuários -->
+    <table>
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Editar</th>
+            <th>Ativar/Desativar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.nome}">Nome</td>
+            <td th:text="${user.email}">Email</td>
+            <td th:text="${user.ativo ? 'Ativo' : 'Inativo'}">Status</td>
+            <td>
+                <a th:href="@{/editar/{id}(id=${user.id})}">
+                    <button type="button">Editar</button>
+                </a>
+            </td>
+            <td>
+                <form th:action="@{/usuarios/status/{id}(id=${user.id})}" method="post">
+                    <button type="submit" th:text="${user.ativo ? 'Desativar' : 'Ativar'}">Ativar/Desativar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Botão para adicionar usuário -->
+    <div class="buttons">
+        <a href="/usuarios/cadastrar"><button type="button">Adicionar Usuário</button></a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editar Produto</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .disabled-field {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        color: #666;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>Editar Produto</h1>
+
+
+<form th:action="@{/admin/produtos/salvar}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="id" th:value="${produto.id}" />
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" th:value="${produto.nome}"
+           th:attr="${role == 'estoquista'} ? 'disabled' : ''" />
+
+    <label for="descricaoDetalhada">Descrição Detalhada:</label>
+    <textarea id="descricaoDetalhada" name="descricaoDetalhada"
+              th:text="${produto.descricaoDetalhada}"
+              th:attr="${role == 'estoquista'} ? 'disabled' : ''"></textarea>
+
+    <label for="preco">Preço:</label>
+    <input type="text" id="preco" name="preco" th:value="${produto.preco}"
+           th:attr="${role == 'estoquista'} ? 'disabled' : ''" />
+
+    <label for="quantidadeEmEstoque">Quantidade em Estoque:</label>
+    <input type="number" id="quantidadeEmEstoque" name="quantidadeEmEstoque"
+           th:value="${produto.quantidadeEmEstoque}"
+           th:attr="${role == 'estoquista'} ? '' : 'disabled'" />
+
+    <label for="ativo">Ativo:</label>
+    <input type="checkbox" id="ativo" name="ativo" th:checked="${produto.ativo}"
+           th:attr="${role == 'estoquista'} ? 'disabled' : ''" />
+
+    <label for="imagem">Imagem:</label>
+    <input type="file" id="imagem" name="imagem"
+           th:attr="${role == 'estoquista'} ? 'disabled' : ''" />
+
+    <button type="submit" th:if="${role != 'estoquista'}">Salvar</button>
+</form>
+
+<a href="/admin/produtos">Voltar para a lista de produtos</a>
+</body>
+</html>
