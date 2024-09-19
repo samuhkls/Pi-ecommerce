@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhes do Produto</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h1>Detalhes do Produto</h1>
+<div>
+    <p>ID: <span th:text="${produto.id}"></span></p>
+    <p>Nome: <span th:text="${produto.nome}"></span></p>
+    <p>Descrição: <span th:text="${produto.descricaoDetalhada}"></span></p>
+    <p>Preço: <span th:text="${produto.preco}"></span></p>
+    <p>Quantidade em Estoque: <span th:text="${produto.qtdEstoque}"></span></p>
+</div>
+<h2>Imagens</h2>
+<div th:each="imagem : ${produto.imagens}">
+    <img th:src="@{/imagens/{caminho}(caminho=${imagem.caminho})}" th:alt="Imagem do Produto" width="200"/>
+    <p th:text="${imagem.principal} ? 'Principal' : 'Secundária'"></p>
+    <form th:action="@{/produtos/imagem-principal/{produtoId}/{imagemId}(produtoId=${produto.id}, imagemId=${imagem.id})}" method="post">
+        <button type="submit">Definir como Principal</button>
+    </form>
+</div>
+<a href="/produtos">Voltar à lista</a>
+</body>
+</html>

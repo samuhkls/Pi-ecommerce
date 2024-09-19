@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Criar Novo Produto</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h1>Criar Novo Produto</h1>
+
+<form id="produtoForm">
+    <div>
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" maxlength="200"/>
+    </div>
+    <div>
+        <label for="avaliacao">Avaliação:</label>
+        <input type="number" id="avaliacao" name="avaliacao" step="0.5" min="0.5" max="5"/>
+    </div>
+    <div>
+        <label for="descricaoDetalhada">Descrição Detalhada:</label>
+        <textarea id="descricaoDetalhada" name="descricaoDetalhada" maxlength="2000"></textarea>
+    </div>
+    <div>
+        <label for="preco">Preço:</label>
+        <input type="number" id="preco" name="preco" step="0.01" min="0"/>
+    </div>
+    <div>
+        <label for="qtdEstoque">Quantidade em Estoque:</label>
+        <input type="number" id="qtdEstoque" name="qtdEstoque" min="0"/>
+    </div>
+    <div>
+        <label for="imagemPrincipal">Imagem Principal:</label>
+        <input type="file" id="imagemPrincipal" name="imagemPrincipal"/>
+    </div>
+    <div>
+        <label for="imagens">Imagens:</label>
+        <input type="file" id="imagens" name="imagens" multiple/>
+    </div>
+
+    <div>
+        <button type="button" onclick="salvarProduto()">Salvar</button>
+        <a href="/produtos">Cancelar</a>
+    </div>
+
+    <div id="errorMessage" style="color:red;"></div>
+</form>
+
+<script>
+    function salvarProduto() {
+        var form = document.getElementById('produtoForm');
+        var formData = new FormData(form);
+
+        fetch('/produtos/novo', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/produtos';
+            } else {
+                return response.text().then(text => { throw new Error(text) });
+            }
+        })
+        .catch(error => {
+            document.getElementById('errorMessage').innerText = "Erro ao salvar o produto: " + error.message;
+        });
+    }
+</script>
+
+</body>
+</html>

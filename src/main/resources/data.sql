@@ -7,3 +7,20 @@ CREATE TABLE IF NOT EXISTS USUARIO (
     GRUPO ENUM('Estoquista', 'Administrador') NOT NULL,
     STATUS BOOLEAN DEFAULT TRUE
 );
+
+CREATE TABLE IF NOT EXISTS produto (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(200) NOT NULL,
+    avaliacao DECIMAL(2, 1) CHECK (avaliacao >= 0.5 AND avaliacao <= 5) NOT NULL,
+    descricao_detalhada VARCHAR(2000) NOT NULL,
+    preco DECIMAL(10, 2) NOT NULL,
+    qtd_estoque INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS imagem (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    caminho VARCHAR(255) NOT NULL,
+    principal BOOLEAN NOT NULL DEFAULT FALSE,
+    produto_id BIGINT NOT NULL,
+    FOREIGN KEY (produto_id) REFERENCES produto(id) ON DELETE CASCADE
+);

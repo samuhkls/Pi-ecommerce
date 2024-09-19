@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Produto</title>
+    <link rel="stylesheet" href="/path/to/your/styles.css">
+</head>
+<body>
+<h1>${produto.id == null ? 'Novo Produto' : 'Editar Produto'}</h1>
+
+<form action="/produtos${produto.id == null ? '/novo' : '/' + produto.id + '/editar'}" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" value="${produto.nome}" maxlength="200" required>
+    </div>
+
+    <div>
+        <label for="avaliacao">Avaliação (de 0,5 a 5):</label>
+        <input type="number" id="avaliacao" name="avaliacao" step="0.5" min="0.5" max="5" value="${produto.avaliacao}" required>
+    </div>
+
+    <div>
+        <label for="descricaoDetalhada">Descrição Detalhada:</label>
+        <textarea id="descricaoDetalhada" name="descricaoDetalhada" rows="4" maxlength="2000" required>${produto.descricaoDetalhada}</textarea>
+    </div>
+
+    <div>
+        <label for="preco">Preço:</label>
+        <input type="number" id="preco" name="preco" step="0.01" min="0" value="${produto.preco}" required>
+    </div>
+
+    <div>
+        <label for="qtdEstoque">Quantidade em Estoque:</label>
+        <input type="number" id="qtdEstoque" name="qtdEstoque" min="0" value="${produto.qtdEstoque}" required>
+    </div>
+
+    <div>
+        <label for="imagemPrincipal">Imagem Principal:</label>
+        <input type="file" id="imagemPrincipal" name="imagemPrincipal" accept="image/*">
+    </div>
+
+    <div>
+        <label for="imagens">Imagens Adicionais:</label>
+        <input type="file" id="imagens" name="imagens" multiple accept="image/*">
+    </div>
+
+    <button type="submit">Salvar</button>
+    <a href="/listar-produtos" role="button">Cancelar</a>
+</form>
+</body>
+</html>

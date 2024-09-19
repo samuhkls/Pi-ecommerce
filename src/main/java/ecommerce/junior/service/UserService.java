@@ -18,7 +18,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
     public User authenticate(String email, String senha) {
         User user = userRepository.findByEmail(email);
         if(user != null && passwordEncoder.matches(senha, user.getSenha())) {
@@ -69,6 +68,12 @@ public class UserService {
 
         if (!user.getId().equals(currentUser.getId())){
             throw new Exception("Você não tem permissão para atualizar este usuario");
+        }
+
+        if(user.getSenha() != null && !user.getSenha().isEmpty()){
+            user.setSenha(passwordEncoder.encode(user.getSenha()));
+        } else {
+            user.setSenha(currentUser.getSenha());
         }
 
         user.setTipo(currentUser.getTipo());
