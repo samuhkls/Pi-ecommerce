@@ -31,8 +31,6 @@ public class ProdutoService {
         return produtoRepository.findByNomeContainingIgnoreCase(nome, pageable);
     }
 
-
-
     public Optional<Produto> getProdutoById(Long id) {
         return produtoRepository.findById(id);
     }
@@ -44,4 +42,10 @@ public class ProdutoService {
         produto.setAtivo(!produto.isAtivo());  // Alterna o status ativo/inativo
         produtoRepository.save(produto);
     }
+    public Produto getProdutoByIdNoOptional(Long id) {
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
+    }
+
+
 }

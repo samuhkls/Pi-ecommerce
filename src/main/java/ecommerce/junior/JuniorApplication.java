@@ -1,6 +1,7 @@
 package ecommerce.junior;
 
 import ecommerce.junior.model.Grupo;
+import ecommerce.junior.model.Produto;
 import ecommerce.junior.model.User;
 import ecommerce.junior.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

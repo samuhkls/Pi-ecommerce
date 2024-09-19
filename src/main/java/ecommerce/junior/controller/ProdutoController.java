@@ -28,27 +28,44 @@ public class ProdutoController {
         return "cadastrar-produto";
     }
 
+    @GetMapping("/detalhes/{id}")
+    @ResponseBody
+    public Optional<Produto> getProdutoDetalhes(@PathVariable Long id) {
+        return produtoService.getProdutoById(id);
+    }
+
+
     @PostMapping("/salvar")
-    public String salvarProduto(@RequestParam("nome") String nome,
+    public String salvarProduto(@RequestParam("id") Long id,
+                                @RequestParam("nome") String nome,
                                 @RequestParam("descricaoDetalhada") String descricaoDetalhada,
                                 @RequestParam("preco") Double preco,
                                 @RequestParam("quantidadeEmEstoque") Integer quantidadeEmEstoque,
                                 @RequestParam("ativo") Boolean ativo,
-                                @RequestParam("imagem") MultipartFile imagem) throws IOException {
-        Produto produto = new Produto();
-        produto.setNome(nome);
-        produto.setDescricaoDetalhada(descricaoDetalhada);
-        produto.setPreco(preco);
-        produto.setQuantidadeEmEstoque(quantidadeEmEstoque);
-        produto.setAtivo(ativo);
+                                @RequestParam("imagem") MultipartFile imagem,
+                                @RequestParam("role") String role) throws IOException {
+        if ("estoquista".equals(role)) {
+            Produto produto = produtoService.getProdutoByIdNoOptional(id);
+            produto.setQuantidadeEmEstoque(quantidadeEmEstoque);
+            produtoService.salvarProduto(produto);
+        } else {
+            Produto produto = new Produto();
+            produto.setId(id);
+            produto.setNome(nome);
+            produto.setDescricaoDetalhada(descricaoDetalhada);
+            produto.setPreco(preco);
+            produto.setQuantidadeEmEstoque(quantidadeEmEstoque);
+            produto.setAtivo(ativo);
 
-        if (!imagem.isEmpty()) {
-            produto.setImagem(imagem.getBytes());
+            if (!imagem.isEmpty()) {
+                produto.setImagem(imagem.getBytes());
+            }
+
+            produtoService.salvarProduto(produto);
         }
-
-        produtoService.salvarProduto(produto);
         return "redirect:/admin/produtos";
     }
+
 
     @GetMapping
     public String listarProdutos(@RequestParam(value = "nome", required = false) String nome,
@@ -86,7 +103,6 @@ public class ProdutoController {
         }
     }
 
-    // Exibe o formulário para editar um produto existente
     @GetMapping("/alterar/{id}")
     public String alterarProdutoForm(@PathVariable Long id, Model model) {
         Optional<Produto> produto = produtoService.getProdutoById(id);
@@ -98,7 +114,20 @@ public class ProdutoController {
         }
     }
 
-    // Atualiza um produto existente
+    @GetMapping("/editar/{id}")
+    public String editarProdutoForm(@PathVariable Long id, Model model, @RequestParam String role) {
+        try {
+            Produto produto = produtoService.getProdutoByIdNoOptional(id);
+            model.addAttribute("produto", produto);
+            model.addAttribute("role", role);
+            return "editar-produto";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "erro";
+        }
+    }
+
+        // Atualiza um produto existente
     @PostMapping("/atualizar/{id}")
     public String atualizarProduto(@PathVariable Long id,
                                    @RequestParam("nome") String nome,
