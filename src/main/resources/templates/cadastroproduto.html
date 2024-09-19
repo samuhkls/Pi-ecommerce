@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Produto</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+  <h2>Cadastrar Produto</h2>
+  <form th:action="@{/produtos/cadastrar}" method="post">
+    <label for="nome">Nome do Produto:</label>
+    <input type="text" id="nome" name="nome" maxlength="200" required><br>
+
+    <label for="avaliacao">Avaliação (1 a 5):</label>
+    <input type="number" id="avaliacao" name="avaliacao" step="0.5" min="1" max="5" required><br>
+
+    <label for="descricao">Descrição Detalhada:</label>
+    <textarea id="descricao" name="descricao" maxlength="2000" required></textarea><br>
+
+    <label for="preco">Preço do Produto (R$):</label>
+    <input type="number" id="preco" name="preco" step="0.01" min="0" required><br>
+
+    <label for="estoque">Quantidade em Estoque:</label>
+    <input type="number" id="estoque" name="estoque" min="0" required><br>
+
+    <button type="submit">Cadastrar Produto</button>
+    <a href="/produtos"><button type="button">Cancelar</button></a>
+  </form>
+</div>
+
+<script>
+  // Validação básica em JavaScript, se necessário
+  document.querySelector('form').addEventListener('submit', function(event) {
+      const avaliacao = parseFloat(document.getElementById('avaliacao').value);
+      if (avaliacao < 1 || avaliacao > 5) {
+          alert("A avaliação deve estar entre 1 e 5.");
+          event.preventDefault();
+      }
+  });
+</script>
+</body>
+</html>
