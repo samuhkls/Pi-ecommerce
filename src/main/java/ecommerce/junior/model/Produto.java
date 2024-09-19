@@ -1,39 +1,36 @@
 package ecommerce.junior.model;
 
 import jakarta.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.Set;
 
 @Entity
-@Table(name = "produtos")
+@Table(name = "produto")
 public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O nome do produto é obrigatório")
-    @Size(max = 200)
+    @Column(nullable = false, length = 100)
     private String nome;
 
-    @NotNull(message = "O preço é obrigatório")
-    private BigDecimal preco;
+    @Column(nullable = false)
+    private Double preco;
 
-    @NotNull(message = "A quantidade em estoque é obrigatória")
+    @Column(nullable = false)
     private Integer quantidadeEmEstoque;
 
-    @Size(max = 2000)
+    @Column(columnDefinition = "TEXT")
     private String descricaoDetalhada;
 
-    private boolean ativo;
+    @Column(nullable = false)
+    private Boolean ativo;
 
-    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Imagem> imagens;
+    @Lob
+    @Column(name = "imagem", columnDefinition = "LONGBLOB")
+    private byte[] imagem;
 
     // Getters e Setters
+
     public Long getId() {
         return id;
     }
@@ -50,11 +47,11 @@ public class Produto {
         this.nome = nome;
     }
 
-    public BigDecimal getPreco() {
+    public Double getPreco() {
         return preco;
     }
 
-    public void setPreco(BigDecimal preco) {
+    public void setPreco(Double preco) {
         this.preco = preco;
     }
 
@@ -74,19 +71,24 @@ public class Produto {
         this.descricaoDetalhada = descricaoDetalhada;
     }
 
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    // Este é o método que provavelmente faltava
     public boolean isAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
+    public byte[] getImagem() {
+        return imagem;
     }
 
-    public Set<Imagem> getImagens() {
-        return imagens;
-    }
-
-    public void setImagens(Set<Imagem> imagens) {
-        this.imagens = imagens;
+    public void setImagem(byte[] imagem) {
+        this.imagem = imagem;
     }
 }

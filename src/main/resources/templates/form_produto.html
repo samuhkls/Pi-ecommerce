@@ -1,62 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-  <title>Cadastro de Produto</title>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Produto</title>
 </head>
 <body>
-<h1>Cadastrar Novo Produto</h1>
 
-<!-- Exibe erros de validação globais, se houver -->
-<div th:if="${#fields.hasErrors()}">
-  <p style="color:red">Por favor, corrija os erros abaixo:</p>
-  <ul>
-    <li th:each="error : ${#fields.errors()}" th:text="${error}"></li>
-  </ul>
-</div>
+<h1>Cadastrar Produto</h1>
 
-<!-- Formulário para cadastro de novo produto -->
-<form th:action="@{/admin/produtos/novo}" method="post" enctype="multipart/form-data" th:object="${produto}">
-  <div>
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" th:field="*{nome}" placeholder="Nome do produto"/>
-    <p th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" style="color:red"></p>
-  </div>
+<form action="/admin/produtos/salvar" method="post" enctype="multipart/form-data">
+  <label for="nome">Nome:</label>
+  <input type="text" id="nome" name="nome" required><br><br>
 
-  <div>
-    <label for="preco">Preço:</label>
-    <input type="number" step="0.01" id="preco" name="preco" th:field="*{preco}" placeholder="Preço"/>
-    <p th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}" style="color:red"></p>
-  </div>
+  <label for="descricaoDetalhada">Descrição Detalhada:</label>
+  <textarea id="descricaoDetalhada" name="descricaoDetalhada" required></textarea><br><br>
 
-  <div>
-    <label for="quantidadeEmEstoque">Quantidade em Estoque:</label>
-    <input type="number" id="quantidadeEmEstoque" name="quantidadeEmEstoque" th:field="*{quantidadeEmEstoque}" placeholder="Quantidade"/>
-    <p th:if="${#fields.hasErrors('quantidadeEmEstoque')}" th:errors="*{quantidadeEmEstoque}" style="color:red"></p>
-  </div>
+  <label for="preco">Preço:</label>
+  <input type="number" step="0.01" id="preco" name="preco" required><br><br>
 
-  <div>
-    <label for="descricaoDetalhada">Descrição Detalhada:</label>
-    <textarea id="descricaoDetalhada" name="descricaoDetalhada" th:field="*{descricaoDetalhada}" placeholder="Descrição detalhada do produto"></textarea>
-    <p th:if="${#fields.hasErrors('descricaoDetalhada')}" th:errors="*{descricaoDetalhada}" style="color:red"></p>
-  </div>
+  <label for="quantidadeEmEstoque">Quantidade em Estoque:</label>
+  <input type="number" id="quantidadeEmEstoque" name="quantidadeEmEstoque" required><br><br>
 
-  <div>
-    <label for="imagens">Imagens do Produto:</label>
-    <input type="file" id="imagens" name="imagens" multiple/>
-  </div>
+  <label for="ativo">Ativo:</label>
+  <input type="checkbox" id="ativo" name="ativo" value="true" checked><br><br>
 
-  <div>
-    <label for="ativo">Ativo:</label>
-    <input type="checkbox" id="ativo" name="ativo" th:field="*{ativo}"/>
-  </div>
+  <label for="imagem">Imagem do Produto:</label>
+  <input type="file" id="imagem" name="imagem" required><br><br>
 
-  <div>
-    <button type="submit">Salvar Produto</button>
-  </div>
+  <button type="submit">Salvar Produto</button>
 </form>
 
-<a href="/admin/produtos">Voltar para a Lista de Produtos</a>
 
 </body>
 </html>

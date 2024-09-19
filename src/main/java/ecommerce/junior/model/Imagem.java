@@ -1,6 +1,5 @@
 package ecommerce.junior.model;
 
-
 import jakarta.persistence.*;
 
 @Entity

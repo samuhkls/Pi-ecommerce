@@ -19,6 +19,7 @@
     <th>Quantidade em Estoque</th>
     <th>Descrição Detalhada</th>
     <th>Status</th>
+    <th>Imagens</th> <!-- Nova coluna para exibir as imagens -->
     <th>Ações</th>
   </tr>
   </thead>
@@ -32,12 +33,18 @@
     <td th:text="${produto.descricaoDetalhada}"></td>
     <td th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></td>
     <td>
-      <!-- Botão para alterar o status do produto -->
-      <form th:action="@{/admin/produtos/status(id=${produto.id})}" method="post">
+      <div th:if="${produto.imagem != null}">
+        <img th:src="@{'/imagens/' + ${produto.id}}" alt="Imagem do produto" width="100" height="100"/>
+      </div>
+    </td>
+
+    <!-- Botão para alterar o status do produto -->
+    <td>
+      <form th:action="@{/admin/produtos/alterar-status/{id}(id=${produto.id})}" method="post">
         <button type="submit" th:text="${produto.ativo ? 'Desativar' : 'Ativar'}"></button>
       </form>
       <!-- Link para editar o produto -->
-      <a th:href="@{/admin/produtos/editar(id=${produto.id})}">Editar</a>
+      <a th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a>
     </td>
   </tr>
   </tbody>

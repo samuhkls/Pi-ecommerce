@@ -13,7 +13,10 @@ public class User {
     private String cpf;
     private String email;
     private String senha;
+
+    @Enumerated(EnumType.STRING)
     private Grupo tipo;
+
     private boolean ativo = true;
 
     public boolean isAtivo() {
