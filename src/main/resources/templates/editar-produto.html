@@ -73,35 +73,37 @@
 <h1>Editar Produto</h1>
 
 
-<form th:action="@{/admin/produtos/salvar}" method="post" enctype="multipart/form-data">
+<form th:action="@{/admin/produtos/atualizar/{id}(id=${produto.id})}" method="post" enctype="multipart/form-data">
+
     <input type="hidden" name="id" th:value="${produto.id}" />
+
     <label for="nome">Nome:</label>
     <input type="text" id="nome" name="nome" th:value="${produto.nome}"
-           th:attr="${role == 'estoquista'} ? 'disabled' : ''" />
+           />
 
     <label for="descricaoDetalhada">Descrição Detalhada:</label>
     <textarea id="descricaoDetalhada" name="descricaoDetalhada"
               th:text="${produto.descricaoDetalhada}"
-              th:attr="${role == 'estoquista'} ? 'disabled' : ''"></textarea>
+             ></textarea>
 
     <label for="preco">Preço:</label>
     <input type="text" id="preco" name="preco" th:value="${produto.preco}"
-           th:attr="${role == 'estoquista'} ? 'disabled' : ''" />
+           />
 
     <label for="quantidadeEmEstoque">Quantidade em Estoque:</label>
     <input type="number" id="quantidadeEmEstoque" name="quantidadeEmEstoque"
            th:value="${produto.quantidadeEmEstoque}"
-           th:attr="${role == 'estoquista'} ? '' : 'disabled'" />
+           />
 
     <label for="ativo">Ativo:</label>
     <input type="checkbox" id="ativo" name="ativo" th:checked="${produto.ativo}"
-           th:attr="${role == 'estoquista'} ? 'disabled' : ''" />
+           />
 
     <label for="imagem">Imagem:</label>
     <input type="file" id="imagem" name="imagem"
-           th:attr="${role == 'estoquista'} ? 'disabled' : ''" />
+           />
 
-    <button type="submit" th:if="${role != 'estoquista'}">Salvar</button>
+    <button type="submit">Salvar</button>
 </form>
 
 <a href="/admin/produtos">Voltar para a lista de produtos</a>
