@@ -2,6 +2,7 @@ package ecommerce.junior.service;
 
 import ecommerce.junior.model.User;
 import ecommerce.junior.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,15 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public User authenticate(String email, String senha) {
+        User user = userRepository.findByEmail(email);
+        if(user != null && passwordEncoder.matches(senha, user.getSenha())) {
+            return user;
+        }
+        return null;
+    }
 
     public List<User> getUsersByName(String nome) {
         if (nome == null || nome.isEmpty()) {
@@ -49,23 +57,22 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateUser(User user, String senhaConfirmacao, User currentUser) throws Exception {
-        if (!user.getId().equals(currentUser.getId())) {
-            throw new Exception("Você não tem permissão para atualizar este usuário.");
+    public void updateUser(User user, HttpSession session) throws Exception {
+
+        Long currentUserId = (Long) session.getAttribute("userId");
+        if (currentUserId == null){
+            throw new Exception("você não tá logado meu mano");
         }
 
-        if (senhaConfirmacao != null && !senhaConfirmacao.isEmpty()) {
-            if (!passwordEncoder.matches(senhaConfirmacao, currentUser.getSenha())) {
-                throw new Exception("Senha de confirmação incorreta.");
-            }
-            if (user.getSenha() != null && !user.getSenha().isEmpty()) {
-                user.setSenha(passwordEncoder.encode(user.getSenha()));
-            } else {
-                user.setSenha(currentUser.getSenha());
-            }
-        } else {
-            user.setSenha(currentUser.getSenha());
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new Exception("Usúario logado não existe"));
+
+        if (!user.getId().equals(currentUser.getId())){
+            throw new Exception("Você não tem permissão para atualizar este usuario");
         }
+
+        user.setTipo(currentUser.getTipo());
+        user.setCpf(currentUser.getCpf());
 
         userRepository.save(user);
     }

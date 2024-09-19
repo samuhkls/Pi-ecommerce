@@ -2,6 +2,7 @@ package ecommerce.junior.controller;
 
 import ecommerce.junior.model.User;
 import ecommerce.junior.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,8 @@ import java.util.List;
 @Controller
 public class MappingController {
 
+    @Autowired
+    private HttpSession session;
     @Autowired
     private UserService userService;
 
@@ -67,7 +70,7 @@ public class MappingController {
             user.setNome(nome);
             user.setEmail(email);
 
-            userService.updateUser(user, senhaConfirmacao, user);
+            userService.updateUser(user, session);
 
             model.addAttribute("message", "Usuário atualizado com sucesso!");
         } catch (Exception e) {
@@ -82,7 +85,7 @@ public class MappingController {
             User user = userService.getUserById(id);
             user.setAtivo(!user.isAtivo());
 
-            userService.updateUser(user, user.getSenha(), user);
+            userService.updateUser(user, session);
             return "redirect:/listar-usuario";
         } catch (Exception e) {
             return "redirect:/listar-usuario";

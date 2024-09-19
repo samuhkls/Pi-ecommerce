@@ -1,12 +1,13 @@
 package ecommerce.junior.controller;
 
+import ecommerce.junior.model.Grupo;
 import ecommerce.junior.model.User;
 import ecommerce.junior.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Controller
@@ -16,6 +17,14 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private HttpSession session;
+
+    @GetMapping("/cadastrar")
+    public String cadastrar(){
+        return "cadastrar";
+    }
+
     @GetMapping
     public String listarUsuarios(@RequestParam(value = "nome", required = false) String nome, Model model) {
         List<User> users = userService.getUsersByName(nome);
@@ -23,11 +32,15 @@ public class UserController {
         return "listar";
     }
 
-    @PostMapping("/register")
+    @PostMapping("/cadastrar")
     public String registerUser(@ModelAttribute User user, @RequestParam String senhaConfirmacao, Model model) {
         try {
+            if (user.getTipo() != null) {
+                user.setTipo(user.getTipo());
+            }
+
             userService.createUser(user, senhaConfirmacao);
-            return "redirect:/usuarios";
+            return "redirect:/listar-usuario";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "listar";
@@ -35,11 +48,13 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public String updateUser(@ModelAttribute User user, @RequestParam String senhaConfirmacao, Model model) {
+    public String updateUser(@ModelAttribute User user, HttpSession session, Model model) {
         try {
-            userService.updateUser(user, senhaConfirmacao, user);
-
-            return "redirect:/usuarios";
+            if (user.getTipo() != null) {
+                user.setTipo(user.getTipo());
+            }
+            userService.updateUser(user, session);
+            return "redirect:/listar-usuario";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", e.getMessage());
@@ -50,13 +65,28 @@ public class UserController {
     @PostMapping("/status/{id}")
     public String alterarStatus(@PathVariable Long id) {
         try {
+            Long currentUserId = (Long) session.getAttribute("userId");
+            if(currentUserId == null){
+                throw new Exception("Usuário não está logado.");
+            }
+
             User user = userService.getUserById(id);
+            if(user == null){
+                throw new Exception("Usuário não encontrado");
+            }
+
+            User currentUser = userService.getUserById(currentUserId);
+            if(!user.getId().equals(currentUser.getId())){
+                throw new Exception("Você não tem permissão de alterar o status dos oto");
+            }
+
             user.setAtivo(!user.isAtivo());
 
-            userService.updateUser(user, user.getSenha(), user);
+            userService.updateUser(user, session);
 
-            return "redirect:/usuarios";
+            return "redirect:/listar-usuario";
         } catch (Exception e) {
+            e.printStackTrace();
             return "redirect:/usuarios";
         }
     }

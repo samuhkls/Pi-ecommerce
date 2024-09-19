@@ -27,6 +27,14 @@ public class JuniorApplication implements CommandLineRunner {
 		user.setSenha("password");
 		user.setTipo(Grupo.ADMINISTRADOR);
 
+		User user1 = new User();
+		user1.setNome("primovieira");
+		user1.setCpf("44921676844");
+		user1.setEmail("vieira@primo.com");
+		user1.setSenha("password");
+		user1.setTipo(Grupo.ESTOQUISTA);
+
 		userService.createUser(user, "password");
+		userService.createUser(user1, "password");
 	}
 }

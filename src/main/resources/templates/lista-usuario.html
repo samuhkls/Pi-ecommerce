@@ -36,7 +36,7 @@
                 </a>
             </td>
             <td>
-                <form th:action="@{/usuarios/alterar-status/{id}(id=${user.id})}" method="post">
+                <form th:action="@{/usuarios/status/{id}(id=${user.id})}" method="post">
                     <button type="submit" th:text="${user.ativo ? 'Desativar' : 'Ativar'}">Ativar/Desativar</button>
                 </form>
             </td>
