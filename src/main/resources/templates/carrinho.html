@@ -39,6 +39,10 @@
     .btn:hover {
         background-color: #0056b3;
     }
+    input[type="number"] {
+        width: 50px;
+        text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -56,7 +60,11 @@
     <tbody>
     <tr th:each="item : ${carrinho}">
       <td th:text="${item.produto.nome}">Nome do Produto</td>
-      <td th:text="${item.quantidade}">Quantidade</td>
+      <td>
+        <button onclick="alterarQuantidade(-1, 'quantidade-${item.produto.id}')">-</button>
+        <input type="number" id="quantidade-${item.produto.id}" th:value="${item.quantidade}" min="1" readonly />
+        <button onclick="alterarQuantidade(1, 'quantidade-${item.produto.id}')">+</button>
+      </td>
       <td th:text="${#numbers.formatCurrency(item.produto.preco)}">Preço</td>
       <td th:text="${#numbers.formatCurrency(item.quantidade * item.produto.preco)}">Subtotal</td>
     </tr>
@@ -64,26 +72,60 @@
       <td colspan="4">Seu carrinho está vazio!</td>
     </tr>
     </tbody>
-
   </table>
 
-  <tr th:each="item : ${itens}">
-    <td th:text="${item.produto != null ? item.produto.id : 'Produto não encontrado'}">ID do Produto</td>
-    <td th:text="${item.produto != null ? item.produto.nome : 'Produto não encontrado'}">Nome do Produto</td>
-    <td th:text="${item.quantidade}">Quantidade</td>
+  <input type="text"> Insira seu CEP:
 
-    <form th:action="@{/carrinho/atualizar/{id}(id=${item.produto != null ? item.produto.id : 0})}" method="post">
-      <input type="number" th:value="${item.quantidade}" name="quantidade" min="1" required />
-      <button type="submit" class="btn">Atualizar</button>
-    </form>
-  </tr>
-
-
-  <div class="total">
-    Total: R$ <span th:text="${#numbers.formatCurrency(total)}"></span>
+  <h3>Escolha o frete:</h3>
+  <div>
+    <label>
+      <input type="radio" name="frete" value="0" onchange="atualizarSubtotal()"> Retirada (Grátis)
+    </label><br>
+    <label>
+      <input type="radio" name="frete" value="10" onchange="atualizarSubtotal()"> Frete Econômico (R$ 10,00)
+    </label><br>
+    <label>
+      <input type="radio" name="frete" value="20" onchange="atualizarSubtotal()"> Frete Rápido (R$ 20,00)
+    </label>
   </div>
 
-  <a href="/" class="btn">Continuar Comprando</a>
+  <div class="total">
+    Total: R$ <span id="subtotal" th:text="${#numbers.formatCurrency(total)}"></span>
+  </div>
+
+  <a href="/admin/produtos/home" class="btn">Continuar Comprando</a>
 </div>
+
+<script>
+  function alterarQuantidade(valor, inputId) {
+      const quantidadeInput = document.getElementById(inputId);
+      let quantidade = parseInt(quantidadeInput.value);
+
+      if (quantidade + valor >= 1) {
+          quantidade += valor;
+          quantidadeInput.value = quantidade;
+          atualizarSubtotal();
+      }
+  }
+
+  function atualizarSubtotal() {
+      let subtotal = 0;
+      const items = document.querySelectorAll('[id^="quantidade-"]');
+
+      items.forEach(item => {
+          const quantidade = parseInt(item.value);
+          const preco = parseFloat(item.closest('tr').querySelector('td:nth-child(3)').textContent.replace('R$', '').replace(',', '.'));
+          subtotal += quantidade * preco;
+      });
+
+      const freteSelecionado = document.querySelector('input[name="frete"]:checked');
+      const frete = freteSelecionado ? parseFloat(freteSelecionado.value) : 0;
+
+      subtotal += frete;
+
+      document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+  }
+</script>
+
 </body>
 </html>
