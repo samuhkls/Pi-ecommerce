@@ -75,4 +75,16 @@ public class User {
         this.tipo = tipo;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", email='" + email + '\'' +
+                ", senha='" + senha + '\'' +
+                ", tipo=" + tipo +
+                ", ativo=" + ativo +
+                '}';
+    }
 }

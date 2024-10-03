@@ -28,13 +28,6 @@ public class ProdutoController {
         return "cadastrar-produto";
     }
 
-    @GetMapping("/detalhes/{id}")
-    @ResponseBody
-    public Optional<Produto> getProdutoDetalhes(@PathVariable Long id) {
-        return produtoService.getProdutoById(id);
-    }
-
-
     @PostMapping("/salvar")
     public String salvarProduto(@RequestParam("nome") String nome,
                                 @RequestParam("descricaoDetalhada") String descricaoDetalhada,
@@ -139,5 +132,26 @@ public class ProdutoController {
 
         produtoService.salvarProduto(produto);
         return "redirect:/admin/produtos";
+    }
+
+    @GetMapping("/detalhes/{id}")
+    public String detalhesProduto(@PathVariable Long id, Model model) {
+        Optional<Produto> produto = produtoService.getProdutoById(id);
+        if (produto.isPresent()) {
+            model.addAttribute("produto", produto.get());
+            return "detalhe-produto";
+        } else {
+            return "redirect:/home";
+        }
+    }
+
+
+    @GetMapping("/home")
+    public String exibirPaginaPrincipal(Model model) {
+        Pageable pageable = PageRequest.of(0, 6, Sort.by("id").descending());
+        Page<Produto> produtos = produtoService.getAllProdutos(pageable);
+
+        model.addAttribute("produtos", produtos);
+        return "home";
     }
 }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Carrinho de Compras</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        width: 90%;
+        margin: 0 auto;
+        padding-top: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+    th, td {
+        padding: 10px;
+        text-align: left;
+    }
+    .total {
+        text-align: right;
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .btn {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Carrinho de Compras</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Produto</th>
+      <th>Quantidade</th>
+      <th>Preço</th>
+      <th>Subtotal</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${carrinho}">
+      <td th:text="${item.produto.nome}">Nome do Produto</td>
+      <td th:text="${item.quantidade}">Quantidade</td>
+      <td th:text="${#numbers.formatCurrency(item.produto.preco)}">Preço</td>
+      <td th:text="${#numbers.formatCurrency(item.quantidade * item.produto.preco)}">Subtotal</td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(carrinho)}">
+      <td colspan="4">Seu carrinho está vazio!</td>
+    </tr>
+    </tbody>
+
+  </table>
+
+  <tr th:each="item : ${itens}">
+    <td th:text="${item.produto != null ? item.produto.id : 'Produto não encontrado'}">ID do Produto</td>
+    <td th:text="${item.produto != null ? item.produto.nome : 'Produto não encontrado'}">Nome do Produto</td>
+    <td th:text="${item.quantidade}">Quantidade</td>
+
+    <form th:action="@{/carrinho/atualizar/{id}(id=${item.produto != null ? item.produto.id : 0})}" method="post">
+      <input type="number" th:value="${item.quantidade}" name="quantidade" min="1" required />
+      <button type="submit" class="btn">Atualizar</button>
+    </form>
+  </tr>
+
+
+  <div class="total">
+    Total: R$ <span th:text="${#numbers.formatCurrency(total)}"></span>
+  </div>
+
+  <a href="/" class="btn">Continuar Comprando</a>
+</div>
+</body>
+</html>
