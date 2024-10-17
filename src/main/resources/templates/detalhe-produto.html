@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+      <html xmlns:th="http://www.thymeleaf.org">
+      <head>
+      <meta charset="UTF-8">
+      <title>Detalhes do Produto</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+  <div class="produto-detalhe">
+    <img th:src="@{${produto.imagem}}" alt="Imagem do Produto" class="img-fluid">
+    <h1 th:text="${produto.nome}">Nome do Produto</h1>
+    <p th:text="${produto.descricaoDetalhada}">Descrição do Produto</p>
+    <h3 th:text="${produto.preco}">Preço</h3>
+    <a th:href="@{/carrinho/adicionar/{produto.id}(produto.id=${produto.id})}" class="btn">Comprar</a>
+    <a href="/carrinho/adicionar/${produto.id}" class="btn btn-success">Adicionar ao Carrinho</a>
+  </div>
+</div>
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>

@@ -2,6 +2,8 @@ package ecommerce.junior.model;
 
 import jakarta.persistence.*;
 
+import java.util.Arrays;
+
 @Entity
 @Table(name = "produto")
 public class Produto {
@@ -61,6 +63,19 @@ public class Produto {
 
     public void setQuantidadeEmEstoque(Integer quantidadeEmEstoque) {
         this.quantidadeEmEstoque = quantidadeEmEstoque;
+    }
+
+    @Override
+    public String toString() {
+        return "Produto{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", preco=" + preco +
+                ", quantidadeEmEstoque=" + quantidadeEmEstoque +
+                ", descricaoDetalhada='" + descricaoDetalhada + '\'' +
+                ", ativo=" + ativo +
+                ", imagem=" + Arrays.toString(imagem) +
+                '}';
     }
 
     public String getDescricaoDetalhada() {
