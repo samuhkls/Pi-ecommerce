@@ -40,7 +40,7 @@ public class UserController {
             }
 
             userService.createUser(user, senhaConfirmacao);
-            return "redirect:/listar-usuario";
+            return "redirect:/login";// após cadastro ele redireciona para a página de log-in
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", e.getMessage());
@@ -91,4 +91,5 @@ public class UserController {
             return "redirect:/usuarios";
         }
     }
+
 }

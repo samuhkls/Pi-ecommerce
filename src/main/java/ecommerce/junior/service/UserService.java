@@ -50,12 +50,37 @@ public class UserService {
         } catch (InvalidStateException e) {
             throw new IllegalArgumentException("CPF inválido.");
         }
+// Validação de nome completo
+        if (!nomeValido(user.getNome())) {
+            throw new IllegalArgumentException("Nome inválido. Deve conter pelo menos 2 palavras com pelo menos 3 letras.");
+        }
+        // Verificar o endereço de entrega
+        String enderecoEntrega = user.getEnderecoEntrega();
+
+        if (enderecoEntrega == null || enderecoEntrega.isEmpty()) {
+            throw new IllegalArgumentException("Endereço de entrega inválido: o endereço não pode ser nulo ou vazio.");
+        }
+
+        // Validação de endereço de entrega
+        if (user.getEnderecoEntrega().isEmpty()) {
+            user.setEnderecoEntrega(user.getEndereco());
+        }
 
         user.setSenha(passwordEncoder.encode(user.getSenha()));
         user.setAtivo(true);
 
         userRepository.save(user);
     }
+
+    private boolean nomeValido(String nome) {
+        String[] partes = nome.trim().split("\\s+");
+        if (partes.length < 2) return false;
+        for (String parte : partes) {
+            if (parte.length() < 3) return false;
+        }
+        return true;
+    }
+
 
     public void updateUser(User user, HttpSession session) throws Exception {
 

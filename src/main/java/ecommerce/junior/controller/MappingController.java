@@ -1,5 +1,6 @@
 package ecommerce.junior.controller;
 
+import ecommerce.junior.model.Grupo;
 import ecommerce.junior.model.User;
 import ecommerce.junior.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -24,6 +25,36 @@ public class MappingController {
     @GetMapping("/login")
     public String login() {
         return "login";
+    }
+
+    @GetMapping("/cadastrocliente")
+    public String exibirCadastroCliente(Model model) {
+        model.addAttribute("user", new User());  // Adiciona um objeto User vazio ao modelo
+        return "cadastrocliente";  // Nome da página HTML para o cadastro de cliente
+    }
+    @PostMapping("/cadastrocliente")
+    public String cadastrarCliente(Model model) {
+        try {
+            // Criando um novo objeto User e atribuindo valores diretamente
+            User user = new User();
+            user.setNome("muu rilo");
+            user.setCpf("12345678909");
+            user.setEmail("liro@penris.com");
+            user.setSenha("password");
+            user.setEndereco("01311-000, Avenida Paulista, 1000, Sala 202, Bela Vista, São Paulo, SP");
+            user.setTipo(Grupo.ADMINISTRADOR); // Aqui você pode definir o tipo que preferir
+
+            // Chama o serviço para salvar o usuário
+            userService.createUser(user, user.getSenha());
+
+            // Adiciona mensagem de sucesso ao modelo para feedback na página
+            model.addAttribute("message", "Usuário cadastrado com sucesso!");
+            return "redirect:/listausuario"; // Redireciona para a lista de usuários ou outra página de sucesso
+        } catch (Exception e) {
+            // Caso ocorra um erro, exibe a mensagem de erro
+            model.addAttribute("error", "Erro ao cadastrar o usuário: " + e.getMessage());
+            return "cadastrocliente"; // Retorna à página de cadastro em caso de erro
+        }
     }
 
     @GetMapping("/principal")
