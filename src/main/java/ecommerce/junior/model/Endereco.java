@@ -26,7 +26,7 @@ public class Endereco {
     private String bairro;
 
     @NotBlank(message = "Cidade é obrigatória.")
-    private String cidade;
+    private String localidade; // essa é a cidade, mas precisa se chamar localidade por conta do retorno da API viaCEP
 
     @NotBlank(message = "Estado é obrigatório.")
     private String uf;
@@ -84,12 +84,12 @@ public class Endereco {
         this.bairro = bairro;
     }
 
-    public String getCidade() {
-        return cidade;
+    public String getLocalidade() {
+        return localidade;
     }
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
+    public void setLocalidade(String localidade) {
+        this.localidade = localidade;
     }
 
     public String getUf() {
@@ -117,7 +117,7 @@ public class Endereco {
                 ", numero='" + numero + '\'' +
                 ", complemento='" + complemento + '\'' +
                 ", bairro='" + bairro + '\'' +
-                ", cidade='" + cidade + '\'' +
+                ", cidade='" + localidade + '\'' +
                 ", uf='" + uf + '\'' +
                 '}';
     }

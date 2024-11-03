@@ -81,7 +81,7 @@ public class UserService {
                 enderecoFaturamento.getLogradouro() != null && !enderecoFaturamento.getLogradouro().isEmpty() &&
                 enderecoFaturamento.getNumero() != null && !enderecoFaturamento.getNumero().isEmpty() &&
                 enderecoFaturamento.getBairro() != null && !enderecoFaturamento.getBairro().isEmpty() &&
-                enderecoFaturamento.getCidade() != null && !enderecoFaturamento.getCidade().isEmpty() &&
+                enderecoFaturamento.getLocalidade() != null && !enderecoFaturamento.getLocalidade().isEmpty() &&
                 enderecoFaturamento.getUf() != null && !enderecoFaturamento.getUf().isEmpty();
     }
 

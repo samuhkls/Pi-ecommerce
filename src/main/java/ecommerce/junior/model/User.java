@@ -21,7 +21,8 @@ public class User {
 
     private boolean ativo = true;
 
-    @Embedded
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_faturamento_id")
     private Endereco enderecoFaturamento;
 
     // Endereço de Entrega
