@@ -32,21 +32,7 @@ public class UserController {
         return "listar";
     }
 
-    @PostMapping("/cadastrar")
-    public String registerUser(@ModelAttribute User user, @RequestParam String senhaConfirmacao, Model model) {
-        try {
-            if (user.getTipo() != null) {
-                user.setTipo(user.getTipo());
-            }
 
-            userService.createUser(user, senhaConfirmacao);
-            return "redirect:/listar-usuario";
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("error", e.getMessage());
-            return "listar";
-        }
-    }
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute User user, HttpSession session, Model model) {

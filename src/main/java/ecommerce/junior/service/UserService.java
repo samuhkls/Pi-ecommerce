@@ -1,13 +1,16 @@
 package ecommerce.junior.service;
 
+import ecommerce.junior.model.Endereco;
 import ecommerce.junior.model.User;
 import ecommerce.junior.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +38,22 @@ public class UserService {
         }
     }
 
+    // método que cadastra o usuário (importante!!)
     public void createUser(User user, String senhaConfirmacao) throws IllegalArgumentException {
+        if(!isNomeValido(user.getNome())){
+            throw new IllegalArgumentException("Este nome nao é valido!");
+        }
+
         if (!user.getSenha().equals(senhaConfirmacao)) {
             throw new IllegalArgumentException("As senhas não coincidem.");
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email já cadastrado.");
+        }
+
+        if (userRepository.existsByCpf(user.getCpf())) {
+            throw new IllegalArgumentException("CPF já cadastrado.");
         }
 
         CPFValidator cpfValidator = new CPFValidator();
@@ -51,10 +63,45 @@ public class UserService {
             throw new IllegalArgumentException("CPF inválido.");
         }
 
+        if (!EnderecoService.validarCep(user.getEnderecoFaturamento().getCep())) {
+            throw new IllegalArgumentException("CEP inválido.");
+        }
+
+        if (!isEnderecoFaturamentoCompleto(user.getEnderecoFaturamento())) { // se nao for true, o cep é invalido
+            throw new IllegalArgumentException("Endereço de faturamento incompleto.");
+        }
+
         user.setSenha(passwordEncoder.encode(user.getSenha()));
         user.setAtivo(true);
 
         userRepository.save(user);
+    }
+
+    // VALIDAÇOES AO CRIAR USUARIO ABAIXO:
+
+    // Método que verifica se TODOS os campos do endereco estão completos para fazer o cadastro
+    private boolean isEnderecoFaturamentoCompleto(Endereco enderecoFaturamento) {
+        return enderecoFaturamento != null &&
+                enderecoFaturamento.getCep() != null && !enderecoFaturamento.getCep().isEmpty() &&
+                enderecoFaturamento.getLogradouro() != null && !enderecoFaturamento.getLogradouro().isEmpty() &&
+                enderecoFaturamento.getNumero() != null && !enderecoFaturamento.getNumero().isEmpty() &&
+                enderecoFaturamento.getBairro() != null && !enderecoFaturamento.getBairro().isEmpty() &&
+                enderecoFaturamento.getLocalidade() != null && !enderecoFaturamento.getLocalidade().isEmpty() &&
+                enderecoFaturamento.getUf() != null && !enderecoFaturamento.getUf().isEmpty();
+    }
+
+    // Método para validar o nome
+    private boolean isNomeValido(String nome) {
+        String[] palavras = nome.trim().split("\\s+");
+        if (palavras.length < 2) {
+            return false; // Deve ter pelo menos duas palavras
+        }
+        for (String palavra : palavras) {
+            if (palavra.length() < 3) {
+                return false; // Cada palavra deve ter pelo menos 3 letras
+            }
+        }
+        return true; // Nome válido
     }
 
     public void updateUser(User user, HttpSession session) throws Exception {
@@ -88,6 +135,7 @@ public class UserService {
         user.setAtivo(!user.isAtivo());
         userRepository.save(user);
     }
+    
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

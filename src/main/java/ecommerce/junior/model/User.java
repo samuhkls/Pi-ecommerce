@@ -2,6 +2,8 @@ package ecommerce.junior.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "usuario")
 public class User {
@@ -18,6 +20,27 @@ public class User {
     private Grupo tipo;
 
     private boolean ativo = true;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_faturamento_id")
+    private Endereco enderecoFaturamento;
+
+    // Endereço de Entrega
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Endereco> enderecosEntrega;  // Lista de endereços de entrega
+
+    public User() {
+
+    }
+
+    // Construtor com os parâmetros principais
+    public User(String nome, String email, String cpf, String senha, Grupo tipo) {
+        this.nome = nome;
+        this.email = email;
+        this.cpf = cpf;
+        this.senha = senha;
+        this.tipo = tipo;
+    }
 
     public boolean isAtivo() {
         return ativo;
@@ -74,6 +97,23 @@ public class User {
     public void setTipo(Grupo tipo) {
         this.tipo = tipo;
     }
+
+    public Endereco getEnderecoFaturamento() {
+        return enderecoFaturamento;
+    }
+
+    public void setEnderecoFaturamento(Endereco enderecoFaturamento) {
+        this.enderecoFaturamento = enderecoFaturamento;
+    }
+
+    public List<Endereco> getEnderecosEntrega() {
+        return enderecosEntrega;
+    }
+
+    public void setEnderecosEntrega(List<Endereco> enderecosEntrega) {
+        this.enderecosEntrega = enderecosEntrega;
+    }
+
 
     @Override
     public String toString() {
