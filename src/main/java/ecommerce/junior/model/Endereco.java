@@ -35,6 +35,20 @@ public class Endereco {
     @JoinColumn(name = "usuario_id")  // Cria uma coluna para a associação com o usuário
     private User usuario;
 
+    // Construtor padrão necessário para o Spring
+    public Endereco() {}
+
+    // Construtor com os parâmetros principais
+    public Endereco(String cep, String logradouro, String numero, String complemento, String bairro, String localidade, String uf) {
+        this.cep = cep;
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.complemento = complemento;
+        this.bairro = bairro;
+        this.localidade = localidade;
+        this.uf = uf;
+    }
+
     // Getters e Setters
     public Long getId() {
         return id;

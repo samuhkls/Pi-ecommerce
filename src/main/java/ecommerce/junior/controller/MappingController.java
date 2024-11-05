@@ -1,5 +1,7 @@
 package ecommerce.junior.controller;
 
+import ecommerce.junior.model.Endereco;
+import ecommerce.junior.model.Grupo;
 import ecommerce.junior.model.User;
 import ecommerce.junior.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -27,8 +29,17 @@ public class MappingController {
     }
 
     @GetMapping("/principal")
-    public String principal() {
-        return "principal";
+    public String principal(HttpSession session) {
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login"; // Redireciona se o usuário não estiver logado
+        }
+        return "principal"; // Retorna a página principal se o usuário estiver logado
+    }
+    @GetMapping("/logout")
+    public String logout() {
+        session.invalidate();
+        System.out.println("Usuário deslogado com sucesso.");
+        return "redirect:/login";
     }
 
     @GetMapping("/listar-usuario")
@@ -40,7 +51,7 @@ public class MappingController {
             users = userService.getAllUsers();
         }
         model.addAttribute("users", users);
-        return "lista-usuario";
+        return "listar-usuario";
     }
 
     @GetMapping("/editar/{id}")
@@ -91,4 +102,41 @@ public class MappingController {
             return "redirect:/listar-usuario";
         }
     }
+
+    // Mapeamento para a tela de cadastro de usuário
+    @GetMapping("/cadastrar")
+    public String showCadastroForm() {
+        return "cadastrar"; // Nome do arquivo HTML para o formulário de cadastro
+    }
+
+    @PostMapping("/usuarios/cadastrar")
+    public String cadastrarUsuario(
+            @RequestParam("nome") String nome,
+            @RequestParam("email") String email,
+            @RequestParam("cpf") String cpf,
+            @RequestParam("senha") String senha,
+            @RequestParam("senhaConfirmacao") String senhaConfirmacao,
+            @RequestParam("cep") String cep,
+            @RequestParam("logradouro") String logradouro,
+            @RequestParam("numero") String numero,
+            @RequestParam("complemento") String complemento,
+            @RequestParam("bairro") String bairro,
+            @RequestParam("cidade") String cidade,
+            @RequestParam("uf") String uf,
+            Model model) {
+
+        try {
+            User user = new User(nome, email, cpf, senha, Grupo.CLIENTE);
+            user.setEnderecoFaturamento(new Endereco(cep, logradouro, numero, complemento, bairro, cidade, uf));
+
+            userService.createUser(user, senhaConfirmacao);
+            model.addAttribute("message", "Usuário cadastrado com sucesso!");
+            return "redirect:/login";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "cadastrar";
+        }
+    }
+
+
 }

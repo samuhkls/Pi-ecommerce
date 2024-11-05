@@ -40,6 +40,10 @@ public class UserService {
 
     // método que cadastra o usuário (importante!!)
     public void createUser(User user, String senhaConfirmacao) throws IllegalArgumentException {
+        if(!isNomeValido(user.getNome())){
+            throw new IllegalArgumentException("Este nome nao é valido!");
+        }
+
         if (!user.getSenha().equals(senhaConfirmacao)) {
             throw new IllegalArgumentException("As senhas não coincidem.");
         }
@@ -73,6 +77,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    // VALIDAÇOES AO CRIAR USUARIO ABAIXO:
 
     // Método que verifica se TODOS os campos do endereco estão completos para fazer o cadastro
     private boolean isEnderecoFaturamentoCompleto(Endereco enderecoFaturamento) {
@@ -85,18 +90,19 @@ public class UserService {
                 enderecoFaturamento.getUf() != null && !enderecoFaturamento.getUf().isEmpty();
     }
 
-    // Método que verifica se o cep fornecido pelo usuario é valido
-//    private boolean isCepValido(String cep) {
-//        RestTemplate restTemplate = new RestTemplate();
-//        String url = "https://viacep.com.br/ws/" + cep + "/json/";
-//
-//        try {
-//            ResponseEntity<Endereco> response = restTemplate.getForEntity(url, Endereco.class);
-//            return response.getStatusCode().is2xxSuccessful() && response.getBody() != null;
-//        } catch (Exception e) {
-//            return false; // sera falso se ocorrer um erro na requisição
-//        }
-//    }
+    // Método para validar o nome
+    private boolean isNomeValido(String nome) {
+        String[] palavras = nome.trim().split("\\s+");
+        if (palavras.length < 2) {
+            return false; // Deve ter pelo menos duas palavras
+        }
+        for (String palavra : palavras) {
+            if (palavra.length() < 3) {
+                return false; // Cada palavra deve ter pelo menos 3 letras
+            }
+        }
+        return true; // Nome válido
+    }
 
     public void updateUser(User user, HttpSession session) throws Exception {
 

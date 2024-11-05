@@ -29,6 +29,19 @@ public class User {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Endereco> enderecosEntrega;  // Lista de endereços de entrega
 
+    public User() {
+
+    }
+
+    // Construtor com os parâmetros principais
+    public User(String nome, String email, String cpf, String senha, Grupo tipo) {
+        this.nome = nome;
+        this.email = email;
+        this.cpf = cpf;
+        this.senha = senha;
+        this.tipo = tipo;
+    }
+
     public boolean isAtivo() {
         return ativo;
     }
