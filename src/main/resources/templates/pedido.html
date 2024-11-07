@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Resumo do Pedido</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .order-summary {
+            width: 80%;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .order-items table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-items th, .order-items td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .total {
+            font-weight: bold;
+        }
+
+        .address, .payment-method {
+            margin-top: 20px;
+        }
+
+        .button-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .btn-confirm {
+            background-color: #4CAF50;
+        }
+
+        .btn-back {
+            background-color: #007bff;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Resumo do Pedido</h1>
+
+<div class="order-summary">
+    <!-- Lista de produtos do pedido -->
+    <div class="order-items">
+        <table>
+            <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Valor Unitário</th>
+                <th>Quantidade</th>
+                <th>Valor Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${pedido?.itens ?: {}}">
+                <td th:text="${item?.produto?.nome ?: 'N/A'}"></td>
+                <td th:text="${item?.produto?.preco ?: '0.00'}"></td>
+                <td th:text="${item?.quantidade ?: '0'}"></td>
+                <td th:text="${item?.total ?: '0.00'}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Exibir frete e total geral -->
+    <div class="totals">
+        <p><strong>Frete:</strong> <span th:text="${pedido?.frete ?: '0.00'}">0.00</span></p>
+        <p class="total"><strong>Total Geral:</strong> <span th:text="${pedido?.totalGeral ?: '0.00'}">0.00</span></p>
+    </div>
+
+    <!-- Endereço de entrega -->
+    <div class="address">
+        <h3>Endereço de Entrega</h3>
+        <p th:text="${pedido?.enderecoEntrega ?: 'Endereço não informado'}">Rua Exemplo, 123, Cidade</p>
+    </div>
+
+    <!-- Forma de pagamento -->
+    <div class="payment-method">
+        <h3>Forma de Pagamento</h3>
+        <p th:text="${pedido?.formaPagamento ?: 'Forma de pagamento não informada'}">Cartão de Crédito</p>
+    </div>
+
+    <!-- Botões de ação -->
+    <div class="button-container">
+        <button class="btn btn-back" onclick="window.location.href='/carrinho/pagamento'">Voltar</button>
+        <button class="btn btn-confirm" onclick="finalizarCompra()">Concluir Compra</button>
+    </div>
+</div>
+
+<script>
+    function finalizarCompra() {
+        window.location.href = '/pedido/concluir';
+    }
+</script>
+
+</body>
+</html>

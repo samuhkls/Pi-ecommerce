@@ -43,6 +43,9 @@
         width: 50px;
         text-align: center;
     }
+    .error {
+        color: red;
+    }
   </style>
 </head>
 <body>
@@ -74,7 +77,12 @@
     </tbody>
   </table>
 
-  <input type="text"> Insira seu CEP:
+  <h3>Endereço de Entrega</h3>
+  <form th:action="@{/carrinho/atualizarEndereco}" method="post">
+    <input type="text" name="endereco" th:value="${enderecoEntrega}" placeholder="Digite seu endereço" required />
+    <button type="submit" class="btn">Salvar Endereço</button>
+  </form>
+  <p th:if="${erroEndereco}" th:text="${erroEndereco}" class="error"></p>
 
   <h3>Escolha o frete:</h3>
   <div>
@@ -94,6 +102,7 @@
   </div>
 
   <a href="/admin/produtos/home" class="btn">Continuar Comprando</a>
+  <a href="/carrinho/pagamento"  class="btn">Ir para Pagamento</a>
 </div>
 
 <script>

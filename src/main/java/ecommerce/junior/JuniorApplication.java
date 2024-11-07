@@ -89,7 +89,7 @@ public class JuniorApplication implements CommandLineRunner {
 		enderecoEntrega1.setComplemento("test");;
 
 		System.out.println(enderecoEntrega1);
-		user1.setEnderecosEntrega(List.of(enderecoEntrega1)); // Usando List.of para criar uma lista imutável
+		user1.setEnderecosEntrega(List.of(enderecoEntrega1));
 
 		userService.createUser(user1, "password");
 	}
