@@ -4,110 +4,6 @@
   <title>Lista de Produtos - Admin</title>
   <link rel="stylesheet" href="../static/css/style.css">
   <style>
-    /* Estilos para o overlay escuro */
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    /* Estilos para o card de detalhes do produto */
-    .product-card {
-        background-color: #fff;
-        padding: 20px;
-        width: 400px;
-        border-radius: 10px;
-        text-align: center;
-        position: relative;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Estilo para o botão de fechar */
-    .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #ff5e5e;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-    }
-
-    /* Botão de comprar desabilitado */
-    .buy-btn {
-        background-color: gray;
-        cursor: not-allowed;
-        padding: 10px 20px;
-        border: none;
-        color: white;
-        border-radius: 5px;
-    }
-
-    /* Estilos para o popup de confirmação */
-    .confirm-popup {
-        background-color: #fff;
-        padding: 20px;
-        width: 300px;
-        border-radius: 10px;
-        text-align: center;
-        position: relative;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .popup-btn {
-        margin-top: 15px;
-        padding: 10px 20px;
-        border: none;
-        color: white;
-        border-radius: 5px;
-    }
-
-    .confirm-btn {
-        background-color: #4CAF50;
-    }
-
-    .cancel-btn {
-        background-color: #ff5e5e;
-    }
-
-    /* Estilos para a paginação */
-    .pagination {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .pagination a {
-        margin: 0 5px;
-        padding: 10px 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        text-decoration: none;
-        color: #333;
-    }
-
-    .pagination a.active {
-        background-color: #4CAF50;
-        color: white;
-        border: 1px solid #4CAF50;
-    }
-  </style>
-</head>
-<body><!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <title>Lista de Produtos - Admin</title>
-  <link rel="stylesheet" href="../static/css/style.css">
-  <style>
     body {
         font-family: Arial, sans-serif;
         margin: 20px;
@@ -163,16 +59,6 @@
         background-color: #218838;
     }
 
-    .buy-btn {
-        background-color: gray;
-        cursor: not-allowed;
-        padding: 10px 20px;
-        border: none;
-        color: white;
-        border-radius: 5px;
-    }
-
-    /* Estilos para o overlay escuro */
     .overlay {
         position: fixed;
         top: 0;
@@ -186,18 +72,19 @@
         z-index: 1000;
     }
 
-    /* Estilos para o card de detalhes do produto */
-    .product-card {
+    .product-card, .confirm-popup {
         background-color: #fff;
         padding: 20px;
-        width: 400px;
         border-radius: 10px;
         text-align: center;
-        position: relative;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
-    /* Estilo para o botão de fechar */
+    .product-card {
+        width: 400px;
+        position: relative;
+    }
+
     .close-btn {
         position: absolute;
         top: 10px;
@@ -211,15 +98,13 @@
         cursor: pointer;
     }
 
-    /* Estilos para o popup de confirmação */
-    .confirm-popup {
-        background-color: #fff;
-        padding: 20px;
-        width: 300px;
-        border-radius: 10px;
-        text-align: center;
-        position: relative;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    .buy-btn {
+        background-color: gray;
+        cursor: not-allowed;
+        padding: 10px 20px;
+        border: none;
+        color: white;
+        border-radius: 5px;
     }
 
     .popup-btn {
@@ -238,7 +123,6 @@
         background-color: #ff5e5e;
     }
 
-    /* Estilos para a paginação */
     .pagination {
         margin-top: 20px;
         text-align: center;
@@ -270,6 +154,7 @@
 <h1>Lista de Produtos</h1>
 
 <a href="/admin/produtos/novo">Novo Produto +</a>
+<a href="/admin/produtos/pedidos"> Ver Pedidos </a>
 
 <table>
   <thead>
@@ -290,7 +175,7 @@
     <td th:text="${produto.preco}"></td>
     <td th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></td>
     <td>
-      <a href="#" class="edit-btn" th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a> |
+      <a class="edit-btn" th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a> |
       <a href="#" th:onclick="'showProductDetails(' + ${produto.id} + ')'">Visualizar</a> |
       <a href="#" th:onclick="'confirmStatusChange(' + ${produto.id} + ', \'' + ${produto.ativo} + '\')'">
         <span th:text="${produto.ativo ? 'Inativar' : 'Ativar'}"></span>
@@ -367,7 +252,5 @@
   }
 </script>
 
-</body>
-</html>
 </body>
 </html>

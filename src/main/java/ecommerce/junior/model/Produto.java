@@ -30,9 +30,6 @@ public class Produto {
     @Lob
     @Column(name = "imagem", columnDefinition = "LONGBLOB")
     private byte[] imagem;
-
-    // Getters e Setters
-
     public Long getId() {
         return id;
     }

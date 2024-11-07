@@ -154,4 +154,9 @@ public class ProdutoController {
         model.addAttribute("produtos", produtos);
         return "home";
     }
+
+    @GetMapping("/pedidos")
+    public String pagamento(Model model) {
+        return "pedido";
+    }
 }

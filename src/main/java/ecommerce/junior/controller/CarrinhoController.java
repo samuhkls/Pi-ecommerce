@@ -24,69 +24,42 @@ public class CarrinhoController {
     private CarrinhoItemRepository carrinhoItemRepository;
 
     @ModelAttribute("carrinho")
-    public List<CarrinhoItem> inicializarCarrinho() {
-        return new ArrayList<>();
+    public List<CarrinhoItem> inicializarCarrinho(@SessionAttribute(value = "carrinho", required = false) List<CarrinhoItem> carrinhoExistente) {
+        return carrinhoExistente != null ? carrinhoExistente : new ArrayList<>();
+    }
+
+    @ModelAttribute("enderecoEntrega")
+    public String inicializarEnderecoEntrega(@SessionAttribute(value = "enderecoEntrega", required = false) String enderecoExistente) {
+        return enderecoExistente != null ? enderecoExistente : "";
     }
 
 
     @PostMapping("/carrinho/adicionar/{id}")
     public String adicionarProdutoAoCarrinho(@PathVariable Long id, @ModelAttribute("carrinho") List<CarrinhoItem> carrinho, Model model) {
-        Optional<Produto> produtoOpt = produtoService.getProdutoById(id);
-
-        if (produtoOpt.isPresent()) {
-            Produto produto = produtoOpt.get();
-            boolean produtoJaNoCarrinho = false;
-
-            for (CarrinhoItem item : carrinho) {
-                if (item.getProduto().getId().equals(produto.getId())) {
-                    item.incrementarQuantidade();
-                    produtoJaNoCarrinho = true;
-                    break;
-                }
-            }
-
-            if (!produtoJaNoCarrinho) {
-                carrinho.add(new CarrinhoItem(produto, 1));
-            }
-
-            for (CarrinhoItem item : carrinho) {
-                carrinhoItemRepository.save(item);
-            }
-        }
-
-        model.addAttribute("carrinho", carrinho);
         return "redirect:/carrinho";
     }
 
     @GetMapping("/carrinho")
     public String visualizarCarrinho(@ModelAttribute("carrinho") List<CarrinhoItem> carrinho, Model model) {
-
-        if (carrinho == null || carrinho.isEmpty()) {
-            model.addAttribute("total", 0.0);
-            return "carrinho";
-        }
-
         double total = carrinho.stream()
                 .mapToDouble(item -> item.getQuantidade() * item.getProduto().getPreco())
                 .sum();
-
         model.addAttribute("total", total);
-
-        System.out.println(carrinho);
-        model.addAttribute("carrinho", carrinho);
         return "carrinho";
     }
 
-    @PostMapping("/carrinho/atualizar/{id}")
-    public String atualizarQuantidade(@PathVariable Long id, @RequestParam Integer quantidade, @ModelAttribute("carrinho") List<CarrinhoItem> carrinho) {
-        for (CarrinhoItem item : carrinho) {
-            if (item.getProduto().getId().equals(id)) {
-                item.setQuantidade(quantidade);
-                carrinhoItemRepository.save(item);
-                break;
-            }
+    @PostMapping("/carrinho/atualizarEndereco")
+    public String atualizarEndereco(@RequestParam("endereco") String endereco, Model model) {
+        if (endereco == null || endereco.isBlank()) {
+            model.addAttribute("erroEndereco", "O endereço de entrega é obrigatório para prosseguir.");
+            return "carrinho";
         }
+        model.addAttribute("enderecoEntrega", endereco);
         return "redirect:/carrinho";
     }
 
+    @GetMapping("/carrinho/pagamento")
+    public String pagamento(Model model) {
+        return "pagamento";
+    }
 }

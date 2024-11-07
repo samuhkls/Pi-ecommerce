@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+        .btn {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .total {
+            text-align: right;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .payment-details {
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Pagamento</h2>
+    <p><strong>Endereço de Entrega:</strong> <span th:text="${enderecoEntrega}">Endereço aqui</span></p>
+
+    <h3>Escolha a Forma de Pagamento</h3>
+    <form action="/processar-pagamento" method="post">
+        <label for="formaPagamento">Forma de Pagamento:</label>
+        <select name="formaPagamento" id="formaPagamento" required onchange="mostrarDetalhesPagamento()">
+            <option value="credito">Cartão de Crédito</option>
+            <option value="debito">Cartão de Débito</option>
+            <option value="boleto">Boleto Bancário</option>
+        </select>
+
+        <div class="payment-details" id="detalhesCredito">
+            <h4>Cartão de Crédito</h4>
+            <label for="numeroCartao">Número do Cartão:</label>
+            <input type="text" id="numeroCartao" name="numeroCartao" required><br>
+            <label for="nomeTitular">Nome do Titular:</label>
+            <input type="text" id="nomeTitular" name="nomeTitular" required><br>
+            <label for="validadeCartao">Validade:</label>
+            <input type="text" id="validadeCartao" name="validadeCartao" placeholder="MM/AA" required><br>
+            <label for="codigoSeguranca">Código de Segurança:</label>
+            <input type="text" id="codigoSeguranca" name="codigoSeguranca" required>
+        </div>
+
+        <div class="payment-details" id="detalhesDebito">
+            <h4>Cartão de Débito</h4>
+            <label for="numeroCartaoDebito">Número do Cartão:</label>
+            <input type="text" id="numeroCartaoDebito" name="numeroCartaoDebito" required><br>
+            <label for="nomeTitularDebito">Nome do Titular:</label>
+            <input type="text" id="nomeTitularDebito" name="nomeTitularDebito" required><br>
+        </div>
+
+        <div class="payment-details" id="detalhesBoleto">
+            <h4>Boleto Bancário</h4>
+            <p>O boleto será gerado e enviado para o e-mail cadastrado após a confirmação do pedido.</p>
+        </div>
+
+        <div class="total">
+            Total a Pagar: R$ <span th:text="${#numbers.formatCurrency(total)}">0,00</span>
+        </div>
+
+        <button type="submit" class="btn">Confirmar Pagamento</button>
+    </form>
+</div>
+
+<script>
+    function mostrarDetalhesPagamento() {
+        // Oculta todos os detalhes de pagamento
+        document.getElementById("detalhesCredito").style.display = "none";
+        document.getElementById("detalhesDebito").style.display = "none";
+        document.getElementById("detalhesBoleto").style.display = "none";
+
+        // Exibe a seção correta com base na seleção
+        const formaPagamento = document.getElementById("formaPagamento").value;
+        if (formaPagamento === "credito") {
+            document.getElementById("detalhesCredito").style.display = "block";
+        } else if (formaPagamento === "debito") {
+            document.getElementById("detalhesDebito").style.display = "block";
+        } else if (formaPagamento === "boleto") {
+            document.getElementById("detalhesBoleto").style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>
