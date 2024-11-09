@@ -1,6 +1,7 @@
 package ecommerce.junior.service;
 
 import ecommerce.junior.model.Endereco;
+import ecommerce.junior.model.Grupo;
 import ecommerce.junior.model.User;
 import ecommerce.junior.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -90,38 +91,45 @@ public class UserService {
                 enderecoFaturamento.getUf() != null && !enderecoFaturamento.getUf().isEmpty();
     }
 
-    // Método para validar o nome
+
     private boolean isNomeValido(String nome) {
         String[] palavras = nome.trim().split("\\s+");
         if (palavras.length < 2) {
-            return false; // Deve ter pelo menos duas palavras
+            return false; // pelo menos duas palavras
         }
         for (String palavra : palavras) {
             if (palavra.length() < 3) {
-                return false; // Cada palavra deve ter pelo menos 3 letras
+                return false; // pelo menos 3 letras
             }
         }
-        return true; // Nome válido
+        return true; // nome válido
     }
 
-    public void updateUser(User user, HttpSession session) throws Exception {
-
+    public void updateUser(User user, String novaSenha, String senhaConfirmacao, HttpSession session) throws Exception {
         Long currentUserId = (Long) session.getAttribute("userId");
-        if (currentUserId == null){
-            throw new Exception("você não tá logado meu mano");
+        if (currentUserId == null) {
+            throw new Exception("Usuário não está logado.");
         }
 
         User currentUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new Exception("Usúario logado não existe"));
+                .orElseThrow(() -> new Exception("Usuário logado não existe"));
 
-        if (!user.getId().equals(currentUser.getId())){
-            throw new Exception("Você não tem permissão para atualizar este usuario");
+        if (!user.getId().equals(currentUser.getId())) {
+            throw new Exception("Você não tem permissão para atualizar este usuário.");
         }
 
-        user.setTipo(currentUser.getTipo());
-        user.setCpf(currentUser.getCpf());
+        // Permite alterar apenas os campos permitidos pelo professor
+        currentUser.setNome(user.getNome());
 
-        userRepository.save(user);
+        // Se nova senha não está vazia, verifica e altera
+        if (novaSenha != null && !novaSenha.isEmpty()) {
+            if (!novaSenha.equals(senhaConfirmacao)) {
+                throw new Exception("A confirmação da senha não corresponde.");
+            }
+            currentUser.setSenha(novaSenha);
+        }
+
+        userRepository.save(currentUser);
     }
 
     public User getUserById(Long id) throws Exception {
@@ -134,6 +142,11 @@ public class UserService {
                 .orElseThrow(() -> new Exception("Usuário não encontrado."));
         user.setAtivo(!user.isAtivo());
         userRepository.save(user);
+    }
+
+    public Grupo getUserRole(Long userId) throws Exception {
+        User user = getUserById(userId);
+        return user.getTipo();
     }
     
 

@@ -145,6 +145,11 @@ public class ProdutoController {
         }
     }
 
+    @GetMapping("/pedidos")
+    public String pagamento(Model model) {
+        return "pedido";
+    }
+
 
     @GetMapping("/home")
     public String exibirPaginaPrincipal(Model model) {

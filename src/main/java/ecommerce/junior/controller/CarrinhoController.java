@@ -89,4 +89,9 @@ public class CarrinhoController {
         return "redirect:/carrinho";
     }
 
+    @GetMapping("/carrinho/pagamento")
+    public String pagamento(Model model) {
+        return "pagamento";
+    }
+
 }

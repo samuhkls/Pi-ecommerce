@@ -74,21 +74,29 @@ public class MappingController {
     }
 
     @PostMapping("/updateDetails")
-    public String updateUser(@RequestParam Long id, @RequestParam String nome, @RequestParam String email, @RequestParam String senhaConfirmacao,
-                             Model model) {
+    public String updateUser(
+            @RequestParam Long id,
+            @RequestParam String nome,
+            @RequestParam String email,
+            @RequestParam(required = false) String senha,
+            @RequestParam(required = false) String senhaConfirmacao,
+            Model model) {
         try {
             User user = userService.getUserById(id);
             user.setNome(nome);
             user.setEmail(email);
 
-            userService.updateUser(user, session);
+            userService.updateUser(user, senha == null ? "" : senha, senhaConfirmacao == null ? "" : senhaConfirmacao, session);
 
             model.addAttribute("message", "Usuário atualizado com sucesso!");
+            return "redirect:/listar-usuario";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
+            return "editar-usuario";
         }
-        return "redirect:/listar-usuario";
     }
+
+
 
     @PostMapping("/alterar-status/{id}")
     public String alterarStatus(@PathVariable Long id) {
@@ -96,12 +104,14 @@ public class MappingController {
             User user = userService.getUserById(id);
             user.setAtivo(!user.isAtivo());
 
-            userService.updateUser(user, session);
+            userService.updateUser(user, "", "", session);
+
             return "redirect:/listar-usuario";
         } catch (Exception e) {
             return "redirect:/listar-usuario";
         }
     }
+
 
     // Mapeamento para a tela de cadastro de usuário
     @GetMapping("/cadastrar")

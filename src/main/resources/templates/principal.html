@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Principal</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <title>Backoffice Principal</title>
 </head>
 <body>
-<div class="container">
-    <div class="section" id="principal">
-        <h2>Principal</h2>
-        <button onclick="window.location.href='/listar-produto'">Listar Produto</button>
-        <button onclick="window.location.href='/listar-usuario'">Listar Usuário</button>
-        <button onclick="window.location.href='/listar-pedidos'">Listar Pedidos</button>
+<h1>Bem-vindo ao Backoffice</h1>
+<div th:switch="${userRole}">
+    <div th:case="'ADMIN'">
+        <!-- Conteúdo para administrador -->
+        <h2>Bem-vindo, Administrador!</h2>
+        <a href="/admin/produtos">Gerenciar Produtos</a>
+        <a href="/admin/usuarios">Gerenciar Usuários</a>
+    </div>
+    <div th:case="'ESTOQUISTA'">
+        <!-- Conteúdo para estoquista -->
+        <h2>Bem-vindo, Estoquista!</h2>
+        <a href="/admin/produtos">Gerenciar Produtos</a>
+        <a href="/admin/pedidos">Gerenciar Pedidos</a>
+    </div>
+    <div th:case="*">
+        <!-- Conteúdo padrão ou para usuários não reconhecidos -->
+        <h2>Bem-vindo!</h2>
     </div>
 </div>
+
+
 </body>
 </html>
-

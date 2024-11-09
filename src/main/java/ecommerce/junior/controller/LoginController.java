@@ -22,7 +22,7 @@ public class LoginController {
         User user = userService.authenticate(email, senha);
         if (user != null) {
             session.setAttribute("userId", user.getId());
-            return "redirect:/listar-usuario";
+            return "redirect:/principal";
         } else {
             return "login";
         }

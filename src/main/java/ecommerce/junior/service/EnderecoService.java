@@ -26,7 +26,7 @@ public class EnderecoService {
             // Aqui você deve verificar se o retorno da API é um endereço válido
             Endereco endereco = restTemplate.getForObject(url, Endereco.class);
 
-            // Verifique se o endereco não é nulo e se o campo cep não é nulo
+            // verifica se o endereco não é nulo e se o campo cep não é nulo
             return endereco != null && endereco.getCep() != null && endereco.getCep().equals(cep);
         } catch (HttpClientErrorException e) {
             return false; // se der erro, o CEP é inválido
