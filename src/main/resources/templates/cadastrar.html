@@ -1,58 +1,188 @@
-<!-- cadastrar-usuario.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Cadastro de Usuário</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            color: #333;
+            margin: 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 1em;
+            color: #555;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 0.8em;
+            margin-top: 0.5em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 1em;
+            background-color: #4a90e2;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 1.5em;
+        }
+
+        button:hover {
+            background-color: #357ab8;
+        }
+
+        .error {
+            border-color: #e74c3c;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 0.5em;
+        }
+    </style>
 </head>
 <body>
-<h1>Cadastro de Usuário</h1>
-<form action="/usuarios/cadastrar" method="post">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" required><br>
+<div class="form-container">
+    <div class="header">
+        <h1>Cadastro de Usuário</h1>
+    </div>
+    <form action="/usuarios/cadastrar" method="post">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required><br>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
 
-    <label for="cpf">CPF:</label>
-    <input type="text" id="cpf" name="cpf" required><br>
+        <label for="cpf">CPF:</label>
+        <input type="text" id="cpf" name="cpf" required><br>
 
-    <label for="senha">Senha:</label>
-    <input type="password" id="senha" name="senha" required><br>
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required><br>
 
-    <label for="senhaConfirmacao">Confirme a senha:</label>
-    <input type="password" id="senhaConfirmacao" name="senhaConfirmacao" required><br>
+        <label for="senhaConfirmacao">Confirme a senha:</label>
+        <input type="password" id="senhaConfirmacao" name="senhaConfirmacao" required><br>
 
-    <label for="grupo">Tipo:</label>
-    <select id="grupo" name="grupo">
-        <option value="CLIENTE">Cliente</option>
-        <option value="ADMINISTRADOR">Administrador</option>
-        <option value="ESTOQUISTA">Estoquista</option>
+        <label for="grupo">Tipo:</label>
+        <select id="grupo" name="grupo">
+            <option value="CLIENTE">Cliente</option>
+            <option value="ADMINISTRADOR">Administrador</option>
+            <option value="ESTOQUISTA">Estoquista</option>
+        </select><br>
 
-    </select><br>
+        <h3>Endereço de Faturamento</h3>
+        <label for="cep">CEP:</label>
+        <input type="text" id="cep" name="cep" required><br>
 
-    <h3>Endereço de Faturamento</h3>
-    <label for="cep">CEP:</label>
-    <input type="text" id="cep" name="cep" required><br>
+        <label for="logradouro">Logradouro:</label>
+        <input type="text" id="logradouro" name="logradouro" required><br>
 
-    <label for="logradouro">Logradouro:</label>
-    <input type="text" id="logradouro" name="logradouro" required><br>
+        <label for="numero">Número:</label>
+        <input type="text" id="numero" name="numero" required><br>
 
-    <label for="numero">Número:</label>
-    <input type="text" id="numero" name="numero" required><br>
+        <label for="complemento">Complemento:</label>
+        <input type="text" id="complemento" name="complemento"><br>
 
-    <label for="complemento">Complemento:</label>
-    <input type="text" id="complemento" name="complemento"><br>
+        <label for="bairro">Bairro:</label>
+        <input type="text" id="bairro" name="bairro" required><br>
 
-    <label for="bairro">Bairro:</label>
-    <input type="text" id="bairro" name="bairro" required><br>
+        <label for="cidade">Cidade:</label>
+        <input type="text" id="cidade" name="cidade" required><br>
 
-    <label for="cidade">Cidade:</label>
-    <input type="text" id="cidade" name="cidade" required><br>
+        <label for="uf">Estado:</label>
+        <input type="text" id="uf" name="uf" required><br>
 
-    <label for="uf">Estado:</label>
-    <input type="text" id="uf" name="uf" required><br>
+        <button type="submit">Cadastrar</button>
+    </form>
+</div>
 
-    <button type="submit">Cadastrar</button>
-</form>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const senha = document.getElementById("senha");
+        const senhaConfirmacao = document.getElementById("senhaConfirmacao");
+
+        // Função para verificar se as senhas coincidem
+        function validarSenhas() {
+            if (senha.value !== senhaConfirmacao.value) {
+                senha.classList.add("error");
+                senhaConfirmacao.classList.add("error");
+                mostrarMensagemErro("As senhas não coincidem.");
+            } else {
+                senha.classList.remove("error");
+                senhaConfirmacao.classList.remove("error");
+                removerMensagemErro();
+            }
+        }
+
+        // Exibe mensagem de erro abaixo do campo
+        function mostrarMensagemErro(mensagem) {
+            let mensagemErro = document.querySelector(".error-message");
+            if (!mensagemErro) {
+                mensagemErro = document.createElement("div");
+                mensagemErro.classList.add("error-message");
+                senhaConfirmacao.parentNode.insertBefore(mensagemErro, senhaConfirmacao.nextSibling);
+            }
+            mensagemErro.textContent = mensagem;
+        }
+
+        // Remove a mensagem de erro
+        function removerMensagemErro() {
+            const mensagemErro = document.querySelector(".error-message");
+            if (mensagemErro) {
+                mensagemErro.remove();
+            }
+        }
+
+        // Eventos para validar ao digitar
+        senha.addEventListener("input", validarSenhas);
+        senhaConfirmacao.addEventListener("input", validarSenhas);
+    });
+</script>
 </body>
 </html>

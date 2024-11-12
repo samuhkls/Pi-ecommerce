@@ -32,22 +32,6 @@ public class UserController {
     @GetMapping("/principal")
     public String principal(Model model) {
         try {
-            // Recuperando o ID do usuário da sessão
-            Long currentUserId = (Long) session.getAttribute("userId");
-
-            // Verificando se o usuário está logado
-            if (currentUserId == null) {
-                throw new Exception("Usuário não está logado.");
-            }
-
-            // Recuperando o grupo do usuário a partir do UserService
-            Grupo userRole = userService.getUserRole(currentUserId);
-
-            // Adicionando os atributos no modelo
-            model.addAttribute("userRole", userRole);  // Passando o grupo do usuário
-            model.addAttribute("userId", currentUserId);  // Passando o ID do usuário
-
-            // Retornando a página principal
             return "principal";
         } catch (Exception e) {
             e.printStackTrace();

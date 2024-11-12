@@ -29,11 +29,29 @@ public class MappingController {
     }
 
     @GetMapping("/principal")
-    public String principal(HttpSession session) {
-        if (session.getAttribute("userId") == null) {
-            return "redirect:/login"; // Redireciona se o usuário não estiver logado
+    public String principal(Model model) {
+        try {
+            // Recuperando o ID do usuário da sessão
+            Long currentUserId = (Long) session.getAttribute("userId");
+
+            // Verificando se o usuário está logado
+            if (currentUserId == null) {
+                throw new Exception("Usuário não está logado.");
+            }
+
+            // Recuperando o grupo do usuário a partir do UserService
+            Grupo userRole = userService.getUserRole(currentUserId);
+
+            // Adicionando os atributos no modelo
+            model.addAttribute("userRole", userRole.toString());  // Passando o grupo do usuário
+            model.addAttribute("userId", currentUserId);  // Passando o ID do usuário
+
+            // Retornando a página principal
+            return "principal";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/login";  // Redireciona ao login se ocorrer algum erro
         }
-        return "principal"; // Retorna a página principal se o usuário estiver logado
     }
     @GetMapping("/logout")
     public String logout() {
@@ -136,7 +154,7 @@ public class MappingController {
             Model model) {
 
         try {
-            User user = new User(nome, email, cpf, senha, Grupo.CLIENTE);
+            User user = new User(nome, email, cpf, senha, Grupo.ADMINISTRADOR);
             user.setEnderecoFaturamento(new Endereco(cep, logradouro, numero, complemento, bairro, cidade, uf));
 
             userService.createUser(user, senhaConfirmacao);

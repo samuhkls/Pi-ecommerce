@@ -2,28 +2,80 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Backoffice Principal</title>
+    <style>
+        /* Estilos Gerais */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 0.5em;
+        }
+
+        h2 {
+            color: #4a90e2;
+            margin-top: 1.5em;
+        }
+
+        p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 1em;
+        }
+
+        a {
+            display: inline-block;
+            margin: 1em;
+            padding: 0.8em 1.5em;
+            background-color: #4a90e2;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #357ab8;
+        }
+    </style>
 </head>
 <body>
-<h1>Bem-vindo ao Backoffice</h1>
-<div th:switch="${userRole}">
-    <div th:case="'ADMIN'">
-        <!-- Conteúdo para administrador -->
-        <h2>Bem-vindo, Administrador!</h2>
-        <a href="/admin/produtos">Gerenciar Produtos</a>
-        <a href="/admin/usuarios">Gerenciar Usuários</a>
-    </div>
-    <div th:case="'ESTOQUISTA'">
-        <!-- Conteúdo para estoquista -->
-        <h2>Bem-vindo, Estoquista!</h2>
-        <a href="/admin/produtos">Gerenciar Produtos</a>
-        <a href="/admin/pedidos">Gerenciar Pedidos</a>
-    </div>
-    <div th:case="*">
-        <!-- Conteúdo padrão ou para usuários não reconhecidos -->
-        <h2>Bem-vindo!</h2>
+<div class="container">
+    <h1>Bem-vindo ao Backoffice</h1>
+    <p>Função do usuário: <span th:text="${userRole}">Role</span></p>
+    <div th:switch="${userRole}">
+        <div th:case="'ADMINISTRADOR'">
+            <h2>Bem-vindo, Administrador!</h2>
+            <a href="/admin/produtos">Gerenciar Produtos</a>
+            <a href="/admin/usuarios">Gerenciar Usuários</a>
+        </div>
+        <div th:case="'ESTOQUISTA'">
+            <h2>Bem-vindo, Estoquista!</h2>
+            <a href="/admin/produtos">Gerenciar Produtos</a>
+            <a href="/admin/pedidos">Gerenciar Pedidos</a>
+        </div>
+        <div th:case="*">
+            <h2>Bem-vindo!</h2>
+        </div>
     </div>
 </div>
-
-
 </body>
 </html>

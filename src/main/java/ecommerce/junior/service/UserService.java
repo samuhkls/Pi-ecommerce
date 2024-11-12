@@ -118,10 +118,8 @@ public class UserService {
             throw new Exception("Você não tem permissão para atualizar este usuário.");
         }
 
-        // Permite alterar apenas os campos permitidos pelo professor
         currentUser.setNome(user.getNome());
 
-        // Se nova senha não está vazia, verifica e altera
         if (novaSenha != null && !novaSenha.isEmpty()) {
             if (!novaSenha.equals(senhaConfirmacao)) {
                 throw new Exception("A confirmação da senha não corresponde.");
