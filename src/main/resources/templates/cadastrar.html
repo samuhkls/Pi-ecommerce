@@ -109,34 +109,32 @@
         <label for="senhaConfirmacao">Confirme a senha:</label>
         <input type="password" id="senhaConfirmacao" name="senhaConfirmacao" required><br>
 
-        <label for="grupo">Tipo:</label>
-        <select id="grupo" name="grupo">
-            <option value="CLIENTE">Cliente</option>
-            <option value="ADMINISTRADOR">Administrador</option>
-            <option value="ESTOQUISTA">Estoquista</option>
-        </select><br>
-
         <h3>Endereço de Faturamento</h3>
         <label for="cep">CEP:</label>
-        <input type="text" id="cep" name="cep" required><br>
+        <input type="text" id="cep" name="enderecoFaturamento.cep" required><br>
 
         <label for="logradouro">Logradouro:</label>
-        <input type="text" id="logradouro" name="logradouro" required><br>
+        <input type="text" id="logradouro" name="enderecoFaturamento.logradouro" required><br>
 
         <label for="numero">Número:</label>
-        <input type="text" id="numero" name="numero" required><br>
+        <input type="text" id="numero" name="enderecoFaturamento.numero" required><br>
 
         <label for="complemento">Complemento:</label>
-        <input type="text" id="complemento" name="complemento"><br>
+        <input type="text" id="complemento" name="enderecoFaturamento.complemento"><br>
 
         <label for="bairro">Bairro:</label>
-        <input type="text" id="bairro" name="bairro" required><br>
+        <input type="text" id="bairro" name="enderecoFaturamento.bairro" required><br>
 
         <label for="cidade">Cidade:</label>
-        <input type="text" id="cidade" name="cidade" required><br>
+        <input type="text" id="cidade" name="enderecoFaturamento.cidade" required><br>
 
         <label for="uf">Estado:</label>
-        <input type="text" id="uf" name="uf" required><br>
+        <input type="text" id="uf" name="enderecoFaturamento.uf" required><br>
+
+        <div th:if="${usuario instanceof Cliente}">
+            <label>Endereço de entrega:</label>
+            <input type="text" th:field="*{enderecosEntrega[0].logradouro}" required />
+        </div>
 
         <button type="submit">Cadastrar</button>
     </form>

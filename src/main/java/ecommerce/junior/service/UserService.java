@@ -1,8 +1,10 @@
 package ecommerce.junior.service;
 
+import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Endereco;
 import ecommerce.junior.model.Grupo;
 import ecommerce.junior.model.User;
+import ecommerce.junior.repository.ClienteRepository;
 import ecommerce.junior.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,7 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    private ClienteRepository clienteRepository;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public User authenticate(String email, String senha) {
@@ -64,18 +68,37 @@ public class UserService {
             throw new IllegalArgumentException("CPF inválido.");
         }
 
-        if (!EnderecoService.validarCep(user.getEnderecoFaturamento().getCep())) {
-            throw new IllegalArgumentException("CEP inválido.");
-        }
-
-        if (!isEnderecoFaturamentoCompleto(user.getEnderecoFaturamento())) { // se nao for true, o cep é invalido
-            throw new IllegalArgumentException("Endereço de faturamento incompleto.");
-        }
-
         user.setSenha(passwordEncoder.encode(user.getSenha()));
         user.setAtivo(true);
 
         userRepository.save(user);
+    }
+
+    public void createCliente(Cliente cliente, Endereco enderecoEntrega){
+        if(!isNomeValido(cliente.getNome())){
+            throw new IllegalArgumentException("Este nome nao é valido!");
+        }
+
+        if (userRepository.existsByEmail(cliente.getEmail())) {
+            throw new IllegalArgumentException("Email já cadastrado.");
+        }
+
+        if (userRepository.existsByCpf(cliente.getCpf())) {
+            throw new IllegalArgumentException("CPF já cadastrado.");
+        }
+
+        CPFValidator cpfValidator = new CPFValidator();
+        try {
+            cpfValidator.assertValid(cliente.getCpf());
+        } catch (InvalidStateException e) {
+            throw new IllegalArgumentException("CPF inválido.");
+        }
+
+        List<Endereco> enderecosEntrega = new ArrayList<>();
+        enderecosEntrega.add(enderecoEntrega);
+        cliente.setEnderecosEntrega(enderecosEntrega);
+
+        clienteRepository.save(cliente);
     }
 
     // VALIDAÇOES AO CRIAR USUARIO ABAIXO:

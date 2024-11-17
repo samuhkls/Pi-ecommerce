@@ -137,34 +137,34 @@ public class MappingController {
         return "cadastrar"; // Nome do arquivo HTML para o formulário de cadastro
     }
 
-    @PostMapping("/usuarios/cadastrar")
-    public String cadastrarUsuario(
-            @RequestParam("nome") String nome,
-            @RequestParam("email") String email,
-            @RequestParam("cpf") String cpf,
-            @RequestParam("senha") String senha,
-            @RequestParam("senhaConfirmacao") String senhaConfirmacao,
-            @RequestParam("cep") String cep,
-            @RequestParam("logradouro") String logradouro,
-            @RequestParam("numero") String numero,
-            @RequestParam("complemento") String complemento,
-            @RequestParam("bairro") String bairro,
-            @RequestParam("cidade") String cidade,
-            @RequestParam("uf") String uf,
-            Model model) {
-
-        try {
-            User user = new User(nome, email, cpf, senha, Grupo.ADMINISTRADOR);
-            user.setEnderecoFaturamento(new Endereco(cep, logradouro, numero, complemento, bairro, cidade, uf));
-
-            userService.createUser(user, senhaConfirmacao);
-            model.addAttribute("message", "Usuário cadastrado com sucesso!");
-            return "redirect:/login";
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "cadastrar";
-        }
-    }
+//    @PostMapping("/usuarios/cadastrar")
+//    public String cadastrarUsuario(
+//            @RequestParam("nome") String nome,
+//            @RequestParam("email") String email,
+//            @RequestParam("cpf") String cpf,
+//            @RequestParam("senha") String senha,
+//            @RequestParam("senhaConfirmacao") String senhaConfirmacao,
+//            @RequestParam("cep") String cep,
+//            @RequestParam("logradouro") String logradouro,
+//            @RequestParam("numero") String numero,
+//            @RequestParam("complemento") String complemento,
+//            @RequestParam("bairro") String bairro,
+//            @RequestParam("cidade") String cidade,
+//            @RequestParam("uf") String uf,
+//            Model model) {
+//
+//        try {
+//            User user = new User(nome, email, cpf, senha, Grupo.ADMINISTRADOR);
+//            user.setEnderecoFaturamento(new Endereco(cep, logradouro, numero, complemento, bairro, cidade, uf));
+//
+//            userService.createUser(user, senhaConfirmacao);
+//            model.addAttribute("message", "Usuário cadastrado com sucesso!");
+//            return "redirect:/login";
+//        } catch (IllegalArgumentException e) {
+//            model.addAttribute("errorMessage", e.getMessage());
+//            return "cadastrar";
+//        }
+//    }
 
 
 }

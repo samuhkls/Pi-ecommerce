@@ -21,14 +21,6 @@ public class User {
 
     private boolean ativo = true;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_faturamento_id")
-    private Endereco enderecoFaturamento;
-
-    // Endereço de Entrega
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Endereco> enderecosEntrega;  // Lista de endereços de entrega
-
     public User() {
 
     }
@@ -97,23 +89,6 @@ public class User {
     public void setTipo(Grupo tipo) {
         this.tipo = tipo;
     }
-
-    public Endereco getEnderecoFaturamento() {
-        return enderecoFaturamento;
-    }
-
-    public void setEnderecoFaturamento(Endereco enderecoFaturamento) {
-        this.enderecoFaturamento = enderecoFaturamento;
-    }
-
-    public List<Endereco> getEnderecosEntrega() {
-        return enderecosEntrega;
-    }
-
-    public void setEnderecosEntrega(List<Endereco> enderecosEntrega) {
-        this.enderecosEntrega = enderecosEntrega;
-    }
-
 
     @Override
     public String toString() {

@@ -19,6 +19,9 @@ public class CarrinhoItem {
     private Long id;
 
     @ManyToOne
+    private Cliente cliente; // O cliente associado a este item no carrinho
+
+    @ManyToOne
     private Produto produto;
 
     private Integer quantidade;

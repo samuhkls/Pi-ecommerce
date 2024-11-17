@@ -32,8 +32,9 @@ public class Endereco {
     private String uf;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")  // Cria uma coluna para a associação com o usuário
-    private User usuario;
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
+
 
     // Construtor padrão necessário para o Spring
     public Endereco() {}
@@ -114,12 +115,12 @@ public class Endereco {
         this.uf = uf;
     }
 
-    public User getUsuario() {
-        return usuario;
+    public Cliente getUsuario() {
+        return cliente;
     }
 
-    public void setUsuario(User usuario) {
-        this.usuario = usuario;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     @Override

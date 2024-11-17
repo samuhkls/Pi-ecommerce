@@ -41,7 +41,7 @@ public class JuniorApplication implements CommandLineRunner {
 		enderecoFaturamento.setUf("SP");;
 		enderecoFaturamento.setComplemento("test");;
 		System.out.println(enderecoFaturamento);
-		user.setEnderecoFaturamento(enderecoFaturamento);
+		//user.setEnderecoFaturamento(enderecoFaturamento);
 
 		// Adicionando um endereço de entrega
 		Endereco enderecoEntrega = new Endereco();
@@ -54,8 +54,8 @@ public class JuniorApplication implements CommandLineRunner {
 		enderecoEntrega.setComplemento("test");;
 		System.out.println(enderecoEntrega);
 
-		user.setEnderecosEntrega(List.of(enderecoEntrega)); // Usando List.of para criar uma lista imutável
-		System.out.println(user.getEnderecosEntrega() +"enderecos de entrega lista --");
+		//user.setEnderecosEntrega(List.of(enderecoEntrega)); // Usando List.of para criar uma lista imutável
+		//System.out.println(user.getEnderecosEntrega() +"enderecos de entrega lista --");
 		userService.createUser(user, "password");
 
 		User user1 = new User();
@@ -76,7 +76,7 @@ public class JuniorApplication implements CommandLineRunner {
 		enderecoFaturamento.setComplemento("test");;
 
 		System.out.println(enderecoFaturamento1);
-		user1.setEnderecoFaturamento(enderecoFaturamento1);
+		//user1.setEnderecoFaturamento(enderecoFaturamento1);
 
 		// Adicionando um endereço de entrega para o segundo usuário
 		Endereco enderecoEntrega1 = new Endereco();
@@ -89,7 +89,7 @@ public class JuniorApplication implements CommandLineRunner {
 		enderecoEntrega1.setComplemento("test");;
 
 		System.out.println(enderecoEntrega1);
-		user1.setEnderecosEntrega(List.of(enderecoEntrega1)); // Usando List.of para criar uma lista imutável
+		//user1.setEnderecosEntrega(List.of(enderecoEntrega1)); // Usando List.of para criar uma lista imutável
 
 		userService.createUser(user1, "password");
 	}

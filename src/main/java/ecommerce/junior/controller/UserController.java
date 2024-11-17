@@ -1,8 +1,9 @@
 package ecommerce.junior.controller;
 
-import ecommerce.junior.model.Grupo;
-import ecommerce.junior.model.Produto;
-import ecommerce.junior.model.User;
+import ecommerce.junior.dto.ClienteForm;
+import ecommerce.junior.model.*;
+import ecommerce.junior.repository.ClienteRepository;
+import ecommerce.junior.repository.UserRepository;
 import ecommerce.junior.service.ProdutoService;
 import ecommerce.junior.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -27,6 +28,9 @@ public class UserController {
 
     @Autowired
     private HttpSession session;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
 
     // endpoint para a pagina principal do backoffice, que será diferente com base no tipo do usuario
     @GetMapping("/principal")
@@ -69,6 +73,32 @@ public class UserController {
     public String cadastrar(){
         return "cadastrar";
     }
+
+    @PostMapping("/cadastrar")
+    public String cadastrarCliente(@ModelAttribute("clienteForm") ClienteForm clienteForm, Model model) {
+        try {
+            Cliente cliente = new Cliente();
+            cliente.setNome(clienteForm.getNome());
+            cliente.setEmail(clienteForm.getEmail());
+            cliente.setCpf(clienteForm.getCpf());
+            cliente.setSenha(clienteForm.getSenha());
+
+            // Copiando endereço de faturamento
+            cliente.setEnderecoFaturamento(clienteForm.getEnderecoFaturamento());
+
+            cliente.setEnderecosEntrega(clienteForm.getEnderecosEntrega());
+
+            // Salvar no banco de dados (ajuste conforme seu service/repository)
+            clienteRepository.save(cliente);
+
+            model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
+            return "redirect:/login";
+        } catch (Exception e) {
+            model.addAttribute("mensagemErro", "Erro ao cadastrar cliente: " + e.getMessage());
+            return "cadastrar";
+        }
+    }
+
 
     @GetMapping
     public String listarUsuarios(@RequestParam(value = "nome", required = false) String nome, Model model) {
