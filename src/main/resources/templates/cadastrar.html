@@ -93,6 +93,16 @@
     <div class="header">
         <h1>Cadastro de Usuário</h1>
     </div>
+
+    <div th:if="${mensagem != null}" class="success-message">
+        <p th:text="${mensagem}"></p>
+    </div>
+
+    <!-- Exibe a mensagem de erro -->
+    <div th:if="${mensagemErro != null}" class="error-message">
+        <p th:text="${mensagemErro}"></p>
+    </div>
+
     <form action="/usuarios/cadastrar" method="post">
         <label for="nome">Nome:</label>
         <input type="text" id="nome" name="nome" required><br>
@@ -109,7 +119,7 @@
         <label for="senhaConfirmacao">Confirme a senha:</label>
         <input type="password" id="senhaConfirmacao" name="senhaConfirmacao" required><br>
 
-        <h3>Endereço de Faturamento</h3>
+        <h3>Endereço de Entrega</h3>
         <label for="cep">CEP:</label>
         <input type="text" id="cep" name="enderecoFaturamento.cep" required><br>
 
@@ -125,16 +135,11 @@
         <label for="bairro">Bairro:</label>
         <input type="text" id="bairro" name="enderecoFaturamento.bairro" required><br>
 
-        <label for="cidade">Cidade:</label>
-        <input type="text" id="cidade" name="enderecoFaturamento.cidade" required><br>
+        <label for="localidade">Cidade:</label>
+        <input type="text" id="localidade" name="enderecoFaturamento.localidade" required><br>
 
         <label for="uf">Estado:</label>
         <input type="text" id="uf" name="enderecoFaturamento.uf" required><br>
-
-        <div th:if="${usuario instanceof Cliente}">
-            <label>Endereço de entrega:</label>
-            <input type="text" th:field="*{enderecosEntrega[0].logradouro}" required />
-        </div>
 
         <button type="submit">Cadastrar</button>
     </form>

@@ -17,10 +17,6 @@ public class Cliente{
     private String email;
     private String senha;
 
-    @OneToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private User usuario;
-
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarrinhoItem> carrinho = new ArrayList<>();
 
@@ -35,8 +31,7 @@ public class Cliente{
     public Cliente() {
     }
 
-    public Cliente(User usuario, Endereco enderecoFaturamento, List<Endereco> enderecosEntrega) {
-        this.usuario = usuario;
+    public Cliente(Endereco enderecoFaturamento, List<Endereco> enderecosEntrega) {
         this.enderecoFaturamento = enderecoFaturamento;
         this.enderecosEntrega = enderecosEntrega;
     }
@@ -89,14 +84,6 @@ public class Cliente{
         this.carrinho = carrinho;
     }
 
-    public User getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(User usuario) {
-        this.usuario = usuario;
-    }
-
     public Endereco getEnderecoFaturamento() {
         return enderecoFaturamento;
     }
@@ -117,7 +104,6 @@ public class Cliente{
     public String toString() {
         return "Cliente{" +
                 "id=" + id +
-                ", usuario=" + usuario +
                 ", enderecoFaturamento=" + enderecoFaturamento +
                 ", enderecosEntrega=" + enderecosEntrega +
                 '}';

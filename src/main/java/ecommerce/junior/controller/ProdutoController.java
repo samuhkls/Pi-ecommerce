@@ -1,7 +1,11 @@
 package ecommerce.junior.controller;
 
+import ecommerce.junior.model.Grupo;
 import ecommerce.junior.model.Produto;
+import ecommerce.junior.model.User;
 import ecommerce.junior.service.ProdutoService;
+import ecommerce.junior.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Optional;
 
 @Controller
@@ -21,6 +26,11 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
+
+    @Autowired
+    private HttpSession session;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/novo")
     public String novoProdutoForm(Model model) {
@@ -101,8 +111,18 @@ public class ProdutoController {
     @GetMapping("/editar/{id}")
     public String editarProdutoForm(@PathVariable Long id, Model model) {
         try {
+            Long currentUserId = (Long) session.getAttribute("userId");
+            Grupo userRole = userService.getUserRole(currentUserId);
+            User currentUser = userService.getUserById(currentUserId);
+            boolean isUserAtivo = currentUser.isAtivo();
+
             Produto produto = produtoService.getProdutoByIdNoOptional(id);
+
+            model.addAttribute("userRole", userRole.toString());  // Passando o grupo do usuário
             model.addAttribute("produto", produto);
+            model.addAttribute("ativo", isUserAtivo);
+            model.addAttribute("imagemAtual", produto.getImagem());
+
             return "editar-produto";
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,7 +137,7 @@ public class ProdutoController {
                                    @RequestParam("preco") Double preco,
                                    @RequestParam("quantidadeEmEstoque") Integer quantidadeEmEstoque,
                                    @RequestParam("ativo") Boolean ativo,
-                                   @RequestParam("imagem") MultipartFile imagem) throws IOException {
+                                   @RequestParam(value = "imagem", required = false) MultipartFile imagem) throws IOException {
         Produto produto = produtoService.getProdutoById(id).orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 
         produto.setNome(nome);
@@ -126,7 +146,7 @@ public class ProdutoController {
         produto.setQuantidadeEmEstoque(quantidadeEmEstoque);
         produto.setAtivo(ativo);
 
-        if (!imagem.isEmpty()) {
+        if (imagem != null && !imagem.isEmpty()) {
             produto.setImagem(imagem.getBytes());
         }
 

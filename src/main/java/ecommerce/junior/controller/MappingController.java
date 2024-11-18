@@ -1,8 +1,10 @@
 package ecommerce.junior.controller;
 
+import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Endereco;
 import ecommerce.junior.model.Grupo;
 import ecommerce.junior.model.User;
+import ecommerce.junior.service.ClienteService;
 import ecommerce.junior.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class MappingController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -33,18 +38,23 @@ public class MappingController {
         try {
             // Recuperando o ID do usuário da sessão
             Long currentUserId = (Long) session.getAttribute("userId");
+            Long currentClienteId = (Long) session.getAttribute("clienteId");
 
-            // Verificando se o usuário está logado
-            if (currentUserId == null) {
-                throw new Exception("Usuário não está logado.");
+            if (currentUserId == null && currentClienteId == null) {
+                throw new Exception("Usuário ou cliente não está logado.");
             }
 
-            // Recuperando o grupo do usuário a partir do UserService
-            Grupo userRole = userService.getUserRole(currentUserId);
-
-            // Adicionando os atributos no modelo
-            model.addAttribute("userRole", userRole.toString());  // Passando o grupo do usuário
-            model.addAttribute("userId", currentUserId);  // Passando o ID do usuário
+            if (currentUserId != null) {
+                // Recuperando o grupo do usuário a partir do UserService
+                Grupo userRole = userService.getUserRole(currentUserId);
+                model.addAttribute("userRole", userRole.toString());
+                model.addAttribute("userId", currentUserId);
+            } else if (currentClienteId != null) {
+                // Aqui você pode adicionar a lógica para recuperar dados do cliente, caso necessário
+                Cliente cliente = clienteService.getClienteById(currentClienteId);
+                model.addAttribute("cliente", cliente);  // Passando os dados do cliente
+                model.addAttribute("clienteId", currentClienteId);
+            }
 
             // Retornando a página principal
             return "principal";
@@ -53,6 +63,7 @@ public class MappingController {
             return "redirect:/login";  // Redireciona ao login se ocorrer algum erro
         }
     }
+
     @GetMapping("/logout")
     public String logout() {
         session.invalidate();

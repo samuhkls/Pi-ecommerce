@@ -41,9 +41,7 @@ public class JuniorApplication implements CommandLineRunner {
 		enderecoFaturamento.setUf("SP");;
 		enderecoFaturamento.setComplemento("test");;
 		System.out.println(enderecoFaturamento);
-		//user.setEnderecoFaturamento(enderecoFaturamento);
 
-		// Adicionando um endereço de entrega
 		Endereco enderecoEntrega = new Endereco();
 		enderecoEntrega.setCep("04469-103");
 		enderecoEntrega.setLogradouro("Rua do Comércio");
@@ -54,8 +52,6 @@ public class JuniorApplication implements CommandLineRunner {
 		enderecoEntrega.setComplemento("test");;
 		System.out.println(enderecoEntrega);
 
-		//user.setEnderecosEntrega(List.of(enderecoEntrega)); // Usando List.of para criar uma lista imutável
-		//System.out.println(user.getEnderecosEntrega() +"enderecos de entrega lista --");
 		userService.createUser(user, "password");
 
 		User user1 = new User();

@@ -82,13 +82,10 @@ public class UserController {
             cliente.setEmail(clienteForm.getEmail());
             cliente.setCpf(clienteForm.getCpf());
             cliente.setSenha(clienteForm.getSenha());
-
-            // Copiando endereço de faturamento
             cliente.setEnderecoFaturamento(clienteForm.getEnderecoFaturamento());
 
             cliente.setEnderecosEntrega(clienteForm.getEnderecosEntrega());
 
-            // Salvar no banco de dados (ajuste conforme seu service/repository)
             clienteRepository.save(cliente);
 
             model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
@@ -98,8 +95,6 @@ public class UserController {
             return "cadastrar";
         }
     }
-
-
     @GetMapping
     public String listarUsuarios(@RequestParam(value = "nome", required = false) String nome, Model model) {
         List<User> users = userService.getUsersByName(nome);
