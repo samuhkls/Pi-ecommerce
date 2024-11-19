@@ -4,6 +4,7 @@ import ecommerce.junior.dto.ClienteForm;
 import ecommerce.junior.model.*;
 import ecommerce.junior.repository.ClienteRepository;
 import ecommerce.junior.repository.UserRepository;
+import ecommerce.junior.service.CarrinhoService;
 import ecommerce.junior.service.ProdutoService;
 import ecommerce.junior.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +29,9 @@ public class UserController {
 
     @Autowired
     private HttpSession session;
+
+    @Autowired
+    private CarrinhoService carrinhoService;
 
     @Autowired
     private ClienteRepository clienteRepository;
@@ -87,6 +91,15 @@ public class UserController {
             cliente.setEnderecosEntrega(clienteForm.getEnderecosEntrega());
 
             clienteRepository.save(cliente);
+
+            // Criar o carrinho e associar ao cliente
+            Carrinho carrinho = new Carrinho();
+            carrinho.setCliente(cliente);
+            carrinhoService.salvarCarrinho(carrinho); // Salvar carrinho no banco
+
+            // Salvar o carrinho com os itens associados
+            model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
+            session.setAttribute("cliente", cliente);
 
             model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
             return "redirect:/login";

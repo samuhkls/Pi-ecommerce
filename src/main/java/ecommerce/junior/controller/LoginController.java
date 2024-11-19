@@ -1,7 +1,9 @@
 package ecommerce.junior.controller;
 
+import ecommerce.junior.model.Carrinho;
 import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.User;
+import ecommerce.junior.service.CarrinhoService;
 import ecommerce.junior.service.ClienteService;
 import ecommerce.junior.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -21,14 +23,25 @@ public class LoginController {
     private ClienteService clienteService;
 
     @Autowired
+    private CarrinhoService carrinhoService;
+
+    @Autowired
     private HttpSession session;
 
     @PostMapping("/login")
     public String login(@RequestParam String email, @RequestParam String senha, HttpSession session, Model model) {
         // Verificar primeiro se é um cliente
         Cliente cliente = clienteService.authenticate(email, senha);
+
         if (cliente != null) {
             session.setAttribute("clienteId", cliente.getId());
+            Carrinho carrinho = carrinhoService.getCarrinhoByClienteId(cliente);
+            if (carrinho == null) {
+                // Caso não tenha carrinho, criar um novo
+                carrinho = new Carrinho();
+                carrinho.setCliente(cliente);
+                carrinhoService.salvarCarrinho(carrinho);
+            }
             return "redirect:/principal";  // Redireciona para a página principal do cliente
         }
 

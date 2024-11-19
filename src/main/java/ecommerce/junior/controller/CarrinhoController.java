@@ -1,9 +1,11 @@
 package ecommerce.junior.controller;
 
+import ecommerce.junior.model.Carrinho;
 import ecommerce.junior.model.CarrinhoItem;
 import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Produto;
 import ecommerce.junior.repository.CarrinhoItemRepository;
+import ecommerce.junior.service.CarrinhoService;
 import ecommerce.junior.service.ProdutoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,42 +24,31 @@ public class CarrinhoController {
     private ProdutoService produtoService;
 
     @Autowired
+    private CarrinhoService carrinhoService;
+
+    @Autowired
     private CarrinhoItemRepository carrinhoItemRepository;
 
     @ModelAttribute("carrinho")
-    public List<CarrinhoItem> inicializarCarrinho(HttpSession session) {
+    public Optional<Carrinho> inicializarCarrinho(HttpSession session) {
         Cliente clienteLogado = (Cliente) session.getAttribute("cliente");
-        if (clienteLogado != null) {
-            return carrinhoItemRepository.findByCliente(clienteLogado);
-        }
-        return new ArrayList<>();
+        Carrinho carrinho = carrinhoService.buscarCarrinhoPorCliente(clienteLogado);
+        return Optional.ofNullable(carrinho);
     }
 
 
 
     @PostMapping("/carrinho/adicionar/{id}")
-    public String adicionarProdutoAoCarrinho(@PathVariable Long id, @ModelAttribute("carrinho") List<CarrinhoItem> carrinho, Model model) {
+    public String adicionarProdutoAoCarrinho(@PathVariable Long id,
+                                             @ModelAttribute("carrinho") List<CarrinhoItem> carrinho,
+                                             HttpSession session,
+                                             Model model) {
         Optional<Produto> produtoOpt = produtoService.getProdutoById(id);
 
         if (produtoOpt.isPresent()) {
             Produto produto = produtoOpt.get();
-            boolean produtoJaNoCarrinho = false;
-
-            for (CarrinhoItem item : carrinho) {
-                if (item.getProduto().getId().equals(produto.getId())) {
-                    item.incrementarQuantidade();
-                    produtoJaNoCarrinho = true;
-                    break;
-                }
-            }
-
-            if (!produtoJaNoCarrinho) {
-                carrinho.add(new CarrinhoItem(produto, 1));
-            }
-
-            for (CarrinhoItem item : carrinho) {
-                carrinhoItemRepository.save(item);
-            }
+            Cliente clienteLogado = (Cliente) session.getAttribute("cliente");
+            carrinhoService.adicionarProduto(clienteLogado, produto, (Carrinho) carrinho);
         }
 
         model.addAttribute("carrinho", carrinho);

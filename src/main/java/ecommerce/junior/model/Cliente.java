@@ -17,7 +17,7 @@ public class Cliente{
     private String email;
     private String senha;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarrinhoItem> carrinho = new ArrayList<>();
 
 

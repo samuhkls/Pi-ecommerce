@@ -18,11 +18,12 @@ public class CarrinhoItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Cliente cliente; // O cliente associado a este item no carrinho
 
     @ManyToOne
     private Produto produto;
+
+    @ManyToOne
+    private Carrinho carrinho;
 
     private Integer quantidade;
 
@@ -33,6 +34,15 @@ public class CarrinhoItem {
         this.produto = produto;
         this.quantidade = quantidade;
     }
+
+    public Carrinho getCarrinho() {
+        return carrinho;
+    }
+
+    public void setCarrinho(Carrinho carrinho) {
+        this.carrinho = carrinho;
+    }
+
 
     public void incrementarQuantidade() {
         this.quantidade++;
