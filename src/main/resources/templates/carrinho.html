@@ -59,14 +59,14 @@
     </thead>
     <tbody>
     <tr th:each="entry : ${carrinho}">
-      <td th:text="${entry.key.nome}">Nome do Produto</td>
+      <td th:text="${produtos[entry.key].nome}">Nome do Produto</td> <!-- Produto pelo ID -->
       <td>
-        <button onclick="alterarQuantidade(-1, 'quantidade-${entry.key.id}')">-</button>
-        <input type="number" id="quantidade-${entry.key.id}" th:value="${entry.value}" min="1" readonly />
-        <button onclick="alterarQuantidade(1, 'quantidade-${entry.key.id}')">+</button>
+        <button onclick="alterarQuantidade(-1, 'quantidade-${entry.key}')">-</button>
+        <input type="number" id="quantidade-${entry.key}" th:value="${entry.value}" min="1" readonly />
+        <button onclick="alterarQuantidade(1, 'quantidade-${entry.key}')">+</button>
       </td>
-      <td th:text="${#numbers.formatCurrency(entry.key.preco)}">Preço</td>
-      <td th:text="${#numbers.formatCurrency(entry.value * entry.key.preco)}">Subtotal</td>
+      <td th:text="${#numbers.formatCurrency(produtos[entry.key].preco)}">Preço</td> <!-- Preço pelo ID -->
+      <td th:text="${#numbers.formatCurrency(entry.value * produtos[entry.key].preco)}">Subtotal</td> <!-- Subtotal -->
     </tr>
 
     <tr th:if="${#lists.isEmpty(carrinho)}">
@@ -75,7 +75,7 @@
     </tbody>
   </table>
 
-  <input type="text"> Insira seu CEP:
+  <input type="text" placeholder="Insira seu CEP"> Insira seu CEP:
 
   <h3>Escolha o frete:</h3>
   <div>
@@ -95,7 +95,7 @@
   </div>
 
   <a href="/admin/produtos/home" class="btn">Continuar Comprando</a>
-  <a href="/carrinho/pagamento"  class="btn">Ir para Pagamento</a>
+  <a href="/carrinho/pagamento" class="btn">Ir para Pagamento</a>
   <a href="/cadastrar" class="btn">
     <button type="button">Cadastrar</button>
   </a>
@@ -119,7 +119,8 @@
 
       items.forEach(item => {
           const quantidade = parseInt(item.value);
-          const preco = parseFloat(item.closest('tr').querySelector('td:nth-child(3)').textContent.replace('R$', '').replace(',', '.'));
+          const precoElement = item.closest('tr').querySelector('td:nth-child(3)').textContent;
+          const preco = parseFloat(precoElement.replace('R$', '').replace(',', '.'));
           subtotal += quantidade * preco;
       });
 

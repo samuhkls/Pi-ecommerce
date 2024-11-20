@@ -4,13 +4,11 @@ import ecommerce.junior.model.Carrinho;
 import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Produto;
 import ecommerce.junior.repository.CarrinhoRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class CarrinhoService {
@@ -31,11 +29,31 @@ public class CarrinhoService {
         return carrinhoRepository.save(carrinho);
     }
 
+    public Carrinho obterOuCriarCarrinho(HttpSession session) {
+        Long carrinhoId = (Long) session.getAttribute("carrinhoId");
+        Carrinho carrinho;
+
+        if (carrinhoId != null) {
+            // Recupere o carrinho do banco de dados pelo ID
+            carrinho = carrinhoRepository.findById(carrinhoId).orElse(null);
+        } else {
+            // Crie um novo carrinho e salve no banco de dados
+            carrinho = new Carrinho();
+            carrinhoRepository.save(carrinho);
+            session.setAttribute("carrinhoId", carrinho.getId());
+        }
+
+        return carrinho;
+    }
+
+
+
+
 
     public void adicionarProduto(Cliente cliente, Produto produto) {
         Carrinho carrinho = buscarCarrinhoPorCliente(cliente);
 
-        carrinho.getProdutos().merge(produto, 1, Integer::sum); // Incrementa a quantidade se o produto já existir, ou adiciona com quantidade 1.
+        carrinho.getProdutos().merge(produto.getId(), 1, Integer::sum); // Incrementa a quantidade se o produto já existir, ou adiciona com quantidade 1.
         carrinhoRepository.save(carrinho);
     }
 
@@ -46,7 +64,7 @@ public class CarrinhoService {
         if (carrinho.getProdutos().containsKey(produto)) {
             int quantidadeAtual = carrinho.getProdutos().get(produto);
             if (quantidadeAtual > 1) {
-                carrinho.getProdutos().put(produto, quantidadeAtual - 1);
+                carrinho.getProdutos().put(produto.getId(), quantidadeAtual - 1);
             } else { // se a quantidade for maior que 1, reduz. Se for 1, remove o produto.
                 carrinho.getProdutos().remove(produto);
             }
@@ -59,7 +77,7 @@ public class CarrinhoService {
         Carrinho carrinho = buscarCarrinhoPorCliente(cliente);
 
         if (quantidade > 0) {
-            carrinho.getProdutos().put(produto, quantidade); // Atualiza a quantidade para o valor informado.
+            carrinho.getProdutos().put(produto.getId(), quantidade); // Atualiza a quantidade para o valor informado.
         } else {
             carrinho.getProdutos().remove(produto); // Remove o produto se a quantidade for zero ou menor.
         }
@@ -68,7 +86,7 @@ public class CarrinhoService {
     }
 
 
-    public Map<Produto, Integer> listarProdutosComQuantidades(Cliente cliente) {
+    public Map<Long, Integer> listarProdutosComQuantidades(Cliente cliente) {
         Carrinho carrinho = buscarCarrinhoPorCliente(cliente);
         return carrinho.getProdutos();
     }

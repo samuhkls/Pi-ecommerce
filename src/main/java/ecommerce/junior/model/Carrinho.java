@@ -2,13 +2,13 @@ package ecommerce.junior.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Entity
-public class Carrinho {
+public class Carrinho implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,18 +19,20 @@ public class Carrinho {
             name = "carrinho_produto",
             joinColumns = @JoinColumn(name = "carrinho_id")
     )
-    @MapKeyJoinColumn(name = "produto_id")
+    @MapKeyColumn(name = "produto_id") // Apenas IDs dos produtos
     @Column(name = "quantidade")
-    private Map<Produto, Integer> produtos = new HashMap<>();
+    private Map<Long, Integer> produtos = new HashMap<>();
 
     @OneToOne
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
     private Cliente cliente;
 
 
-    public void adicionarProduto(Produto produto, int quantidade) {
-        produtos.put(produto, produtos.getOrDefault(produto, 0) + quantidade);
+    public void adicionarProduto(Long produtoId, int quantidade) {
+        produtos.put(produtoId, produtos.getOrDefault(produtoId, 0) + quantidade);
     }
+
+
 
     public void removerProduto(Produto produto) {
         produtos.remove(produto);
@@ -39,7 +41,7 @@ public class Carrinho {
     public void atualizarQuantidade(Produto produto, int quantidade) {
         if (produtos.containsKey(produto)) {
             if (quantidade > 0) {
-                produtos.put(produto, quantidade);
+                produtos.put(produto.getId(), quantidade);
             } else {
                 produtos.remove(produto);
             }
@@ -62,13 +64,14 @@ public class Carrinho {
         this.cliente = cliente;
     }
 
-    public Map<Produto, Integer> getProdutos() {
-        return new HashMap<>(produtos); // Converte PersistentMap
+    public Map<Long, Integer> getProdutos() {
+        return produtos;
     }
 
-    public void setProdutos(Map<Produto, Integer> produtos) {
+    public void setProdutos(Map<Long, Integer> produtos) {
         this.produtos = produtos;
     }
+
 
     // getters e setters
 }
