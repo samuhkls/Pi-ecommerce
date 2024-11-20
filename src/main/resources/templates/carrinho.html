@@ -131,6 +131,32 @@
 
       document.getElementById('subtotal').textContent = subtotal.toFixed(2);
   }
+  function removerProduto(produtoId) {
+    // Cria o payload com o ID do produto
+    const payload = {
+        produtoId: produtoId
+    };
+
+    // Envia uma requisição POST para o backend
+    fetch('/carrinho/remover', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Produto removido com sucesso!');
+            location.reload(); // Recarrega a página para atualizar o carrinho
+        } else {
+            alert('Erro ao remover o produto!');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+    });
+}
 </script>
 
 </body>

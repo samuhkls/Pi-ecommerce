@@ -42,7 +42,7 @@ public class LoginController {
                 carrinho.setCliente(cliente);
                 carrinhoService.salvarCarrinho(carrinho);
             }
-            return "redirect:/principal";  // Redireciona para a página principal do cliente
+            return "redirect:/cliente-principal";  // Redireciona para a página principal do cliente
         }
 
         // Se não for cliente, verificar se é um usuário

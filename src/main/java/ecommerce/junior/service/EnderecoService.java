@@ -31,6 +31,14 @@ public class EnderecoService {
         } catch (HttpClientErrorException e) {
             return false; // se der erro, o CEP é inválido
         }
-    }
 
+    }
+    public Endereco buscarEndereco(String cep) {
+        String url = "https://viacep.com.br/ws/" + cep + "/json/";
+        try {
+            return restTemplate.getForObject(url, Endereco.class);
+        } catch (Exception e) {
+            return null; // Retorna nulo em caso de erro
+        }
+    }
 }

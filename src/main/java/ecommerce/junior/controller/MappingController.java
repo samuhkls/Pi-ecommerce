@@ -63,7 +63,22 @@ public class MappingController {
             return "redirect:/login";  // Redireciona ao login se ocorrer algum erro
         }
     }
+    @GetMapping("/cliente-principal")
+    public String clientePrincipal(Model model) {
+        try {
+            Long currentClienteId = (Long) session.getAttribute("clienteId");
+            if (currentClienteId == null) {
+                throw new Exception("Cliente não está logado.");
+            }
 
+            Cliente cliente = clienteService.getClienteById(currentClienteId);
+            model.addAttribute("cliente", cliente);  // Dados do cliente para a página
+            return "cliente-principal";  // Nome do arquivo HTML
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/login";
+        }
+    }
     @GetMapping("/logout")
     public String logout() {
         session.invalidate();

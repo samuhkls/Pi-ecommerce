@@ -186,6 +186,34 @@
         senha.addEventListener("input", validarSenhas);
         senhaConfirmacao.addEventListener("input", validarSenhas);
     });
+    document.addEventListener("DOMContentLoaded", () => {
+        const cepInput = document.getElementById("cep");
+
+        cepInput.addEventListener("blur", () => {
+            const cep = cepInput.value.trim();
+            if (cep) {
+                fetch(`/buscar-endereco?cep=${cep}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Erro ao buscar endereço");
+                        }
+                        return response.json();
+                    })
+                    .then(endereco => {
+                        if (endereco) {
+                            document.getElementById("logradouro").value = endereco.logradouro || "";
+                            document.getElementById("bairro").value = endereco.bairro || "";
+                            document.getElementById("localidade").value = endereco.localidade || "";
+                            document.getElementById("uf").value = endereco.uf || "";
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("Não foi possível buscar o endereço. Verifique o CEP.");
+                    });
+            }
+        });
+    });
 </script>
 </body>
 </html>
