@@ -1,10 +1,9 @@
 package ecommerce.junior.controller;
 
-import ecommerce.junior.model.Grupo;
+import ecommerce.junior.model.Imagem;
 import ecommerce.junior.model.Produto;
-import ecommerce.junior.model.User;
+import ecommerce.junior.service.ImagemService;
 import ecommerce.junior.service.ProdutoService;
-import ecommerce.junior.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +16,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,9 +32,10 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @Autowired
-    private HttpSession session;
+    private ImagemService imagemService;
+
     @Autowired
-    private UserService userService;
+    private HttpSession session;
 
     @GetMapping("/novo")
     public String novoProdutoForm(Model model) {
@@ -39,12 +44,14 @@ public class ProdutoController {
     }
 
     @PostMapping("/salvar")
-    public String salvarProduto(@RequestParam("nome") String nome,
-                                @RequestParam("descricaoDetalhada") String descricaoDetalhada,
-                                @RequestParam("preco") Double preco,
-                                @RequestParam("quantidadeEmEstoque") Integer quantidadeEmEstoque,
-                                @RequestParam("ativo") Boolean ativo,
-                                @RequestParam("imagem") MultipartFile imagem) throws IOException {
+    public String salvarProduto(
+            @RequestParam("nome") String nome,
+            @RequestParam("descricaoDetalhada") String descricaoDetalhada,
+            @RequestParam("preco") Double preco,
+            @RequestParam("quantidadeEmEstoque") Integer quantidadeEmEstoque,
+            @RequestParam("ativo") Boolean ativo,
+            @RequestParam("imagens") MultipartFile[] imagens) throws IOException {
+
         Produto produto = new Produto();
         produto.setNome(nome);
         produto.setDescricaoDetalhada(descricaoDetalhada);
@@ -52,11 +59,29 @@ public class ProdutoController {
         produto.setQuantidadeEmEstoque(quantidadeEmEstoque);
         produto.setAtivo(ativo);
 
-        if (!imagem.isEmpty()) {
-            produto.setImagem(imagem.getBytes());
+        List<Imagem> listaImagens = new ArrayList<>();
+        String uploadDir = "src/main/resources/static/uploads/"; // Caminho para a pasta de uploads
+
+        for (MultipartFile imagem : imagens) {
+            if (!imagem.isEmpty()) {
+                // Gerar o nome do arquivo
+                String fileName = imagem.getOriginalFilename();
+                Path filePath = Paths.get(uploadDir + fileName);
+
+                // Salvar a imagem fisicamente no diretório 'uploads'
+                Files.copy(imagem.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                // Salvar a URL relativa no banco de dados
+                Imagem novaImagem = new Imagem();
+                novaImagem.setUrl("uploads/" + fileName);  // Salvar apenas o caminho relativo
+                novaImagem.setProduto(produto); // Associando a imagem ao produto
+                listaImagens.add(novaImagem);
+            }
         }
 
-        produtoService.salvarProduto(produto);
+        produto.setImagens(listaImagens); // Associando a lista de imagens ao produto
+        produtoService.salvarProduto(produto); // Salva o produto com imagens associadas
+
         return "redirect:/admin/produtos";
     }
 
@@ -78,12 +103,6 @@ public class ProdutoController {
         model.addAttribute("produtos", produtos);
         model.addAttribute("nome", nome);
         return "lista-produtos";
-    }
-
-    @PostMapping("/alterar-status/{id}")
-    public String alterarStatus(@PathVariable Long id) {
-        produtoService.alterarStatus(id);
-        return "redirect:/admin/produtos";
     }
 
     @GetMapping("/visualizar/{id}")
@@ -108,28 +127,6 @@ public class ProdutoController {
         }
     }
 
-    @GetMapping("/editar/{id}")
-    public String editarProdutoForm(@PathVariable Long id, Model model) {
-        try {
-            Long currentUserId = (Long) session.getAttribute("userId");
-            Grupo userRole = userService.getUserRole(currentUserId);
-            User currentUser = userService.getUserById(currentUserId);
-            boolean isUserAtivo = currentUser.isAtivo();
-
-            Produto produto = produtoService.getProdutoByIdNoOptional(id);
-
-            model.addAttribute("userRole", userRole.toString());  // Passando o grupo do usuário
-            model.addAttribute("produto", produto);
-            model.addAttribute("ativo", isUserAtivo);
-            model.addAttribute("imagemAtual", produto.getImagem());
-
-            return "editar-produto";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "erro";
-        }
-    }
-
     @PostMapping("/atualizar/{id}")
     public String atualizarProduto(@PathVariable Long id,
                                    @RequestParam("nome") String nome,
@@ -137,7 +134,8 @@ public class ProdutoController {
                                    @RequestParam("preco") Double preco,
                                    @RequestParam("quantidadeEmEstoque") Integer quantidadeEmEstoque,
                                    @RequestParam("ativo") Boolean ativo,
-                                   @RequestParam(value = "imagem", required = false) MultipartFile imagem) throws IOException {
+                                   @RequestParam(value = "imagens", required = false) MultipartFile[] imagens) throws IOException {
+
         Produto produto = produtoService.getProdutoById(id).orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 
         produto.setNome(nome);
@@ -146,16 +144,28 @@ public class ProdutoController {
         produto.setQuantidadeEmEstoque(quantidadeEmEstoque);
         produto.setAtivo(ativo);
 
-        if (imagem != null && !imagem.isEmpty()) {
-            produto.setImagem(imagem.getBytes());
+        // Se houver novas imagens, elas são processadas e associadas ao produto
+        List<Imagem> listaImagens = new ArrayList<>();
+        if (imagens != null && imagens.length > 0) {
+            for (MultipartFile imagem : imagens) {
+                if (!imagem.isEmpty()) {
+                    Imagem novaImagem = new Imagem();
+                    novaImagem.setUrl("static/uploads/" + imagem.getOriginalFilename());
+                    novaImagem.setProduto(produto);
+                    listaImagens.add(novaImagem);
+                }
+            }
         }
 
+        produto.setImagens(listaImagens);
         produtoService.salvarProduto(produto);
         return "redirect:/admin/produtos";
     }
 
     @GetMapping("/detalhes/{id}")
     public String detalhesProduto(@PathVariable Long id, Model model) {
+        List<Imagem> imagens = imagemService.getAllImagens(); // exemplo de como obter as imagens
+        model.addAttribute("imagens", imagens);
         Optional<Produto> produto = produtoService.getProdutoById(id);
         if (produto.isPresent()) {
             model.addAttribute("produto", produto.get());
@@ -165,18 +175,25 @@ public class ProdutoController {
         }
     }
 
-    @GetMapping("/pedidos")
-    public String pagamento(Model model) {
-        return "pedido";
-    }
-
-
     @GetMapping("/home")
     public String exibirPaginaPrincipal(Model model) {
         Pageable pageable = PageRequest.of(0, 6, Sort.by("id").descending());
         Page<Produto> produtos = produtoService.getAllProdutos(pageable);
 
+        List<Imagem> imagens = imagemService.getAllImagens(); // exemplo de como obter as imagens
+
+        // Verifique se a lista não está vazia antes de pegar a primeira imagem
+        Imagem imagem = (imagens != null && !imagens.isEmpty()) ? imagens.get(0) : null;
+
+        model.addAttribute("imagem", imagem); // Passa apenas a primeira imagem (ou null se não houver nenhuma)
+
         model.addAttribute("produtos", produtos);
         return "home";
+    }
+
+    // Método de pagamento
+    @GetMapping("/pedidos")
+    public String pagamento(Model model) {
+        return "pedido";
     }
 }

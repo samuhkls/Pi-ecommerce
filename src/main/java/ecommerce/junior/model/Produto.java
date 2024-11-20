@@ -1,8 +1,9 @@
 package ecommerce.junior.model;
 
 import jakarta.persistence.*;
-
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Table(name = "produto")
@@ -27,12 +28,11 @@ public class Produto {
     @Column(nullable = false)
     private Boolean ativo;
 
-    @Lob
-    @Column(name = "imagem", columnDefinition = "LONGBLOB")
-    private byte[] imagem;
+
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Imagem> imagens = new ArrayList<>();
 
     // Getters e Setters
-
     public Long getId() {
         return id;
     }
@@ -65,19 +65,6 @@ public class Produto {
         this.quantidadeEmEstoque = quantidadeEmEstoque;
     }
 
-    @Override
-    public String toString() {
-        return "Produto{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", preco=" + preco +
-                ", quantidadeEmEstoque=" + quantidadeEmEstoque +
-                ", descricaoDetalhada='" + descricaoDetalhada + '\'' +
-                ", ativo=" + ativo +
-                ", imagem=" + Arrays.toString(imagem) +
-                '}';
-    }
-
     public String getDescricaoDetalhada() {
         return descricaoDetalhada;
     }
@@ -94,16 +81,13 @@ public class Produto {
         this.ativo = ativo;
     }
 
-    public boolean isAtivo() {
-        return ativo;
+
+    public List<Imagem> getImagens() {
+        return imagens;
     }
 
-    public byte[] getImagem() {
-        return imagem;
-    }
-
-    public void setImagem(byte[] imagem) {
-        this.imagem = imagem;
+    public void setImagens(List<Imagem> imagens) {
+        this.imagens = imagens;
     }
 
     @Override
@@ -119,4 +103,16 @@ public class Produto {
         return id != null ? id.hashCode() : 0;
     }
 
+    @Override
+    public String toString() {
+        return "Produto{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", preco=" + preco +
+                ", quantidadeEmEstoque=" + quantidadeEmEstoque +
+                ", descricaoDetalhada='" + descricaoDetalhada + '\'' +
+                ", ativo=" + ativo +
+                "," +
+                '}';
+    }
 }

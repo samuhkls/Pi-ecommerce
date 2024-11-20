@@ -17,6 +17,7 @@ public class Imagem {
     @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;
 
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -39,5 +40,14 @@ public class Imagem {
 
     public void setProduto(Produto produto) {
         this.produto = produto;
+    }
+
+    @Override
+    public String toString() {
+        return "Imagem{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", produto=" + (produto != null ? produto.getId() : null) +
+                '}';
     }
 }

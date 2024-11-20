@@ -88,12 +88,12 @@
 
 <header>
     <div class="logo">
-        <img th:src="@{img/logo.jpg}" alt="Logo da Loja">
+        <img th:src="@{/img/logo.jpg}" alt="Logo da Loja">
     </div>
     <nav>
         <ul>
-            <li><a href="/login">Faça login / Crie seu login</a></li>
-            <li><a href="/carrinho">Carrinho (<span th:text="${carrinho != null ? #lists.size(carrinho) : 0}">0</span>)</a></li>
+            <li><a th:href="@{/login}">Faça login / Crie seu login</a></li>
+            <li><a th:href="@{/carrinho}">Carrinho (<span th:text="${carrinho != null ? #lists.size(carrinho) : 0}">0</span>)</a></li>
         </ul>
     </nav>
 </header>
@@ -103,11 +103,16 @@
     <div class="produto-grid">
         <div th:each="produto : ${produtos}" class="produto-card">
             <p>ID do Produto: <span th:text="${produto.id}"></span></p>
-            <img th:src="@{${produto.imagem}}" alt="Imagem do Produto" class="produto-imagem">
-            <h2 th:text="${produto.nome}">Nome do Produto</h2>
-            <p th:text="${produto.preco}">Preço</p>
 
-            <a th:href="@{/produto/detalhes/{id}(id=${produto.id})}" class="detalhes-btn">Ver Detalhes</a>
+            <div>
+                <img th:if="${imagem != null}" th:src="@{/{url}(url=${imagem.url})}" alt="Imagem" />
+            </div>
+
+
+            <h2 th:text="${produto.nome}">Nome do Produto</h2>
+            <p>Preço: R$ <span th:text="${produto.preco}">0.00</span></p>
+
+            <a th:href="@{/admin/produtos/detalhes/{id}(id=${produto.id})}" class="detalhes-btn">Ver Detalhes</a>
 
             <form th:action="@{/carrinho/adicionar/{id}(id=${produto.id})}" method="post">
                 <button type="submit" class="carrinho-btn">Adicionar ao Carrinho</button>

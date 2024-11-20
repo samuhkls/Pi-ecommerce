@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Produto</title>
     <link rel="stylesheet" href="../static/css/style.css">
-
 </head>
 <body>
 
@@ -27,12 +26,12 @@
     <label for="ativo">Ativo:</label>
     <input type="checkbox" id="ativo" name="ativo" value="true" checked><br><br>
 
-    <label for="imagem">Imagem do Produto:</label>
-    <input type="file" id="imagem" name="imagem" required><br><br>
+    <label for="imagens">Imagens do Produto:</label>
+    <input type="file" id="imagens" name="imagens" multiple required><br><br>
+    <small>Você pode selecionar várias imagens segurando a tecla Ctrl (ou Cmd no Mac) enquanto seleciona os arquivos.</small><br><br>
 
     <button type="submit">Salvar Produto</button>
 </form>
-
 
 </body>
 </html>

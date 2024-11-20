@@ -41,13 +41,14 @@ public class ProdutoService {
         return produtoRepository.findById(id);
     }
 
-    @Transactional
+    /*@Transactional
     public void alterarStatus(Long id) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
         produto.setAtivo(!produto.isAtivo());  // Alterna o status ativo/inativo
         produtoRepository.save(produto);
-    }
+    }*/
+
     public Produto getProdutoByIdNoOptional(Long id) {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
