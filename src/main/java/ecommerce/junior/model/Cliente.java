@@ -17,8 +17,8 @@ public class Cliente{
     private String email;
     private String senha;
 
-    @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CarrinhoItem> carrinho = new ArrayList<>();
+    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Carrinho carrinho;
 
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -76,11 +76,11 @@ public class Cliente{
         this.senha = senha;
     }
 
-    public List<CarrinhoItem> getCarrinho() {
+    public Carrinho getCarrinho() {
         return carrinho;
     }
 
-    public void setCarrinho(List<CarrinhoItem> carrinho) {
+    public void setCarrinho(Carrinho carrinho) {
         this.carrinho = carrinho;
     }
 

@@ -58,16 +58,17 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="item : ${carrinho}">
-      <td th:text="${item.produto.nome}">Nome do Produto</td>
+    <tr th:each="entry : ${carrinho}">
+      <td th:text="${entry.key.nome}">Nome do Produto</td>
       <td>
-        <button onclick="alterarQuantidade(-1, 'quantidade-${item.produto.id}')">-</button>
-        <input type="number" id="quantidade-${item.produto.id}" th:value="${item.quantidade}" min="1" readonly />
-        <button onclick="alterarQuantidade(1, 'quantidade-${item.produto.id}')">+</button>
+        <button onclick="alterarQuantidade(-1, 'quantidade-${entry.key.id}')">-</button>
+        <input type="number" id="quantidade-${entry.key.id}" th:value="${entry.value}" min="1" readonly />
+        <button onclick="alterarQuantidade(1, 'quantidade-${entry.key.id}')">+</button>
       </td>
-      <td th:text="${#numbers.formatCurrency(item.produto.preco)}">Preço</td>
-      <td th:text="${#numbers.formatCurrency(item.quantidade * item.produto.preco)}">Subtotal</td>
+      <td th:text="${#numbers.formatCurrency(entry.key.preco)}">Preço</td>
+      <td th:text="${#numbers.formatCurrency(entry.value * entry.key.preco)}">Subtotal</td>
     </tr>
+
     <tr th:if="${#lists.isEmpty(carrinho)}">
       <td colspan="4">Seu carrinho está vazio!</td>
     </tr>

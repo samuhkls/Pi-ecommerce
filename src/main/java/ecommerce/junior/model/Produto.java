@@ -105,4 +105,18 @@ public class Produto {
     public void setImagem(byte[] imagem) {
         this.imagem = imagem;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Produto produto = (Produto) o;
+        return id != null && id.equals(produto.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
 }

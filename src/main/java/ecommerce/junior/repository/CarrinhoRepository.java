@@ -1,7 +1,6 @@
 package ecommerce.junior.repository;
 
 import ecommerce.junior.model.Carrinho;
-import ecommerce.junior.model.CarrinhoItem;
 import ecommerce.junior.model.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 

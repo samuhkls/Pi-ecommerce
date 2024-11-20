@@ -23,6 +23,7 @@ public class ClienteService {
         return null;
     }
 
+
     public Cliente getClienteById(Long clienteId) {
         return clienteRepository.findById(clienteId).orElse(null);
     }
