@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumo do Pedido</title>
+</head>
+<body>
+<h1>Resumo do Pedido</h1>
+<p>Cliente: {{ pedido.cliente.nome }}</p>
+<h2>Produtos:</h2>
+<ul>
+    <li th:each="produto : ${pedido.produtos}">
+        Nome: <span th:text="${produto.produto.nome}"></span>,
+        Quantidade: <span th:text="${produto.quantidade}"></span>,
+        Subtotal: R$ <span th:text="${produto.subtotal}"></span>
+    </li>
+</ul>
+<p>Valor do frete: R$ <span th:text="${pedido.valorFrete}"></span></p>
+<p>Valor total: R$ <span th:text="${pedido.valorTotal}"></span></p>
+<h2>Endereço de Entrega:</h2>
+<p th:text="${pedido.enderecoEntrega}"></p>
+<h2>Forma de Pagamento:</h2>
+<p th:text="${pedido.formaPagamento}"></p>
+</body>
+</html>

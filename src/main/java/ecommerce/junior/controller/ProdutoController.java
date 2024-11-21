@@ -176,22 +176,23 @@ public class ProdutoController {
     }
 
     @GetMapping("/home")
-    public String exibirPaginaPrincipal(Model model) {
-        Pageable pageable = PageRequest.of(0, 6, Sort.by("id").descending());
+    public String exibirPaginaPrincipal(@RequestParam(value = "page", defaultValue = "0") int page, Model model) {
+        int pageSize = 6; // Quantidade de produtos por página
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").descending());
         Page<Produto> produtos = produtoService.getAllProdutos(pageable);
 
-        List<Imagem> imagens = imagemService.getAllImagens(); // exemplo de como obter as imagens
-
-        // Verifique se a lista não está vazia antes de pegar a primeira imagem
+        List<Imagem> imagens = imagemService.getAllImagens();
         Imagem imagem = (imagens != null && !imagens.isEmpty()) ? imagens.get(0) : null;
 
-        model.addAttribute("imagem", imagem); // Passa apenas a primeira imagem (ou null se não houver nenhuma)
-
-        model.addAttribute("produtos", produtos);
+        model.addAttribute("imagem", imagem);
+        model.addAttribute("produtos", produtos.getContent()); // Produtos da página atual
+        model.addAttribute("currentPage", produtos.getNumber());
+        model.addAttribute("totalPages", produtos.getTotalPages());
+        model.addAttribute("totalItems", produtos.getTotalElements());
         return "home";
     }
 
-    // Método de pagamento
+
     @GetMapping("/pedidos")
     public String pagamento(Model model) {
         return "pedido";

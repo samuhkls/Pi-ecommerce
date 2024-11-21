@@ -5,6 +5,7 @@ import ecommerce.junior.model.*;
 import ecommerce.junior.repository.ClienteRepository;
 import ecommerce.junior.repository.UserRepository;
 import ecommerce.junior.service.CarrinhoService;
+import ecommerce.junior.service.ClienteService;
 import ecommerce.junior.service.ProdutoService;
 import ecommerce.junior.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -26,6 +27,9 @@ public class UserController {
 
     @Autowired
     private ProdutoService produtoService;
+
+    @Autowired
+    private ClienteService clienteService;
 
     @Autowired
     private HttpSession session;
@@ -81,27 +85,21 @@ public class UserController {
     @PostMapping("/cadastrar")
     public String cadastrarCliente(@ModelAttribute("clienteForm") ClienteForm clienteForm, Model model) {
         try {
-            Cliente cliente = new Cliente();
-            cliente.setNome(clienteForm.getNome());
-            cliente.setEmail(clienteForm.getEmail());
-            cliente.setCpf(clienteForm.getCpf());
-            cliente.setSenha(clienteForm.getSenha());
-            cliente.setEnderecoFaturamento(clienteForm.getEnderecoFaturamento());
+            // Usando o ClienteService para converter o ClienteForm em uma entidade Cliente
+            Cliente cliente = clienteService.fromDTO(clienteForm);
 
-            cliente.setEnderecosEntrega(clienteForm.getEnderecosEntrega());
-
-            clienteRepository.save(cliente);
+            // Salvar o cliente no banco
+            clienteService.salvar(cliente);
 
             // Criar o carrinho e associar ao cliente
             Carrinho carrinho = new Carrinho();
             carrinho.setCliente(cliente);
-            carrinhoService.salvarCarrinho(carrinho); // Salvar carrinho no banco
+            carrinhoService.salvarCarrinho(carrinho); // Salvar o carrinho no banco
 
             // Salvar o carrinho com os itens associados
             model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
             session.setAttribute("cliente", cliente);
 
-            model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
             return "redirect:/login";
         } catch (Exception e) {
             model.addAttribute("mensagemErro", "Erro ao cadastrar cliente: " + e.getMessage());

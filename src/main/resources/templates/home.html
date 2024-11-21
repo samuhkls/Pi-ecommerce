@@ -58,9 +58,11 @@
             text-align: center;
         }
 
-        .produto-imagem {
+        .produto-imagem img {
             max-width: 100%;
             height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
         }
 
         .detalhes-btn, .carrinho-btn {
@@ -80,7 +82,7 @@
         }
 
         .detalhes-btn:hover, .carrinho-btn:hover {
-            background-color: #0056b3;
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -102,15 +104,14 @@
     <h1>Nossos Produtos</h1>
     <div class="produto-grid">
         <div th:each="produto : ${produtos}" class="produto-card">
-            <p>ID do Produto: <span th:text="${produto.id}"></span></p>
 
-            <div>
-                <img th:if="${imagem != null}" th:src="@{/{url}(url=${imagem.url})}" alt="Imagem" />
+            <div class="produto-imagem">
+                <img th:src="@{/{url}(url=${produto.imagens != null && !#lists.isEmpty(produto.imagens) ? produto.imagens[0].url : 'img/placeholder.png'})}"
+                     th:alt="${produto.nome}" />
             </div>
 
-
             <h2 th:text="${produto.nome}">Nome do Produto</h2>
-            <p>Preço: R$ <span th:text="${produto.preco}">0.00</span></p>
+            <p>Preço: R$ <span th:text="${#numbers.formatDecimal(produto.preco, 2, 2)}">0.00</span></p>
 
             <a th:href="@{/admin/produtos/detalhes/{id}(id=${produto.id})}" class="detalhes-btn">Ver Detalhes</a>
 
