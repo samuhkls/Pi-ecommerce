@@ -103,6 +103,25 @@ public class CarrinhoController {
         return "redirect:/carrinho";
     }
 
+    @PostMapping("/carrinho/remover/{id}")
+    public String removerProduto(@PathVariable Long id, HttpSession session, Model model) {
+        // Obter o carrinho da sessão
+        Carrinho carrinho = carrinhoService.obterOuCriarCarrinho(session);
+
+        // Remover o produto do carrinho, se ele estiver presente
+        if (carrinho.getProdutos().containsKey(id)) {
+            carrinho.getProdutos().remove(id);  // Remove o produto do HashMap
+            carrinhoService.salvarCarrinho(carrinho);  // Salva as alterações no banco de dados
+        }
+
+        // Atualizar a página com o carrinho atualizado
+        model.addAttribute("carrinho", carrinho.getProdutos());
+        return "redirect:/carrinho";  // Redireciona para a página do carrinho
+    }
+
+
+
+
 //    @GetMapping("/carrinho/pagamento")
 //    public String pagamento(@ModelAttribute("carrinho") Carrinho carrinho, Model model) {
 //        double total = carrinho.getProdutos()

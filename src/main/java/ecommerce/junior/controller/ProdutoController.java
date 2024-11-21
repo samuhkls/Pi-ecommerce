@@ -125,7 +125,17 @@ public class ProdutoController {
         }
     }
 
-    @PostMapping("/atualizar/{id}")
+    @GetMapping("/editar/{id}")
+    public String exibirFormularioEdicao(@PathVariable Long id, Model model) {
+        Produto produto = produtoService.getProdutoById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+
+        model.addAttribute("produto", produto);
+        return "editar-produto";
+    }
+
+
+    @PostMapping("/editar/{id}")
     public String atualizarProduto(@PathVariable Long id,
                                    @RequestParam("nome") String nome,
                                    @RequestParam("descricaoDetalhada") String descricaoDetalhada,
@@ -134,31 +144,51 @@ public class ProdutoController {
                                    @RequestParam("ativo") Boolean ativo,
                                    @RequestParam(value = "imagens", required = false) MultipartFile[] imagens) throws IOException {
 
-        Produto produto = produtoService.getProdutoById(id).orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+        Produto produto = produtoService.getProdutoById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 
+        // Atualiza os dados básicos do produto
         produto.setNome(nome);
         produto.setDescricaoDetalhada(descricaoDetalhada);
         produto.setPreco(preco);
         produto.setQuantidadeEmEstoque(quantidadeEmEstoque);
         produto.setAtivo(ativo);
 
-        // Se houver novas imagens, elas são processadas e associadas ao produto
-        List<Imagem> listaImagens = new ArrayList<>();
+        // Remove as imagens antigas do banco
+        List<Imagem> imagensAntigas = produto.getImagens();
+        if (imagensAntigas != null && !imagensAntigas.isEmpty()) {
+            imagensAntigas.forEach(imagemService::deletarImagem); // Método que remove imagens do banco
+        }
+        produto.getImagens().clear(); // Remove as referências no objeto Produto
+
+        // Processa e adiciona as novas imagens
         if (imagens != null && imagens.length > 0) {
+            String uploadDir = "src/main/resources/static/uploads/"; // Caminho para uploads
             for (MultipartFile imagem : imagens) {
                 if (!imagem.isEmpty()) {
+                    String fileName = imagem.getOriginalFilename();
+                    Path filePath = Paths.get(uploadDir + fileName);
+
+                    // Salvar fisicamente no diretório de uploads
+                    Files.copy(imagem.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                    // Criar a nova entidade Imagem
                     Imagem novaImagem = new Imagem();
-                    novaImagem.setUrl("static/uploads/" + imagem.getOriginalFilename());
+                    novaImagem.setUrl("uploads/" + fileName);
                     novaImagem.setProduto(produto);
-                    listaImagens.add(novaImagem);
+
+                    // Adiciona ao produto
+                    produto.getImagens().add(novaImagem);
                 }
             }
         }
 
-        produto.setImagens(listaImagens);
+        // Salva o produto atualizado no banco
         produtoService.salvarProduto(produto);
+
         return "redirect:/admin/produtos";
     }
+
 
     @GetMapping("/detalhes/{id}")
     public String detalhesProduto(@PathVariable Long id, Model model) {

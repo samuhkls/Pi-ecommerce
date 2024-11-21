@@ -15,6 +15,11 @@ public class ImagemService {
         this.imagemRepository = imagemRepository;
     }
 
+    public void deletarImagem(Imagem imagem) {
+        imagemRepository.delete(imagem);
+    }
+
+
     public List<Imagem> getAllImagens() {
         return imagemRepository.findAll();
     }

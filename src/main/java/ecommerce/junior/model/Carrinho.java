@@ -34,8 +34,8 @@ public class Carrinho implements Serializable {
 
 
 
-    public void removerProduto(Produto produto) {
-        produtos.remove(produto);
+    public void removerProduto(Long produtoId) {
+        this.produtos.remove(produtoId); // Remove o produto do HashMap
     }
 
     public void atualizarQuantidade(Produto produto, int quantidade) {

@@ -72,34 +72,24 @@
 
 <h1>Editar Produto</h1>
 
-<form th:action="@{/admin/produtos/atualizar/{id}(id=${produto.id})}" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="id" th:value="${produto.id}" />
-    <input type="hidden" name="ativo" th:value="${ativo}" />
-    <input type="hidden" name="imagemAtual" th:value="${imagemAtual}" />
-
+<form th:action="@{/admin/produtos/editar/{id}(id=${produto.id})}" method="post" enctype="multipart/form-data">
     <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" th:value="${produto.nome}"
-           th:readonly="${userRole == 'ESTOQUISTA'}" />
+    <input type="text" id="nome" name="nome" required th:value="${produto.nome}"><br><br>
 
     <label for="descricaoDetalhada">Descrição Detalhada:</label>
-    <textarea id="descricaoDetalhada" name="descricaoDetalhada"
-              th:text="${produto.descricaoDetalhada}"
-              th:readonly="${userRole == 'ESTOQUISTA'}"></textarea>
+    <textarea id="descricaoDetalhada" name="descricaoDetalhada" required th:text="${produto.descricaoDetalhada}"></textarea><br><br>
 
     <label for="preco">Preço:</label>
-    <input type="text" id="preco" name="preco" th:value="${produto.preco}"
-           th:readonly="${userRole == 'ESTOQUISTA'}" />
+    <input type="number" id="preco" name="preco" step="0.01" required th:value="${produto.preco}"><br><br>
 
     <label for="quantidadeEmEstoque">Quantidade em Estoque:</label>
-    <input type="number" id="quantidadeEmEstoque" name="quantidadeEmEstoque"
-           th:value="${produto.quantidadeEmEstoque}" />
+    <input type="number" id="quantidadeEmEstoque" name="quantidadeEmEstoque" required th:value="${produto.quantidadeEmEstoque}"><br><br>
 
     <label for="ativo">Ativo:</label>
-    <input type="checkbox" id="ativo" name="ativo" th:checked="${produto.ativo}"
-           th:disabled="${userRole == 'ESTOQUISTA'}" />
+    <input type="checkbox" id="ativo" name="ativo" th:checked="${produto.ativo}"><br><br>
 
-    <label for="imagem">Atualizar Imagem</label>
-    <input type="file" id="imagem" name="imagem" th:disabled="${userRole == 'ESTOQUISTA'}" />
+    <label for="imagens">Imagens:</label>
+    <input type="file" id="imagens" name="imagens" multiple><br><br>
 
     <button type="submit">Salvar</button>
 </form>

@@ -289,7 +289,11 @@
     <td th:text="${produto.preco}"></td>
     <td th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></td>
     <td>
-      <a href="#" class="edit-btn" th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a> |
+
+      <a class="edit-btn" th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a>
+
+
+      |
       <a href="#" th:onclick="'showProductDetails(' + ${produto.id} + ')'">Visualizar</a> |
       <a href="#" th:onclick="'confirmStatusChange(' + ${produto.id} + ', \'' + ${produto.ativo} + '\')'">
         <span th:text="${produto.ativo ? 'Inativar' : 'Ativar'}"></span>
