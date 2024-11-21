@@ -34,7 +34,7 @@ public class Carrinho implements Serializable {
     private Map<Long, Double> precos = new HashMap<>();
 
     @OneToOne
-    @JoinColumn(name = "cliente_id", referencedColumnName = "id")
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
     @Column(name = "total")

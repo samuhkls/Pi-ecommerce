@@ -39,6 +39,7 @@ public class CarrinhoController {
 
     @ModelAttribute("carrinho")
     public Carrinho inicializarCarrinho(HttpSession session) {
+        System.out.println("Inicializando carrinho na sessão...");
         return carrinhoService.obterOuCriarCarrinho(session);
     }
 
@@ -54,6 +55,7 @@ public class CarrinhoController {
         if (produtoOpt.isPresent()) {
             Produto produto = produtoOpt.get();
             carrinho.adicionarProduto(produto.getId(), 1, produto.getPreco()); // Adiciona 1 unidade como padrão
+            session.setAttribute("carrinho", carrinho); // Atualiza o carrinho na sessão
             carrinhoRepository.save(carrinho); // Salva as alterações no banco de dados
         }
 
@@ -63,10 +65,25 @@ public class CarrinhoController {
 
     @GetMapping("/carrinho")
     public String visualizarCarrinho(HttpSession session, Model model) {
-        Carrinho carrinho = carrinhoService.obterOuCriarCarrinho(session);
+        Long carrinhoId = (Long) session.getAttribute("carrinhoId");
+        Carrinho carrinho;
 
-        Map<Long, Integer> produtosCarrinho = carrinho.getProdutos(); // IDs + Quantidades
+        if (carrinhoId == null) {
+            // Criar um novo carrinho
+            carrinho = carrinhoService.obterOuCriarCarrinho();
+            session.setAttribute("carrinhoId", carrinho.getId());
+        } else {
+            try {
+                carrinho = carrinhoService.obterCarrinhoPorId(carrinhoId);
+            } catch (RuntimeException e) {
+                // Criar um novo carrinho se o anterior não existir
+                carrinho = carrinhoService.obterOuCriarCarrinho();
+                session.setAttribute("carrinhoId", carrinho.getId());
+            }
+        }
 
+        // Processamento dos dados do carrinho
+        Map<Long, Integer> produtosCarrinho = carrinho.getProdutos();
         List<Produto> produtos = produtoService.getProdutosByIds(produtosCarrinho.keySet());
 
         Map<Long, Produto> produtosPorId = produtos.stream()
@@ -74,12 +91,14 @@ public class CarrinhoController {
 
         double total = calcularTotal(produtosCarrinho, produtosPorId);
 
-        model.addAttribute("carrinho", produtosCarrinho); // IDs e quantidades
-        model.addAttribute("produtos", produtosPorId);   // IDs e produtos
+        model.addAttribute("carrinho", produtosCarrinho);
+        model.addAttribute("produtos", produtosPorId);
         model.addAttribute("total", total);
 
         return "carrinho";
     }
+
+
 
     @GetMapping("/carrinho/pagamento")
     public String exibirPagamento(HttpSession session, Model model) {

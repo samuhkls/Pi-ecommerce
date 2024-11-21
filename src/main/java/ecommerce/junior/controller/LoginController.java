@@ -34,7 +34,10 @@ public class LoginController {
         Cliente cliente = clienteService.authenticate(email, senha);
 
         if (cliente != null) {
-            session.setAttribute("clienteId", cliente.getId());
+            // Guarda o cliente na sessão
+            session.setAttribute("cliente", cliente);  // Aqui estamos guardando o objeto cliente na sessão
+
+            // Verifica o carrinho associado ao cliente
             Carrinho carrinho = carrinhoService.getCarrinhoByClienteId(cliente);
             if (carrinho == null) {
                 // Caso não tenha carrinho, criar um novo
@@ -42,6 +45,10 @@ public class LoginController {
                 carrinho.setCliente(cliente);
                 carrinhoService.salvarCarrinho(carrinho);
             }
+
+            // Salva o carrinhoId na sessão
+            session.setAttribute("carrinhoId", carrinho.getId());  // Aqui associamos o carrinho à sessão
+
             return "redirect:/cliente-principal";  // Redireciona para a página principal do cliente
         }
 
@@ -52,10 +59,11 @@ public class LoginController {
             return "redirect:/principal";  // Redireciona para a página principal do usuário
         }
 
-        // Se nenhum dos dois for encontrado, retorna para a página de login com erro
+        // Se nenhum dos dois for encontrados, retorna para a página de login com erro
         model.addAttribute("erro", "Credenciais inválidas!");
         return "login";  // Página de login com erro
     }
+
 
 }
 

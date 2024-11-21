@@ -16,6 +16,9 @@ public class CarrinhoService {
     @Autowired
     private CarrinhoRepository carrinhoRepository;
 
+    @Autowired
+    private ClienteService clienteService;
+
     public Carrinho buscarCarrinhoPorCliente(Cliente cliente) {
         return carrinhoRepository.findByClienteId(cliente.getId())
                 .orElseGet(() -> criarNovoCarrinho(cliente));
@@ -33,11 +36,27 @@ public class CarrinhoService {
 
         if (carrinhoId != null) {
             carrinho = carrinhoRepository.findById(carrinhoId).orElse(null);
-        } else {
-            carrinho = new Carrinho();
-            carrinhoRepository.save(carrinho);
-            session.setAttribute("carrinhoId", carrinho.getId());
+            if (carrinho != null) {
+                return carrinho; // Retorna o carrinho encontrado
+            }
         }
+
+        // Recupera o cliente logado
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente == null) {
+            throw new RuntimeException("Cliente não autenticado ou não encontrado na sessão.");
+        }
+
+        // Verifica se o cliente já tem um carrinho
+        carrinho = carrinhoRepository.findByCliente(cliente);
+        if (carrinho == null) {
+            carrinho = new Carrinho();
+            carrinho.setCliente(cliente);
+            carrinhoRepository.save(carrinho);
+        }
+
+        // Salva o ID do carrinho na sessão
+        session.setAttribute("carrinhoId", carrinho.getId());
 
         return carrinho;
     }
@@ -98,5 +117,17 @@ public class CarrinhoService {
         }
 
         session.removeAttribute("carrinhoId");
+    }
+
+    public Carrinho obterOuCriarCarrinho() {
+        Carrinho carrinho = new Carrinho();
+        carrinho = carrinhoRepository.save(carrinho); // Persistir no banco
+        return carrinho;
+    }
+
+    public Carrinho obterCarrinhoPorId(Long id) {
+        System.out.println("Procurando carrinho com ID: " + id); // Log para depuração
+        return carrinhoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado!"));
     }
 }
