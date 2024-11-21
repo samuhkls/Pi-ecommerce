@@ -1,25 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Resumo do Pedido</title>
+    <style>
+        /* Adicione seu estilo aqui */
+    </style>
 </head>
 <body>
-<h1>Resumo do Pedido</h1>
-<p>Cliente: {{ pedido.cliente.nome }}</p>
-<h2>Produtos:</h2>
-<ul>
-    <li th:each="produto : ${pedido.produtos}">
-        Nome: <span th:text="${produto.produto.nome}"></span>,
-        Quantidade: <span th:text="${produto.quantidade}"></span>,
-        Subtotal: R$ <span th:text="${produto.subtotal}"></span>
-    </li>
-</ul>
-<p>Valor do frete: R$ <span th:text="${pedido.valorFrete}"></span></p>
-<p>Valor total: R$ <span th:text="${pedido.valorTotal}"></span></p>
-<h2>Endereço de Entrega:</h2>
-<p th:text="${pedido.enderecoEntrega}"></p>
-<h2>Forma de Pagamento:</h2>
+<h2>Resumo do Pedido</h2>
+
+<p th:text="${mensagem}"></p>
+
+<h3>Detalhes do Pedido</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Produto</th>
+        <th>Quantidade</th>
+        <th>Preço</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="produtoPedido : ${pedido.produtos}">
+        <td th:text="${produtoPedido.produto.nome}"></td>
+        <td th:text="${produtoPedido.quantidade}"></td>
+        <td th:text="${produtoPedido.produto.preco}"></td>
+        <td th:text="${produtoPedido.produto.preco * produtoPedido.quantidade}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<p><strong>Valor Total:</strong> R$ <span th:text="${pedido.valorTotal}"></span></p>
+<p><strong>Frete:</strong> R$ <span th:text="${pedido.valorFrete}"></span></p>
+
+<h3>Endereço de Entrega</h3>
+<p th:text="${pedido.enderecoEntrega.logradouro + ', ' + pedido.enderecoEntrega.numero + ', ' + pedido.enderecoEntrega.bairro + ' - ' + pedido.enderecoEntrega.localidade + '/' + pedido.enderecoEntrega.uf}"></p>
+
+<h3>Forma de Pagamento</h3>
 <p th:text="${pedido.formaPagamento}"></p>
 </body>
 </html>

@@ -99,7 +99,9 @@
             <option value="boleto">Boleto Bancário</option>
         </select>
 
+        <!-- Detalhes Dinâmicos de Pagamento -->
         <div class="payment-details" id="detalhesCredito">
+            <!-- Dados do Cartão de Crédito -->
             <h4>Cartão de Crédito</h4>
             <label for="numeroCartao">Número do Cartão:</label>
             <input type="text" id="numeroCartao" name="numeroCartao" placeholder="1234 5678 9012 3456" required>
@@ -112,6 +114,7 @@
         </div>
 
         <div class="payment-details" id="detalhesDebito">
+            <!-- Dados do Cartão de Débito -->
             <h4>Cartão de Débito</h4>
             <label for="numeroCartaoDebito">Número do Cartão:</label>
             <input type="text" id="numeroCartaoDebito" name="numeroCartaoDebito" placeholder="1234 5678 9012 3456" required>
@@ -120,33 +123,40 @@
         </div>
 
         <div class="payment-details" id="detalhesBoleto">
+            <!-- Dados do Boleto -->
             <h4>Boleto Bancário</h4>
             <p class="info-text">O boleto será gerado e enviado para o e-mail cadastrado após a confirmação do pedido.</p>
         </div>
 
+        <!-- Exibição do Total -->
         <div class="total">
             Total a Pagar: R$ <span th:text="${cliente.carrinho.total}"></span>
         </div>
 
-        <button type="submit" class="btn">Confirmar Pagamento</button>
+        <!-- Botão de Confirmar Dados -->
+        <button type="submit" class="btn">Confirmar Dados</button>
     </form>
+
 </div>
 
 <script>
     function mostrarDetalhesPagamento() {
-        document.getElementById("detalhesCredito").style.display = "none";
-        document.getElementById("detalhesDebito").style.display = "none";
-        document.getElementById("detalhesBoleto").style.display = "none";
+    // Esconde todos os campos
+    document.getElementById("detalhesCredito").style.display = "none";
+    document.getElementById("detalhesDebito").style.display = "none";
+    document.getElementById("detalhesBoleto").style.display = "none";
 
-        const formaPagamento = document.getElementById("formaPagamento").value;
-        if (formaPagamento === "credito") {
-            document.getElementById("detalhesCredito").style.display = "block";
-        } else if (formaPagamento === "debito") {
-            document.getElementById("detalhesDebito").style.display = "block";
-        } else if (formaPagamento === "boleto") {
-            document.getElementById("detalhesBoleto").style.display = "block";
-        }
+    // Exibe o campo correspondente à forma de pagamento
+    const formaPagamento = document.getElementById("formaPagamento").value;
+    if (formaPagamento === "credito") {
+        document.getElementById("detalhesCredito").style.display = "block";
+    } else if (formaPagamento === "debito") {
+        document.getElementById("detalhesDebito").style.display = "block";
+    } else if (formaPagamento === "boleto") {
+        document.getElementById("detalhesBoleto").style.display = "block";
     }
+}
+
 </script>
 </body>
 </html>

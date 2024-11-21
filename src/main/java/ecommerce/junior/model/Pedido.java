@@ -10,6 +10,9 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
+    private Long numeroPedido; // Número sequencial do pedido
+
     @OneToOne
     private Cliente cliente;
 
@@ -28,14 +31,24 @@ public class Pedido {
     @Column(nullable = false)
     private String formaPagamento; // Ex: "Cartão", "Boleto", etc.
 
-    // Getters e Setters
+    @Column(nullable = false)
+    private String status = "Aguardando Pagamento"; // Status inicial do pedido
 
+    // Getters e Setters
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getNumeroPedido() {
+        return numeroPedido;
+    }
+
+    public void setNumeroPedido(Long numeroPedido) {
+        this.numeroPedido = numeroPedido;
     }
 
     public Cliente getCliente() {
@@ -84,5 +97,13 @@ public class Pedido {
 
     public void setFormaPagamento(String formaPagamento) {
         this.formaPagamento = formaPagamento;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

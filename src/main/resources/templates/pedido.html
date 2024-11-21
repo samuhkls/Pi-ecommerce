@@ -71,6 +71,17 @@
 </head>
 <body>
 
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Resumo do Pedido</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        /* Estilo básico já fornecido */
+    </style>
+</head>
+<body>
+
 <h1>Resumo do Pedido</h1>
 
 <div class="order-summary">
@@ -86,36 +97,45 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${pedido?.itens ?: {}}">
-                <td th:text="${item?.produto?.nome ?: 'N/A'}"></td>
-                <td th:text="${item?.produto?.preco ?: '0.00'}"></td>
-                <td th:text="${item?.quantidade ?: '0'}"></td>
-                <td th:text="${item?.total ?: '0.00'}"></td>
+            <tr th:each="item : ${pedido?.produtos}">
+                <td th:text="${item?.produto?.nome}"></td>
+                <td th:text="${item?.produto?.preco}"></td>
+                <td th:text="${item?.quantidade}"></td>
+                <td th:text="${item?.total}"></td>
             </tr>
             </tbody>
         </table>
     </div>
 
     <div class="totals">
-        <p><strong>Frete:</strong> <span th:text="${pedido?.frete ?: '0.00'}">0.00</span></p>
-        <p class="total"><strong>Total Geral:</strong> <span th:text="${pedido?.totalGeral ?: '0.00'}">0.00</span></p>
+        <p><strong>Frete:</strong> <span th:text="${pedido?.valorFrete}">0.00</span></p>
+        <p class="total"><strong>Total Geral:</strong> <span th:text="${pedido?.valorTotal}">0.00</span></p>
     </div>
 
     <div class="address">
         <h3>Endereço de Entrega</h3>
-        <p th:text="${pedido?.enderecoEntrega ?: 'Endereço não informado'}">Rua Exemplo, 123, Cidade</p>
+        <p th:text="${pedido?.enderecoEntrega}">Rua Exemplo, 123, Cidade</p>
     </div>
 
     <div class="payment-method">
         <h3>Forma de Pagamento</h3>
-        <p th:text="${pedido?.formaPagamento ?: 'Forma de pagamento não informada'}">Cartão de Crédito</p>
+        <p th:text="${pedido?.formaPagamento}">Cartão de Crédito</p>
     </div>
 
     <div class="button-container">
+        <!-- Botão de voltar para a página de pagamento -->
         <button class="btn btn-back" onclick="window.location.href='/carrinho/pagamento'">Voltar</button>
-        <button class="btn btn-confirm" onclick="finalizarCompra()">Concluir Compra</button>
+
+        <!-- Botão para concluir a compra -->
+        <form action="/pedido/concluir" method="post">
+            <button type="submit" class="btn btn-confirm">Concluir Compra</button>
+        </form>
     </div>
 </div>
+
+</body>
+</html>
+
 
 <script>
     function finalizarCompra() {

@@ -119,6 +119,10 @@ public class CarrinhoController {
         Pedido pedido = new Pedido();
         pedido.setCliente(cliente);
 
+        // Gerando um número sequencial para o pedido
+        Long numeroPedido = gerarNumeroSequencialPedido();
+        pedido.setNumeroPedido(numeroPedido);
+
         List<ProdutoPedido> itensPedido = carrinho.getProdutos().entrySet().stream()
                 .map(entry -> {
                     Produto produto = produtoService.getProdutoById(entry.getKey()).orElse(null);
@@ -135,7 +139,7 @@ public class CarrinhoController {
 
         pedido.setProdutos(itensPedido);
         pedido.setValorTotal(carrinho.getTotal());
-        pedido.setValorFrete(20.0);
+        pedido.setValorFrete(20.0); // Valor do frete fixo por enquanto
         pedido.setEnderecoEntrega(cliente.getEnderecoFaturamento());
         pedido.setFormaPagamento("Cartão de Crédito"); // Temporário, pode ser customizado
 
@@ -145,9 +149,21 @@ public class CarrinhoController {
         // Limpar o carrinho após finalizar o pedido
         carrinhoService.limparCarrinho(cliente, session);
 
+        // Informar o sucesso e o número do pedido
+        model.addAttribute("mensagem", "Pedido nº " + pedido.getNumeroPedido() + " realizado com sucesso!");
         model.addAttribute("pedido", pedido);
         return "resumo-pedido"; // Exibe a tela de resumo
     }
+
+    // Método para gerar um número sequencial para o pedido
+    private Long gerarNumeroSequencialPedido() {
+        // Aqui você pode implementar a lógica para gerar o número sequencial
+        // Pode ser uma consulta ao banco de dados ou usar um contador
+        // Exemplo de incremento simples:
+        Long ultimoNumeroPedido = pedidoRepository.count(); // Contando o número de pedidos no banco
+        return ultimoNumeroPedido + 1;
+    }
+
 
 
     private double calcularTotal(Map<Long, Integer> produtosCarrinho, Map<Long, Produto> produtosPorId) {
