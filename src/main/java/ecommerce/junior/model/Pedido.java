@@ -28,8 +28,9 @@ public class Pedido {
     @OneToOne
     private Endereco enderecoEntrega;
 
-    @Column(nullable = false)
-    private String formaPagamento; // Ex: "Cartão", "Boleto", etc.
+    @Column(name = "forma_pagamento", nullable = false)
+    private String formaPagamento;
+
 
     @Column(nullable = false)
     private String status = "Aguardando Pagamento"; // Status inicial do pedido

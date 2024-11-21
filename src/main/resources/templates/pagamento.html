@@ -90,7 +90,7 @@
     <div class="divider"></div>
 
     <h3>Escolha a Forma de Pagamento</h3>
-    <form action="/processar-pagamento" method="post">
+    <form action="/gerar-pedido" method="post">
         <label for="formaPagamento">Forma de Pagamento:</label>
         <select name="formaPagamento" id="formaPagamento" required onchange="mostrarDetalhesPagamento()">
             <option value="" disabled selected>Selecione</option>
@@ -141,22 +141,21 @@
 
 <script>
     function mostrarDetalhesPagamento() {
-    // Esconde todos os campos
-    document.getElementById("detalhesCredito").style.display = "none";
-    document.getElementById("detalhesDebito").style.display = "none";
-    document.getElementById("detalhesBoleto").style.display = "none";
+        // Esconde todos os campos
+        document.getElementById("detalhesCredito").style.display = "none";
+        document.getElementById("detalhesDebito").style.display = "none";
+        document.getElementById("detalhesBoleto").style.display = "none";
 
-    // Exibe o campo correspondente à forma de pagamento
-    const formaPagamento = document.getElementById("formaPagamento").value;
-    if (formaPagamento === "credito") {
-        document.getElementById("detalhesCredito").style.display = "block";
-    } else if (formaPagamento === "debito") {
-        document.getElementById("detalhesDebito").style.display = "block";
-    } else if (formaPagamento === "boleto") {
-        document.getElementById("detalhesBoleto").style.display = "block";
+        // Exibe o campo correspondente à forma de pagamento
+        const formaPagamento = document.getElementById("formaPagamento").value;
+        if (formaPagamento === "credito") {
+            document.getElementById("detalhesCredito").style.display = "block";
+        } else if (formaPagamento === "debito") {
+            document.getElementById("detalhesDebito").style.display = "block";
+        } else if (formaPagamento === "boleto") {
+            document.getElementById("detalhesBoleto").style.display = "block";
+        }
     }
-}
-
 </script>
 </body>
 </html>

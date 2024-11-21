@@ -1,6 +1,9 @@
 package ecommerce.junior.controller;
 
-import ecommerce.junior.model.Pedido;
+import ecommerce.junior.model.*;
+import ecommerce.junior.repository.ProdutoRepository;
+import ecommerce.junior.service.CarrinhoService;
+import ecommerce.junior.service.ClienteService;
 import ecommerce.junior.service.PedidoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 public class PedidoController {
@@ -16,59 +22,89 @@ public class PedidoController {
     @Autowired
     private PedidoService pedidoService;
 
+    @Autowired
+    private CarrinhoService carrinhoService;
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private ClienteService clienteService;
+
     @GetMapping("/pedido/resumo")
     public String exibirResumoDoPedido(HttpSession session, Model model) {
-        // Recupera o pedido da sessão ou do banco de dados (caso já tenha sido salvo)
-        Pedido pedido = (Pedido) session.getAttribute("pedido");
+        Long pedidoId = (Long) session.getAttribute("pedidoId");
 
-        if (pedido == null) {
-            // Se o pedido não estiver na sessão, busca no banco de dados (por exemplo, pelo ID)
-            Long pedidoId = (Long) session.getAttribute("pedidoId"); // Supondo que o ID do pedido esteja na sessão
-            pedido = pedidoService.buscarPedidoPorId(pedidoId);
+        if (pedidoId == null) {
+            model.addAttribute("mensagem", "Nenhum pedido encontrado.");
+            return "redirect:/carrinho";
         }
 
-        // Passa os dados do pedido para o modelo
-        model.addAttribute("pedido", pedido);
+        Pedido pedido = pedidoService.buscarPedidoPorId(pedidoId);
 
+        if (pedido == null) {
+            model.addAttribute("mensagem", "Pedido inválido ou inexistente.");
+            return "redirect:/carrinho";
+        }
+
+        model.addAttribute("pedido", pedido);
         return "resumo-pedido";
     }
 
-    @PostMapping("/pedido/concluir")
-    public String concluirCompra(HttpSession session) {
-        // Recupera o pedido da sessão
-        Pedido pedido = (Pedido) session.getAttribute("pedido");
+    @PostMapping("/gerar-pedido")
+    public String gerarPedido(
+            @RequestParam("formaPagamento") String formaPagamento, // Captura a forma de pagamento do formulário
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
 
-        if (pedido == null) {
-            // Se o pedido não foi encontrado, redireciona para a tela de pagamento
-            return "redirect:/carrinho/pagamento";
+        Carrinho carrinho = carrinhoService.obterOuCriarCarrinho(session);
+
+        if (carrinho == null || carrinho.getProdutos().isEmpty()) {
+            redirectAttributes.addFlashAttribute("mensagem", "Seu carrinho está vazio.");
+            return "redirect:/carrinho";
         }
 
-        // Atualiza o status do pedido para "Aguardando Pagamento" ou outro status desejado
-        pedido.setStatus("Concluído");
-        pedidoService.salvarPedido(pedido); // Salva o pedido no banco de dados
-
-        // Limpa a sessão após a compra ser concluída
-        session.removeAttribute("pedido");
-
-        // Redireciona para a tela de confirmação de pedido
-        return "redirect:/pedido/confirmacao";
-    }
-        @PostMapping("/processar-pagamento")
-        public String processarPagamento(@RequestParam("formaPagamento") String formaPagamento,
-                                         HttpSession session) {
-
-            Pedido pedido = (Pedido) session.getAttribute("pedido");
-            if (pedido == null) {
-                return "redirect:/carrinho/pagamento";  // Se o pedido não existe, redireciona para a página de pagamento
-            }
-
-            pedido.setFormaPagamento(formaPagamento);
-
-            // Salva o pedido com a forma de pagamento
-            pedidoService.salvarPedido(pedido);
-
-            // Redireciona para o resumo do pedido
-            return "redirect:/pedido/resumo-pedido";
+        Cliente cliente = carrinho.getCliente();
+        if (cliente == null) {
+            redirectAttributes.addFlashAttribute("mensagem", "Cliente não identificado. Faça login novamente.");
+            return "redirect:/login";
         }
+
+        Pedido pedido = new Pedido();
+        pedido.setCliente(cliente);
+        pedido.setValorTotal(carrinho.getTotal());
+        pedido.setFormaPagamento(formaPagamento); // Define a forma de pagamento diretamente no pedido
+
+        List<ProdutoPedido> produtosPedido = carrinho.getProdutos().entrySet().stream().map(entry -> {
+            Produto produto = buscarProdutoPorId(entry.getKey());
+            ProdutoPedido produtoPedido = new ProdutoPedido();
+            produtoPedido.setProduto(produto);
+            produtoPedido.setQuantidade(entry.getValue());
+            return produtoPedido;
+        }).toList();
+        pedido.setProdutos(produtosPedido);
+
+        if (cliente.getEnderecosEntrega() != null && !cliente.getEnderecosEntrega().isEmpty()) {
+            pedido.setEnderecoEntrega(cliente.getEnderecosEntrega().get(0));
+        } else {
+            redirectAttributes.addFlashAttribute("mensagem", "Nenhum endereço de entrega encontrado.");
+            return "redirect:/carrinho";
+        }
+
+        double valorFrete = 20;
+        pedido.setValorFrete(valorFrete);
+        pedido.setNumeroPedido(System.currentTimeMillis());
+
+        pedidoService.salvarPedido(pedido);
+
+        session.setAttribute("pedidoId", pedido.getId());
+        session.removeAttribute("carrinho");
+
+        return "redirect:/pedido/resumo";
     }
 
+    private Produto buscarProdutoPorId(Long id) {
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: ID " + id));
+    }
+}

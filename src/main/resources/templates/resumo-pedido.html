@@ -4,13 +4,43 @@
     <meta charset="UTF-8">
     <title>Resumo do Pedido</title>
     <style>
-        /* Adicione seu estilo aqui */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h2, h3 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        p {
+            margin: 10px 0;
+        }
+        strong {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 <h2>Resumo do Pedido</h2>
 
-<p th:text="${mensagem}"></p>
+<!-- Mensagem de alerta ou erro -->
+<p th:if="${mensagem}" th:text="${mensagem}" style="color: red; font-weight: bold;"></p>
 
 <h3>Detalhes do Pedido</h3>
 <table>
@@ -18,16 +48,17 @@
     <tr>
         <th>Produto</th>
         <th>Quantidade</th>
-        <th>Preço</th>
-        <th>Total</th>
+        <th>Preço Unitário (R$)</th>
+        <th>Subtotal (R$)</th>
     </tr>
     </thead>
     <tbody>
+    <!-- Iteração dos produtos do pedido -->
     <tr th:each="produtoPedido : ${pedido.produtos}">
-        <td th:text="${produtoPedido.produto.nome}"></td>
-        <td th:text="${produtoPedido.quantidade}"></td>
+        <td th:text="${produtoPedido.produto.nome ?: 'Produto indisponível'}"></td>
+        <td th:text="${produtoPedido.quantidade ?: 0}"></td>
         <td th:text="${produtoPedido.produto.preco}"></td>
-        <td th:text="${produtoPedido.produto.preco * produtoPedido.quantidade}"></td>
+        <td th:text="${produtoPedido.subtotal}"></td>
     </tr>
     </tbody>
 </table>
@@ -36,9 +67,15 @@
 <p><strong>Frete:</strong> R$ <span th:text="${pedido.valorFrete}"></span></p>
 
 <h3>Endereço de Entrega</h3>
-<p th:text="${pedido.enderecoEntrega.logradouro + ', ' + pedido.enderecoEntrega.numero + ', ' + pedido.enderecoEntrega.bairro + ' - ' + pedido.enderecoEntrega.localidade + '/' + pedido.enderecoEntrega.uf}"></p>
+<!-- Renderiza o endereço de entrega com verificação de valores nulos -->
+<p th:if="${pedido.enderecoEntrega}"
+   th:text="${pedido.enderecoEntrega.logradouro + ', ' + pedido.enderecoEntrega.numero + ', ' +
+             pedido.enderecoEntrega.bairro + ' - ' +
+             pedido.enderecoEntrega.localidade + '/' + pedido.enderecoEntrega.uf}">
+</p>
 
 <h3>Forma de Pagamento</h3>
-<p th:text="${pedido.formaPagamento}"></p>
+<!-- Verifica se a forma de pagamento está presente -->
+<p th:text="${pedido.formaPagamento ?: 'Não especificada'}"></p>
 </body>
 </html>
