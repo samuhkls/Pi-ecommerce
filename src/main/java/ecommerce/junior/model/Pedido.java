@@ -32,8 +32,9 @@ public class Pedido {
     private String formaPagamento;
 
 
+    @Enumerated(EnumType.STRING) // Persistirá o enum como String no banco
     @Column(nullable = false)
-    private String status = "Aguardando Pagamento"; // Status inicial do pedido
+    private StatusPedido status = StatusPedido.AGUARDANDO_PAGAMENTO;
 
     // Getters e Setters
     public Long getId() {
@@ -100,11 +101,11 @@ public class Pedido {
         this.formaPagamento = formaPagamento;
     }
 
-    public String getStatus() {
+    public StatusPedido getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusPedido status) {
         this.status = status;
     }
 }

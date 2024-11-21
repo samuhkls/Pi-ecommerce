@@ -68,7 +68,7 @@ public class MappingController {
         try {
             Long currentClienteId = (Long) session.getAttribute("clienteId");
             if (currentClienteId == null) {
-                throw new Exception("Cliente não está logado.");
+                return "redirect:/login";
             }
 
             Cliente cliente = clienteService.getClienteById(currentClienteId);

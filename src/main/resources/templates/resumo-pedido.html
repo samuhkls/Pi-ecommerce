@@ -7,7 +7,6 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            line-height: 1.6;
         }
         h2, h3 {
             color: #333;
@@ -16,7 +15,6 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            margin-bottom: 20px;
         }
         table, th, td {
             border: 1px solid #ddd;
@@ -28,18 +26,59 @@
         th {
             background-color: #f4f4f4;
         }
-        p {
-            margin: 10px 0;
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        strong {
+        .btn:hover {
+            background-color: #218838;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            text-align: center;
+        }
+        .modal h3 {
+            color: #28a745;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
             font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
         }
     </style>
 </head>
 <body>
 <h2>Resumo do Pedido</h2>
 
-<!-- Mensagem de alerta ou erro -->
 <p th:if="${mensagem}" th:text="${mensagem}" style="color: red; font-weight: bold;"></p>
 
 <h3>Detalhes do Pedido</h3>
@@ -53,7 +92,6 @@
     </tr>
     </thead>
     <tbody>
-    <!-- Iteração dos produtos do pedido -->
     <tr th:each="produtoPedido : ${pedido.produtos}">
         <td th:text="${produtoPedido.produto.nome ?: 'Produto indisponível'}"></td>
         <td th:text="${produtoPedido.quantidade ?: 0}"></td>
@@ -66,16 +104,35 @@
 <p><strong>Valor Total:</strong> R$ <span th:text="${pedido.valorTotal}"></span></p>
 <p><strong>Frete:</strong> R$ <span th:text="${pedido.valorFrete}"></span></p>
 
-<h3>Endereço de Entrega</h3>
-<!-- Renderiza o endereço de entrega com verificação de valores nulos -->
-<p th:if="${pedido.enderecoEntrega}"
-   th:text="${pedido.enderecoEntrega.logradouro + ', ' + pedido.enderecoEntrega.numero + ', ' +
-             pedido.enderecoEntrega.bairro + ' - ' +
-             pedido.enderecoEntrega.localidade + '/' + pedido.enderecoEntrega.uf}">
-</p>
+<form action="/pedido/confirmar-compra" method="post">
+    <button type="submit" class="btn btn-success" id="confirmarCompraBtn">Confirmar Compra</button>
+</form>
 
-<h3>Forma de Pagamento</h3>
-<!-- Verifica se a forma de pagamento está presente -->
-<p th:text="${pedido.formaPagamento ?: 'Não especificada'}"></p>
+
+<div id="pedidoModal" class="modal" th:if="${mensagemSucesso}">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Pedido Confirmado com Sucesso!</h3>
+        <p><strong>Número do Pedido:</strong> <span th:text="${pedido.numeroPedido}"></span></p>
+        <p><strong>Valor Total:</strong> R$ <span th:text="${pedido.valorTotal}"></span></p>
+        <p><strong>Status:</strong> <span th:text="${pedido.status}"></span></p>
+    </div>
+</div>
+<script>
+    const modal = document.getElementById("pedidoModal");
+    if (modal) {
+        modal.style.display = "block";
+        const span = document.getElementsByClassName("close")[0];
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    }
+</script>
+
 </body>
 </html>

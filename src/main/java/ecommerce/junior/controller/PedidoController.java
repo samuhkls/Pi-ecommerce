@@ -53,7 +53,7 @@ public class PedidoController {
 
     @PostMapping("/gerar-pedido")
     public String gerarPedido(
-            @RequestParam("formaPagamento") String formaPagamento, // Captura a forma de pagamento do formulário
+            @RequestParam("formaPagamento") String formaPagamento,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
@@ -73,7 +73,8 @@ public class PedidoController {
         Pedido pedido = new Pedido();
         pedido.setCliente(cliente);
         pedido.setValorTotal(carrinho.getTotal());
-        pedido.setFormaPagamento(formaPagamento); // Define a forma de pagamento diretamente no pedido
+        pedido.setFormaPagamento(formaPagamento);
+        pedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO); // Define o status inicial
 
         List<ProdutoPedido> produtosPedido = carrinho.getProdutos().entrySet().stream().map(entry -> {
             Produto produto = buscarProdutoPorId(entry.getKey());
@@ -102,6 +103,24 @@ public class PedidoController {
 
         return "redirect:/pedido/resumo";
     }
+
+    @PostMapping("/pedido/confirmar-compra")
+    public String confirmarCompra(HttpSession session, RedirectAttributes redirectAttributes) {
+        Long pedidoId = (Long) session.getAttribute("pedidoId");
+        if (pedidoId == null) {
+            redirectAttributes.addFlashAttribute("mensagem", "Nenhum pedido encontrado.");
+            return "redirect:/carrinho";
+        }
+        pedidoService.atualizarStatusPedido(pedidoId, StatusPedido.PAGAMENTO_COM_SUCESSO);
+        Pedido pedido = pedidoService.buscarPedidoPorId(pedidoId);
+
+        redirectAttributes.addFlashAttribute("mensagemSucesso", true); // Indicador para abrir modal
+        redirectAttributes.addFlashAttribute("pedido", pedido); // Dados do pedido para exibição
+        return "redirect:/pedido/resumo";
+    }
+
+
+
 
     private Produto buscarProdutoPorId(Long id) {
         return produtoRepository.findById(id)

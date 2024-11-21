@@ -35,7 +35,8 @@ public class LoginController {
 
         if (cliente != null) {
             // Guarda o cliente na sessão
-            session.setAttribute("cliente", cliente);  // Aqui estamos guardando o objeto cliente na sessão
+            session.setAttribute("clienteId", cliente.getId());
+            // Aqui estamos guardando o objeto cliente na sessão
 
             // Verifica o carrinho associado ao cliente
             Carrinho carrinho = carrinhoService.getCarrinhoByClienteId(cliente);

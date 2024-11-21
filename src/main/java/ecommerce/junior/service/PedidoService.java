@@ -2,6 +2,7 @@ package ecommerce.junior.service;
 
 import ecommerce.junior.model.FormaPagamento;
 import ecommerce.junior.model.Pedido;
+import ecommerce.junior.model.StatusPedido;
 import ecommerce.junior.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class PedidoService {
         pedidoRepository.save(pedido);
     }
 
+
+
+
     // Método para atualizar a forma de pagamento do pedido
     public void associarFormaPagamento(Pedido pedido, FormaPagamento formaPagamento) {
         if (pedido != null && formaPagamento != null) {
@@ -29,6 +33,16 @@ public class PedidoService {
             salvarPedido(pedido); // Salvando o pedido com a forma de pagamento associada
         } else {
             throw new IllegalArgumentException("Pedido ou Forma de Pagamento não podem ser nulos");
+        }
+    }
+
+    public void atualizarStatusPedido(Long pedidoId, StatusPedido novoStatus) {
+        Pedido pedido = buscarPedidoPorId(pedidoId);
+        if (pedido != null) {
+            pedido.setStatus(novoStatus);
+            salvarPedido(pedido);
+        } else {
+            throw new IllegalArgumentException("Pedido não encontrado: ID " + pedidoId);
         }
     }
 

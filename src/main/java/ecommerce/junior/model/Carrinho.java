@@ -47,10 +47,9 @@ public class Carrinho implements Serializable {
     }
 
     public void removerProduto(Long produtoId) {
-        produtos.remove(produtoId);
-        precos.remove(produtoId);
-        atualizarTotal();
+        this.produtos.remove(produtoId); // Remove o produto do HashMap
     }
+
 
     public void atualizarQuantidade(Long produtoId, int quantidade) {
         if (produtos.containsKey(produtoId)) {

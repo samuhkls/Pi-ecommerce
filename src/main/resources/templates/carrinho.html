@@ -67,6 +67,12 @@
       </td>
       <td th:text="${#numbers.formatCurrency(produtos[entry.key].preco)}">Preço</td> <!-- Preço pelo ID -->
       <td th:text="${#numbers.formatCurrency(entry.value * produtos[entry.key].preco)}">Subtotal</td> <!-- Subtotal -->
+      <td>
+        <!-- Formulário de Remover Produto -->
+        <form th:action="@{/carrinho/remover/{id}(id=${entry.key})}" method="post">
+          <button type="submit" class="btn">Remover</button>
+        </form>
+      </td>
     </tr>
 
     <tr th:if="${#lists.isEmpty(carrinho)}">
