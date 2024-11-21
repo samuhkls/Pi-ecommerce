@@ -6,6 +6,7 @@ import ecommerce.junior.service.ImagemService;
 import ecommerce.junior.service.ProdutoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -22,6 +23,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -127,13 +129,22 @@ public class ProdutoController {
         }
     }
 
+    @GetMapping("/editar/{id}")
+    public String exibirFormularioEdicao(@PathVariable Long id, Model model) {
+        Produto produto = produtoService.getProdutoById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+
+        model.addAttribute("produto", produto);
+        return "editar-produto";
+    }
+
+
     @PostMapping("/editar/{id}")
     public String atualizarProduto(@PathVariable Long id,
                                    @RequestParam("nome") String nome,
                                    @RequestParam("descricaoDetalhada") String descricaoDetalhada,
                                    @RequestParam("preco") Double preco,
                                    @RequestParam("quantidadeEmEstoque") Integer quantidadeEmEstoque,
-                                   @RequestParam("ativo") Boolean ativo,
                                    @RequestParam(value = "imagens", required = false) MultipartFile[] imagens) throws IOException {
 
         Produto produto = produtoService.getProdutoById(id)
@@ -144,7 +155,6 @@ public class ProdutoController {
         produto.setDescricaoDetalhada(descricaoDetalhada);
         produto.setPreco(preco);
         produto.setQuantidadeEmEstoque(quantidadeEmEstoque);
-        produto.setAtivo(ativo);
 
         // Remove as imagens antigas do banco
         List<Imagem> imagensAntigas = produto.getImagens();
@@ -210,6 +220,15 @@ public class ProdutoController {
         model.addAttribute("totalPages", produtos.getTotalPages());
         model.addAttribute("totalItems", produtos.getTotalElements());
         return "home";
+    }
+
+    @PostMapping("/alterar-status/{id}")
+    public ResponseEntity<Void> alterarStatus(@PathVariable("id") Long id) {
+        boolean statusAlterado = produtoService.alterarStatus(id);
+        if (statusAlterado) {
+            return ResponseEntity.ok().build();  // Status alterado com sucesso
+        }
+        return ResponseEntity.notFound().build();  // Produto não encontrado
     }
 
 
