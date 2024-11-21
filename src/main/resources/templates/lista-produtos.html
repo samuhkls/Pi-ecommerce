@@ -289,9 +289,9 @@
     <td th:text="${produto.preco}"></td>
     <td th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></td>
     <td>
-      <a href="#" class="edit-btn" th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a> |
+      <a class="edit-btn" th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a>|
       <a href="#" th:onclick="'showProductDetails(' + ${produto.id} + ')'">Visualizar</a> |
-      <a href="#" th:onclick="'confirmStatusChange(' + ${produto.id} + ', \'' + ${produto.ativo} + '\')'">
+      <a href="javascript:void(0)" th:onclick="'confirmStatusChange(' + ${produto.id} + ', ' + ${produto.ativo} + ')'" class="status-btn">
         <span th:text="${produto.ativo ? 'Inativar' : 'Ativar'}"></span>
       </a>
     </td>
@@ -349,21 +349,47 @@
   }
 
   let currentProductId = null;
+  let currentStatus = null;
 
   function confirmStatusChange(productId, isActive) {
-      currentProductId = productId;
-      let actionText = isActive === 'true' ? 'inativar' : 'ativar';
-      document.getElementById('confirmMessage').textContent = `Tem certeza que deseja ${actionText} este produto?`;
-      document.getElementById('confirmOverlay').style.display = 'flex';
+    currentProductId = productId;
+    currentStatus = isActive;
+
+    let actionText = isActive ? 'inativar' : 'ativar';
+    document.getElementById('confirmMessage').textContent = `Tem certeza que deseja ${actionText} este produto?`;
+    document.getElementById('confirmOverlay').style.display = 'flex';
   }
 
   function confirmAction() {
-      window.location.href = `/admin/produtos/alterar-status/${currentProductId}`;
+    // Envia a requisição para alterar o status
+    alterProductStatus(currentProductId, currentStatus);
+    document.getElementById('confirmOverlay').style.display = 'none';
+  }
+
+  function alterProductStatus(productId, currentStatus) {
+    fetch(`/admin/produtos/alterar-status/${productId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+            .then(response => {
+              if (response.ok) {
+                // Atualiza a UI após a alteração do status
+                location.reload();  // Recarrega a página para refletir a mudança de estado
+              } else {
+                alert('Erro ao alterar o status do produto.');
+              }
+            })
+            .catch(error => {
+              console.error('Erro ao alterar status:', error);
+            });
   }
 
   function cancelAction() {
-      document.getElementById('confirmOverlay').style.display = 'none';
+    document.getElementById('confirmOverlay').style.display = 'none';
   }
+
 </script>
 
 </body>

@@ -49,6 +49,20 @@ public class ProdutoService {
         produtoRepository.save(produto);
     }*/
 
+    public Produto findById(Long id) {
+        return produtoRepository.findById(id).orElse(null);
+    }
+
+    public boolean alterarStatus(Long id) {
+        Produto produto = produtoRepository.findById(id).orElse(null);
+        if (produto != null) {
+            produto.setAtivo(!produto.getAtivo());  // Inverte o status do produto
+            produtoRepository.save(produto);
+            return true;
+        }
+        return false;
+    }
+
     public Produto getProdutoByIdNoOptional(Long id) {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));

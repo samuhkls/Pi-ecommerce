@@ -84,6 +84,10 @@
         .detalhes-btn:hover, .carrinho-btn:hover {
             opacity: 0.9;
         }
+
+        .produto-card.inativo {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -103,7 +107,7 @@
 <section class="produtos">
     <h1>Nossos Produtos</h1>
     <div class="produto-grid">
-        <div th:each="produto : ${produtos}" class="produto-card">
+        <div th:each="produto : ${produtos}"  th:classappend="${produto.ativo == false ? 'inativo' : ''}"  class="produto-card">
 
             <div class="produto-imagem">
                 <img th:src="@{/{url}(url=${produto.imagens != null && !#lists.isEmpty(produto.imagens) ? produto.imagens[0].url : 'img/placeholder.png'})}"

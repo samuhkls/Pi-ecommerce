@@ -54,11 +54,11 @@ public class ClienteService {
         }
 
         // Codifica a senha
-        String senhaCodificada = passwordEncoder.encode(clienteForm.getSenha());
+       // String senhaCodificada = passwordEncoder.encode(clienteForm.getSenha());
 
         // Cria o cliente
         Cliente cliente = fromDTO(clienteForm);
-        cliente.setSenha(senhaCodificada);
+        //cliente.setSenha(senhaCodificada);
 
         // Salva o cliente no repositório
         clienteRepository.save(cliente);
