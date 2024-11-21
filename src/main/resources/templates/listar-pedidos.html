@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pedidos</title>
+</head>
+<body>
+<h1>Pedidos</h1>
+
+<div th:if="${mensagem}" style="color: green;">
+    <p th:text="${mensagem}"></p>
+</div>
+<div th:if="${erro}" style="color: red;">
+    <p th:text="${erro}"></p>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Data</th>
+        <th>Número do Pedido</th>
+        <th>Valor Total</th>
+        <th>Status</th>
+        <th>Ação</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pedido : ${pedidos}">
+        <td th:text="${#dates.format(pedido.dataPedido, 'dd/MM/yyyy HH:mm')}"></td>
+        <td th:text="${pedido.numeroPedido}"></td>
+        <td th:text="${pedido.valorTotal}"></td>
+        <td th:text="${pedido.status}"></td>
+        <td>
+            <form th:action="@{/estoquista/alterar-status/{id}(id=${pedido.id})}" method="post">
+                <select name="status">
+                    <option th:each="status : ${T(ecommerce.junior.model.StatusPedido).values()}"
+                            th:value="${status}" th:text="${status}"
+                            th:selected="${status == pedido.status}">
+                    </option>
+                </select>
+                <button type="submit">Atualizar</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

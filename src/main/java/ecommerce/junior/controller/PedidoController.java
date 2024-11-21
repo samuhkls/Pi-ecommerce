@@ -51,6 +51,7 @@ public class PedidoController {
         return "resumo-pedido";
     }
 
+    // Gerar pedido
     @PostMapping("/gerar-pedido")
     public String gerarPedido(
             @RequestParam("formaPagamento") String formaPagamento,
@@ -74,28 +75,17 @@ public class PedidoController {
         pedido.setCliente(cliente);
         pedido.setValorTotal(carrinho.getTotal());
         pedido.setFormaPagamento(formaPagamento);
-        pedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO); // Define o status inicial
+        pedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO);
 
-        List<ProdutoPedido> produtosPedido = carrinho.getProdutos().entrySet().stream().map(entry -> {
-            Produto produto = buscarProdutoPorId(entry.getKey());
-            ProdutoPedido produtoPedido = new ProdutoPedido();
-            produtoPedido.setProduto(produto);
-            produtoPedido.setQuantidade(entry.getValue());
-            return produtoPedido;
-        }).toList();
-        pedido.setProdutos(produtosPedido);
-
-        if (cliente.getEnderecosEntrega() != null && !cliente.getEnderecosEntrega().isEmpty()) {
-            pedido.setEnderecoEntrega(cliente.getEnderecosEntrega().get(0));
-        } else {
+        // Verificar endereço de entrega
+        if (cliente.getEnderecosEntrega() == null || cliente.getEnderecosEntrega().isEmpty()) {
             redirectAttributes.addFlashAttribute("mensagem", "Nenhum endereço de entrega encontrado.");
             return "redirect:/carrinho";
         }
+        pedido.setEnderecoEntrega(cliente.getEnderecosEntrega().get(0));
 
-        double valorFrete = 20;
-        pedido.setValorFrete(valorFrete);
+        pedido.setValorFrete(20.0);
         pedido.setNumeroPedido(System.currentTimeMillis());
-
         pedidoService.salvarPedido(pedido);
 
         session.setAttribute("pedidoId", pedido.getId());
@@ -119,7 +109,29 @@ public class PedidoController {
         return "redirect:/pedido/resumo";
     }
 
+    @GetMapping("/listar-pedidos")
+    public String listarPedidos(Model model, HttpSession session) {
+        User usuarioLogado = (User) session.getAttribute("usuario");
+        if (usuarioLogado == null || usuarioLogado.getTipo() != Grupo.ESTOQUISTA) {
+            return "redirect:/login?erro=acesso_negado";
+        }
+        List<Pedido> pedidos = pedidoService.listarPedidosOrdenadosPorData();
+        model.addAttribute("pedidos", pedidos);
+        return "listar-pedidos";
+    }
 
+    // Listar pedidos do cliente
+    @GetMapping("/meus-pedidos")
+    public String listarPedidosDoCliente(HttpSession session, Model model) {
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente == null) {
+            return "redirect:/login";
+        }
+
+        List<Pedido> pedidos = pedidoService.listarPedidosPorCliente(cliente.getId());
+        model.addAttribute("pedidos", pedidos);
+        return "meus-pedidos";
+    }
 
 
     private Produto buscarProdutoPorId(Long id) {

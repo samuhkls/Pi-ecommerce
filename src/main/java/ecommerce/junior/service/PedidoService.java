@@ -7,6 +7,8 @@ import ecommerce.junior.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PedidoService {
 
@@ -44,6 +46,20 @@ public class PedidoService {
         } else {
             throw new IllegalArgumentException("Pedido não encontrado: ID " + pedidoId);
         }
+    }
+
+    // Listar todos os pedidos
+    public List<Pedido> listarPedidos() {
+        return pedidoRepository.findAll();
+    }
+
+    public List<Pedido> listarPedidosOrdenadosPorData() {
+        return pedidoRepository.findAllByOrderByDataPedidoDesc();
+    }
+
+    // Listar pedidos por cliente
+    public List<Pedido> listarPedidosPorCliente(Long clienteId) {
+        return pedidoRepository.findByClienteId(clienteId);
     }
 
 }

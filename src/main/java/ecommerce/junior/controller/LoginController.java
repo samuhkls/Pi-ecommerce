@@ -53,10 +53,11 @@ public class LoginController {
             return "redirect:/cliente-principal";  // Redireciona para a página principal do cliente
         }
 
-        // Se não for cliente, verificar se é um usuário
+        // Se não for cliente, verificar se é uxm usuário
         User user = userService.authenticate(email, senha);
         if (user != null) {
             session.setAttribute("userId", user.getId());
+            session.setAttribute("usuario", user);
             return "redirect:/principal";  // Redireciona para a página principal do usuário
         }
 

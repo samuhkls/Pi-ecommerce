@@ -1,6 +1,8 @@
 package ecommerce.junior.model;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -12,6 +14,9 @@ public class Pedido {
 
     @Column(unique = true, nullable = false)
     private Long numeroPedido; // Número sequencial do pedido
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dataPedido;
 
     @OneToOne
     private Cliente cliente;
@@ -107,5 +112,18 @@ public class Pedido {
 
     public void setStatus(StatusPedido status) {
         this.status = status;
+    }
+
+    public LocalDateTime getDataPedido() {
+        return dataPedido;
+    }
+
+    public void setDataPedido(LocalDateTime dataPedido) {
+        this.dataPedido = dataPedido;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.dataPedido = LocalDateTime.now();
     }
 }
