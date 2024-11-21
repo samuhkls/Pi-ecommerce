@@ -1,5 +1,7 @@
 package ecommerce.junior.service;
 
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 import ecommerce.junior.dto.ClienteForm;
 import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Endereco;
@@ -27,6 +29,54 @@ public class ClienteService {
         return null;
     }
 
+    public void createCliente(ClienteForm clienteForm) throws IllegalArgumentException {
+        if (!isNomeValido(clienteForm.getNome())) {
+            throw new IllegalArgumentException("Este nome não é válido!");
+        }
+
+        if (!clienteForm.isSenhaConfirmada()) {
+            throw new IllegalArgumentException("As senhas não coincidem.");
+        }
+
+        if (clienteRepository.findByEmail(clienteForm.getEmail()) != null) {
+            throw new IllegalArgumentException("E-mail já cadastrado.");
+        }
+
+        if (clienteRepository.findByCpf(clienteForm.getCpf()).isPresent()) {
+            throw new IllegalArgumentException("CPF já cadastrado.");
+        }
+
+        CPFValidator cpfValidator = new CPFValidator();
+        try {
+            cpfValidator.assertValid(clienteForm.getCpf());
+        } catch (InvalidStateException e) {
+            throw new IllegalArgumentException("CPF inválido.");
+        }
+
+        // Codifica a senha
+        String senhaCodificada = passwordEncoder.encode(clienteForm.getSenha());
+
+        // Cria o cliente
+        Cliente cliente = fromDTO(clienteForm);
+        cliente.setSenha(senhaCodificada);
+
+        // Salva o cliente no repositório
+        clienteRepository.save(cliente);
+    }
+
+
+    private boolean isNomeValido(String nome) {
+        String[] palavras = nome.trim().split("\\s+");
+        if (palavras.length < 2) {
+            return false; // pelo menos duas palavras
+        }
+        for (String palavra : palavras) {
+            if (palavra.length() < 3) {
+                return false; // pelo menos 3 letras
+            }
+        }
+        return true; // nome válido
+    }
 
     public Cliente getClienteById(Long clienteId) {
         return clienteRepository.findById(clienteId).orElse(null);

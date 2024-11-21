@@ -85,27 +85,23 @@ public class UserController {
     @PostMapping("/cadastrar")
     public String cadastrarCliente(@ModelAttribute("clienteForm") ClienteForm clienteForm, Model model) {
         try {
-            // Usando o ClienteService para converter o ClienteForm em uma entidade Cliente
-            Cliente cliente = clienteService.fromDTO(clienteForm);
+            // Chama o método `createCliente` para realizar as validações e salvar o cliente
+            clienteService.createCliente(clienteForm);
 
-            // Salvar o cliente no banco
-            clienteService.salvar(cliente);
-
-            // Criar o carrinho e associar ao cliente
-            Carrinho carrinho = new Carrinho();
-            carrinho.setCliente(cliente);
-            carrinhoService.salvarCarrinho(carrinho); // Salvar o carrinho no banco
-
-            // Salvar o carrinho com os itens associados
+            // Redireciona para o login após o cadastro bem-sucedido
             model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
-            session.setAttribute("cliente", cliente);
-
             return "redirect:/login";
+        } catch (IllegalArgumentException e) {
+            // Captura erros de validação e exibe a mensagem na página de cadastro
+            model.addAttribute("mensagemErro", e.getMessage());
+            return "cadastrar";
         } catch (Exception e) {
+            // Lida com outros erros inesperados
             model.addAttribute("mensagemErro", "Erro ao cadastrar cliente: " + e.getMessage());
             return "cadastrar";
         }
     }
+
     @GetMapping
     public String listarUsuarios(@RequestParam(value = "nome", required = false) String nome, Model model) {
         List<User> users = userService.getUsersByName(nome);
@@ -113,7 +109,26 @@ public class UserController {
         return "listar";
     }
 
+    @GetMapping("/cadastrar-usuario")
+    public String exibirFormularioCadastroUsuario(Model model) {
+        model.addAttribute("user", new User());
+        return "cadastrar-usuario";
+    }
 
+    @PostMapping("/cadastrar-usuario")
+    public String cadastrarUsuario(
+            @ModelAttribute("user") User user,
+            @RequestParam("senhaConfirmacao") String senhaConfirmacao,
+            Model model) {
+        try {
+            userService.createUser(user, senhaConfirmacao);
+            model.addAttribute("mensagem", "Usuário cadastrado com sucesso!");
+            return "redirect:/listar-usuario";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("erro", e.getMessage());
+            return "cadastrar-usuario";
+        }
+    }
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute User user, HttpSession session, Model model) {

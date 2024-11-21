@@ -1,15 +1,99 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Usuários</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f4f4f9;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .buttons a button {
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .buttons a button:hover {
+            background-color: #27ae60;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <h2>Lista de Usuários</h2>
+
     <!-- Formulário de filtragem -->
-    <form action="#" th:action="@{/listar-usuario}" method="get">
+    <form th:action="@{/usuarios}" method="get">
         <input type="text" name="nome" placeholder="Filtrar por nome" th:value="${param.nome}">
         <button type="submit">Filtrar</button>
     </form>
@@ -44,10 +128,14 @@
         </tbody>
     </table>
 
-    <!-- Botão para adicionar usuário -->
+    <!-- Botões de ações -->
     <div class="buttons">
-        <a href="/usuarios/cadastrar"><button type="button">Adicionar Usuário</button></a>
-        <a href="/logout"><button type="button">Deslogar</button></a>
+        <a th:href="@{/usuarios/cadastrar-usuario}">
+            <button type="button">Adicionar Usuário</button>
+        </a>
+        <a th:href="@{/logout}">
+            <button type="button">Deslogar</button>
+        </a>
     </div>
 </div>
 </body>

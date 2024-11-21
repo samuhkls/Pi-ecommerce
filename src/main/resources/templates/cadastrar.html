@@ -105,41 +105,41 @@
 
     <form action="/usuarios/cadastrar" method="post">
         <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required><br>
+        <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required><br>
 
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
+        <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required><br>
 
         <label for="cpf">CPF:</label>
-        <input type="text" id="cpf" name="cpf" required><br>
+        <input type="text" id="cpf" name="cpf" pattern="\d{11}" title="Digite um CPF válido com 11 dígitos" placeholder="Apenas números" required><br>
 
         <label for="senha">Senha:</label>
-        <input type="password" id="senha" name="senha" required><br>
+        <input type="password" id="senha" name="senha" placeholder="Digite uma senha forte" required><br>
 
         <label for="senhaConfirmacao">Confirme a senha:</label>
-        <input type="password" id="senhaConfirmacao" name="senhaConfirmacao" required><br>
+        <input type="password" id="senhaConfirmacao" name="senhaConfirmacao" placeholder="Confirme sua senha" required><br>
 
         <h3>Endereço de Entrega</h3>
         <label for="cep">CEP:</label>
-        <input type="text" id="cep" name="enderecoFaturamento.cep" required><br>
+        <input type="text" id="cep" name="enderecoFaturamento.cep" placeholder="Digite o CEP" required><br>
 
         <label for="logradouro">Logradouro:</label>
-        <input type="text" id="logradouro" name="enderecoFaturamento.logradouro" required><br>
+        <input type="text" id="logradouro" name="enderecoFaturamento.logradouro" placeholder="Rua, avenida, etc." required><br>
 
         <label for="numero">Número:</label>
-        <input type="text" id="numero" name="enderecoFaturamento.numero" required><br>
+        <input type="text" id="numero" name="enderecoFaturamento.numero" placeholder="Número da residência" required><br>
 
         <label for="complemento">Complemento:</label>
-        <input type="text" id="complemento" name="enderecoFaturamento.complemento"><br>
+        <input type="text" id="complemento" name="enderecoFaturamento.complemento" placeholder="Apartamento, bloco, etc."><br>
 
         <label for="bairro">Bairro:</label>
-        <input type="text" id="bairro" name="enderecoFaturamento.bairro" required><br>
+        <input type="text" id="bairro" name="enderecoFaturamento.bairro" placeholder="Digite o bairro" required><br>
 
         <label for="localidade">Cidade:</label>
-        <input type="text" id="localidade" name="enderecoFaturamento.localidade" required><br>
+        <input type="text" id="localidade" name="enderecoFaturamento.localidade" placeholder="Digite a cidade" required><br>
 
         <label for="uf">Estado:</label>
-        <input type="text" id="uf" name="enderecoFaturamento.uf" required><br>
+        <input type="text" id="uf" name="enderecoFaturamento.uf" placeholder="Digite o estado" required><br>
 
         <button type="submit">Cadastrar</button>
     </form>

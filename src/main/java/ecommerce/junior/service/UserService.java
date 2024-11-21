@@ -1,5 +1,6 @@
 package ecommerce.junior.service;
 
+import ecommerce.junior.dto.ClienteForm;
 import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Endereco;
 import ecommerce.junior.model.Grupo;
@@ -74,36 +75,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void createCliente(Cliente cliente, Endereco enderecoEntrega){
-        if(!isNomeValido(cliente.getNome())){
-            throw new IllegalArgumentException("Este nome nao é valido!");
-        }
-
-        if (userRepository.existsByEmail(cliente.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado.");
-        }
-
-        if (userRepository.existsByCpf(cliente.getCpf())) {
-            throw new IllegalArgumentException("CPF já cadastrado.");
-        }
-
-        CPFValidator cpfValidator = new CPFValidator();
-        try {
-            cpfValidator.assertValid(cliente.getCpf());
-        } catch (InvalidStateException e) {
-            throw new IllegalArgumentException("CPF inválido.");
-        }
-
-        List<Endereco> enderecosEntrega = new ArrayList<>();
-        enderecosEntrega.add(enderecoEntrega);
-        cliente.setEnderecosEntrega(enderecosEntrega);
-
-        clienteRepository.save(cliente);
-    }
-
-    // VALIDAÇOES AO CRIAR USUARIO ABAIXO:
-
-    // Método que verifica se TODOS os campos do endereco estão completos para fazer o cadastro
     private boolean isEnderecoFaturamentoCompleto(Endereco enderecoFaturamento) {
         return enderecoFaturamento != null &&
                 enderecoFaturamento.getCep() != null && !enderecoFaturamento.getCep().isEmpty() &&
