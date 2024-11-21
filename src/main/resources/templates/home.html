@@ -104,9 +104,12 @@
         <div th:each="produto : ${produtos}" class="produto-card">
             <p>ID do Produto: <span th:text="${produto.id}"></span></p>
 
-            <div>
-                <img th:if="${imagem != null}" th:src="@{/{url}(url=${imagem.url})}" alt="Imagem" />
-            </div>
+
+
+                    <div th:if="${produtoImagemMap[produto.id] != null}">
+                        <img th:src="@{/{url}(url=${produtoImagemMap[produto.id].url})}" alt="Imagem do Produto"/>
+                    </div>
+
 
 
             <h2 th:text="${produto.nome}">Nome do Produto</h2>

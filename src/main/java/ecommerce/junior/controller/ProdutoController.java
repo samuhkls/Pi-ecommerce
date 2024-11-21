@@ -20,9 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin/produtos")
@@ -164,32 +162,38 @@ public class ProdutoController {
 
     @GetMapping("/detalhes/{id}")
     public String detalhesProduto(@PathVariable Long id, Model model) {
-        List<Imagem> imagens = imagemService.getAllImagens(); // exemplo de como obter as imagens
-        model.addAttribute("imagens", imagens);
         Optional<Produto> produto = produtoService.getProdutoById(id);
         if (produto.isPresent()) {
+            // Busca as imagens relacionadas ao produto
+            List<Imagem> imagens = imagemService.getImagensByProdutoId(id); // Método que busca imagens pelo id do produto
             model.addAttribute("produto", produto.get());
-            return "detalhe-produto";
+            model.addAttribute("imagens", imagens);
+            return "detalhe-produto"; // Sua página de detalhes do produto
         } else {
-            return "redirect:/home";
+            return "redirect:/home"; // Caso o produto não seja encontrado
         }
     }
+
 
     @GetMapping("/home")
     public String exibirPaginaPrincipal(Model model) {
         Pageable pageable = PageRequest.of(0, 6, Sort.by("id").descending());
         Page<Produto> produtos = produtoService.getAllProdutos(pageable);
 
-        List<Imagem> imagens = imagemService.getAllImagens(); // exemplo de como obter as imagens
+        // Mapeamento para associar uma única imagem por produto
+        Map<Long, Imagem> produtoImagemMap = new HashMap<>();
+        for (Produto produto : produtos) {
+            // Aqui você chama o método que retorna uma imagem associada ao produto
+            Imagem imagem = imagemService.getImagemByProdutoId(produto.getId());
+            produtoImagemMap.put(produto.getId(), imagem);
+        }
 
-        // Verifique se a lista não está vazia antes de pegar a primeira imagem
-        Imagem imagem = (imagens != null && !imagens.isEmpty()) ? imagens.get(0) : null;
-
-        model.addAttribute("imagem", imagem); // Passa apenas a primeira imagem (ou null se não houver nenhuma)
-
+        model.addAttribute("produtoImagemMap", produtoImagemMap);
         model.addAttribute("produtos", produtos);
         return "home";
     }
+
+
 
     // Método de pagamento
     @GetMapping("/pedidos")
