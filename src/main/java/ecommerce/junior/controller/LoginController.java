@@ -45,6 +45,7 @@ public class LoginController {
                 carrinho = new Carrinho();
                 carrinho.setCliente(cliente);
                 carrinhoService.salvarCarrinho(carrinho);
+                // comentario magico
             }
 
             // Salva o carrinhoId na sessão
