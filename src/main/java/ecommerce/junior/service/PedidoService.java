@@ -25,9 +25,6 @@ public class PedidoService {
         pedidoRepository.save(pedido);
     }
 
-
-
-
     // Método para atualizar a forma de pagamento do pedido
     public void associarFormaPagamento(Pedido pedido, FormaPagamento formaPagamento) {
         if (pedido != null && formaPagamento != null) {

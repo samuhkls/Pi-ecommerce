@@ -67,6 +67,5 @@ public class LoginController {
         return "login";  // Página de login com erro
     }
 
-
 }
 

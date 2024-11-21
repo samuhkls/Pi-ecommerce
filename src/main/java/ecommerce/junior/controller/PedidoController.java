@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -132,8 +133,6 @@ public class PedidoController {
         model.addAttribute("pedidos", pedidos);
         return "meus-pedidos";
     }
-
-
     private Produto buscarProdutoPorId(Long id) {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: ID " + id));

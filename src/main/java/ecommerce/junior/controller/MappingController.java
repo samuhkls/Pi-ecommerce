@@ -34,32 +34,34 @@ public class MappingController {
     }
 
     @GetMapping("/principal")
-    public String principal(Model model) throws Exception {
-        String loggedUserType = (String) session.getAttribute("loggedUserType");
+    public String principal(Model model) {
+        try {
+            // Recuperando o ID do usuário da sessão
+            Long currentUserId = (Long) session.getAttribute("userId");
+            Long currentClienteId = (Long) session.getAttribute("clienteId");
 
-        if (loggedUserType == null) {
-            return "redirect:/login";
-        }
+            if (currentUserId == null && currentClienteId == null) {
+                throw new Exception("Usuário ou cliente não está logado.");
+            }
 
-        if ("USER".equals(loggedUserType)) {
-            Long userId = (Long) session.getAttribute("userId");
-            if (userId != null) {
-                Grupo userRole = userService.getUserRole(userId);
+            if (currentUserId != null) {
+                // Recuperando o grupo do usuário a partir do UserService
+                Grupo userRole = userService.getUserRole(currentUserId);
                 model.addAttribute("userRole", userRole.toString());
-                model.addAttribute("userId", userId);
+                model.addAttribute("userId", currentUserId);
+            } else if (currentClienteId != null) {
+                // Aqui você pode adicionar a lógica para recuperar dados do cliente, caso necessário
+                Cliente cliente = clienteService.getClienteById(currentClienteId);
+                model.addAttribute("cliente", cliente);  // Passando os dados do cliente
+                model.addAttribute("clienteId", currentClienteId);
             }
-        } else if ("CLIENTE".equals(loggedUserType)) {
-            Long clienteId = (Long) session.getAttribute("clienteId");
-            if (clienteId != null) {
-                Cliente cliente = clienteService.getClienteById(clienteId);
-                model.addAttribute("cliente", cliente);
-                model.addAttribute("clienteId", clienteId);
-            }
-        } else {
-            return "redirect:/login";
-        }
 
-        return "principal";
+            // Retornando a página principal
+            return "principal";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/login";  // Redireciona ao login se ocorrer algum erro
+        }
     }
 
     @GetMapping("/cliente-principal")
