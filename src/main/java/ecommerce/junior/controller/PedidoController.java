@@ -53,13 +53,6 @@ public class PedidoController {
         // Redireciona para a tela de confirmação de pedido
         return "redirect:/pedido/confirmacao";
     }
-
-    @Controller
-    public class PagamentoController {
-
-        @Autowired
-        private PedidoService pedidoService;
-
         @PostMapping("/processar-pagamento")
         public String processarPagamento(@RequestParam("formaPagamento") String formaPagamento,
                                          HttpSession session) {
@@ -78,6 +71,4 @@ public class PedidoController {
             return "redirect:/pedido/resumo-pedido";
         }
     }
-
-}
 
