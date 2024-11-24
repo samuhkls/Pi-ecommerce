@@ -98,7 +98,12 @@
     </div>
     <nav>
         <ul>
-            <li><a th:href="@{/login}">Faça login / Crie seu login</a></li>
+            <!-- Exibe "Login / Cadastro" se o usuário não estiver logado -->
+            <li th:if="${userRole == null}"><a th:href="@{/login}">Faça login / Crie seu login</a></li>
+
+            <!-- Exibe "Logout" se o usuário estiver logado -->
+            <li th:if="${userRole != null}"><a th:href="@{/logout}">Logout</a></li>
+
             <li><a th:href="@{/carrinho}">Carrinho (<span th:text="${carrinho != null ? #lists.size(carrinho) : 0}">0</span>)</a></li>
         </ul>
     </nav>

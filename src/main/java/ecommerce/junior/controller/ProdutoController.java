@@ -190,6 +190,16 @@ public class ProdutoController {
 
         return "redirect:/admin/produtos";
     }
+    @GetMapping("/produtos")
+    public String listarProdutosParaCliente(Model model,
+                                            @RequestParam(value = "page", defaultValue = "0") int page) {
+        int pageSize = 10;  // Número de produtos por página
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").descending());
+
+        Page<Produto> produtos = produtoService.getAllProdutos(pageable);
+        model.addAttribute("produtos", produtos);
+        return "lista-produtos-cliente";  // Nome da página onde a lista de produtos será exibida
+    }
 
     @GetMapping("/detalhes/{id}")
     public String detalhesProduto(@PathVariable Long id, Model model) {

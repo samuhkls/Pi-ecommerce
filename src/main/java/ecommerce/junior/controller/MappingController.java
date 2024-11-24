@@ -32,37 +32,41 @@ public class MappingController {
     public String login() {
         return "login";
     }
+    @Controller
+    public class HomeController {
 
+        @GetMapping("/")
+        public String home() {
+            // Redireciona para a página principal do e-commerce
+            return "redirect:/admin/produtos/home";  // Ou o caminho correto para a página de produtos
+        }
+    }
     @GetMapping("/principal")
     public String principal(Model model) {
         try {
-            // Recuperando o ID do usuário da sessão
+            // Recuperando o ID do usuário da sessão (pode ser nulo)
             Long currentUserId = (Long) session.getAttribute("userId");
             Long currentClienteId = (Long) session.getAttribute("clienteId");
 
-            if (currentUserId == null && currentClienteId == null) {
-                throw new Exception("Usuário ou cliente não está logado.");
-            }
-
+            // Se o usuário estiver logado, passa os dados do usuário ou cliente para o modelo
             if (currentUserId != null) {
-                // Recuperando o grupo do usuário a partir do UserService
                 Grupo userRole = userService.getUserRole(currentUserId);
                 model.addAttribute("userRole", userRole.toString());
                 model.addAttribute("userId", currentUserId);
             } else if (currentClienteId != null) {
-                // Aqui você pode adicionar a lógica para recuperar dados do cliente, caso necessário
                 Cliente cliente = clienteService.getClienteById(currentClienteId);
-                model.addAttribute("cliente", cliente);  // Passando os dados do cliente
+                model.addAttribute("cliente", cliente);
                 model.addAttribute("clienteId", currentClienteId);
             }
 
-            // Retornando a página principal
+            // Exibe a página principal com ou sem dados do usuário
             return "principal";
         } catch (Exception e) {
             e.printStackTrace();
-            return "redirect:/login";  // Redireciona ao login se ocorrer algum erro
+            return "redirect:/login"; // Redireciona ao login em caso de erro
         }
     }
+
 
     @GetMapping("/cliente-principal")
     public String clientePrincipal(Model model) {
@@ -156,7 +160,6 @@ public class MappingController {
             return "redirect:/listar-usuario";
         }
     }
-
 
     // Mapeamento para a tela de cadastro de usuário
     @GetMapping("/cadastrar")
