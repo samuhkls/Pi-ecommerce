@@ -41,25 +41,27 @@ public class CarrinhoService {
             }
         }
 
-        // Recupera o cliente logado
-        Cliente cliente = (Cliente) session.getAttribute("cliente");
-        if (cliente == null) {
-            throw new RuntimeException("Cliente não autenticado ou não encontrado na sessão.");
-        }
-
-        // Verifica se o cliente já tem um carrinho
-        carrinho = carrinhoRepository.findByCliente(cliente);
-        if (carrinho == null) {
-            carrinho = new Carrinho();
-            carrinho.setCliente(cliente);
-            carrinhoRepository.save(carrinho);
-        }
+        // Criar um carrinho anônimo se nenhum existir
+        carrinho = new Carrinho();
+        carrinho = carrinhoRepository.save(carrinho);
+        session.setAttribute("carrinhoId", carrinho.getId());
 
         // Salva o ID do carrinho na sessão
         session.setAttribute("carrinhoId", carrinho.getId());
 
         return carrinho;
     }
+
+    public void associarCarrinhoAoCliente(Carrinho carrinho, Cliente cliente) {
+        if (carrinho != null && carrinho.getCliente() == null) {
+            // Associa o cliente ao carrinho
+            carrinho.setCliente(cliente);
+
+            // Salva o carrinho atualizado no repositório
+            carrinhoRepository.save(carrinho);
+        }
+    }
+
 
     public void adicionarProduto(Cliente cliente, Produto produto) {
         Carrinho carrinho = buscarCarrinhoPorCliente(cliente);

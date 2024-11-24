@@ -101,11 +101,29 @@
   </div>
 
   <a href="/admin/produtos/home" class="btn">Continuar Comprando</a>
-  <a href="/carrinho/pagamento" class="btn">Ir para Pagamento</a>
+  <a href="#" class="btn" th:if="${#request.userPrincipal == null}"
+     onclick="salvarCarrinhoELogin()">Login para Continuar</a>
+  <a href="/carrinho/pagamento" class="btn" th:if="${#request.userPrincipal != null}">Ir para Pagamento</a>
+
 
 </div>
 
 <script>
+  function salvarCarrinhoELogin() {
+    fetch('/carrinho/salvar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            carrinho: sessionStorage.getItem('carrinho') || '[]'
+        })
+    }).then(() => {
+        window.location.href = '/login';
+    }).catch(error => console.error('Erro ao salvar carrinho:', error));
+}
+
+
   function alterarQuantidade(valor, inputId) {
       const quantidadeInput = document.getElementById(inputId);
       let quantidade = parseInt(quantidadeInput.value);

@@ -43,6 +43,7 @@ public class CarrinhoController {
         return carrinhoService.obterOuCriarCarrinho(session);
     }
 
+
     @PostMapping("/carrinho/adicionar/{id}")
     public String adicionarProdutoAoCarrinho(@PathVariable Long id,
                                              HttpSession session,

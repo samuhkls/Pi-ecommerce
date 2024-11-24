@@ -83,24 +83,33 @@ public class UserController {
     }
 
     @PostMapping("/cadastrar")
-    public String cadastrarCliente(@ModelAttribute("clienteForm") ClienteForm clienteForm, Model model) {
+    public String cadastrarCliente(@ModelAttribute("clienteForm") ClienteForm clienteForm,
+                                   Model model, HttpSession session) {
         try {
-            // Chama o método `createCliente` para realizar as validações e salvar o cliente
-            clienteService.createCliente(clienteForm);
+            // Criação do cliente
+            Cliente cliente = clienteService.createCliente(clienteForm);
+
+            // Verifica se há um carrinho anônimo na sessão
+            Carrinho carrinhoAnonimo = carrinhoService.obterOuCriarCarrinho(session);
+            if (carrinhoAnonimo != null) {
+                carrinhoService.associarCarrinhoAoCliente(carrinhoAnonimo, cliente);
+                session.removeAttribute("carrinho"); // Limpa o carrinho da sessão
+            }
 
             // Redireciona para o login após o cadastro bem-sucedido
             model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
-            return "redirect:/login";
+            return "redirect:/carrinho/pagamento";
         } catch (IllegalArgumentException e) {
-            // Captura erros de validação e exibe a mensagem na página de cadastro
+            // Captura erros de validação
             model.addAttribute("mensagemErro", e.getMessage());
             return "cadastrar";
         } catch (Exception e) {
-            // Lida com outros erros inesperados
+            // Lida com erros inesperados
             model.addAttribute("mensagemErro", "Erro ao cadastrar cliente: " + e.getMessage());
             return "cadastrar";
         }
     }
+
 
     @GetMapping
     public String listarUsuarios(@RequestParam(value = "nome", required = false) String nome, Model model) {

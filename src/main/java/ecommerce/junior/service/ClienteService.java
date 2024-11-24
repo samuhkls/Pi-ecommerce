@@ -29,7 +29,7 @@ public class ClienteService {
         return null;
     }
 
-    public void createCliente(ClienteForm clienteForm) throws IllegalArgumentException {
+    public Cliente createCliente(ClienteForm clienteForm) throws IllegalArgumentException {
         if (!isNomeValido(clienteForm.getNome())) {
             throw new IllegalArgumentException("Este nome não é válido!");
         }
@@ -61,7 +61,7 @@ public class ClienteService {
         //cliente.setSenha(senhaCodificada);
 
         // Salva o cliente no repositório
-        clienteRepository.save(cliente);
+        return clienteRepository.save(cliente);
     }
 
 
