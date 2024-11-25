@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtos</title>
+</head>
+<body>
+<h1>Bem-vindo ao Pedreira <Store></Store></h1>
+<h1>Lista de Produtos</h1>
+
+<div>
+  <ul>
+    <li th:each="produto : ${produtos.content}">
+      <h3 th:text="${produto.nome}"></h3>
+      <p th:text="${produto.preco}"></p>
+      <a th:href="@{/produtos/detalhes/{id}(id=${produto.id})}">Ver Detalhes</a>
+    </li>
+  </ul>
+
+  <!-- Se o usuário não estiver logado -->
+  <div th:if="${userId == null and clienteId == null}">
+    <p>Para comprar, <a href="/login">faça login</a> ou <a href="/cadastrar">cadastre-se</a>.</p>
+  </div>
+
+  <!-- Paginação -->
+  <div>
+    <ul class="pagination">
+      <li th:each="i : ${#numbers.sequence(0, produtos.totalPages - 1)}">
+        <a th:href="@{/produtos?page={page}(page=${i})}" th:text="${i + 1}"></a>
+      </li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
