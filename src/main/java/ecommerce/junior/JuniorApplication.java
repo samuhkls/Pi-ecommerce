@@ -38,8 +38,8 @@ public class JuniorApplication implements CommandLineRunner {
 		User admin = new User();
 		admin.setNome("Murilo Liro");
 		admin.setCpf("12345678909");
-		admin.setEmail("liro@penris.com");
-		admin.setSenha("password");
+		admin.setEmail("murilo@admin");
+		admin.setSenha("123");
 		admin.setTipo(Grupo.ADMINISTRADOR);
 
 		Endereco enderecoAdmin = new Endereco();
@@ -51,7 +51,7 @@ public class JuniorApplication implements CommandLineRunner {
 		enderecoAdmin.setUf("SP");
 		enderecoAdmin.setComplemento("Apto 101");
 
-		userService.createUser(admin, "password");
+		userService.createUser(admin, "123");
 
 		// Usuário Estoquista
 		User estoquista = new User();

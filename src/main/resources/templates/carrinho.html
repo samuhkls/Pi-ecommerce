@@ -101,9 +101,8 @@
   </div>
 
   <a href="/admin/produtos/home" class="btn">Continuar Comprando</a>
-  <a href="#" class="btn" th:if="${#request.userPrincipal == null}"
-     onclick="salvarCarrinhoELogin()">Login para Continuar</a>
-  <a href="/carrinho/pagamento" class="btn" th:if="${#request.userPrincipal != null}">Ir para Pagamento</a>
+  <a href="#" class="btn" onclick="salvarCarrinhoELogin()">Login para Continuar</a>
+  <a href="/carrinho/pagamento" class="btn">Ir para Pagamento</a>
 
 
 </div>
