@@ -49,10 +49,10 @@ public class PedidoController {
         }
 
         model.addAttribute("pedido", pedido);
+        model.addAttribute("produtos", pedido.getProdutos()); // Adiciona os produtos do pedido à view
         return "resumo-pedido";
     }
 
-    // Gerar pedido
     @PostMapping("/gerar-pedido")
     public String gerarPedido(
             @RequestParam("formaPagamento") String formaPagamento,
@@ -87,6 +87,22 @@ public class PedidoController {
 
         pedido.setValorFrete(20.0);
         pedido.setNumeroPedido(System.currentTimeMillis());
+
+        List<ProdutoPedido> produtosPedido = carrinho.getProdutos().entrySet().stream().map(entry -> {
+            Long produtoId = entry.getKey(); // ID do produto
+            Integer quantidade = entry.getValue(); // Quantidade do produto
+
+            // Buscar o produto pelo ID
+            Produto produto = buscarProdutoPorId(produtoId); // Certifique-se de ter este método no código
+
+            ProdutoPedido produtoPedido = new ProdutoPedido();
+            produtoPedido.setProduto(produto); // Define o produto associado
+            produtoPedido.setQuantidade(quantidade); // Define a quantidade
+            produtoPedido.setSubtotal(produto.getPreco() * quantidade); // Calcula o subtotal
+            return produtoPedido;
+        }).toList();
+
+        pedido.setProdutos(produtosPedido);
         pedidoService.salvarPedido(pedido);
 
         session.setAttribute("pedidoId", pedido.getId());
@@ -95,6 +111,7 @@ public class PedidoController {
         return "redirect:/pedido/resumo";
     }
 
+
     @PostMapping("/pedido/confirmar-compra")
     public String confirmarCompra(HttpSession session, RedirectAttributes redirectAttributes) {
         Long pedidoId = (Long) session.getAttribute("pedidoId");
@@ -102,7 +119,7 @@ public class PedidoController {
             redirectAttributes.addFlashAttribute("mensagem", "Nenhum pedido encontrado.");
             return "redirect:/carrinho";
         }
-        pedidoService.atualizarStatusPedido(pedidoId, StatusPedido.PAGAMENTO_COM_SUCESSO);
+        pedidoService.atualizarStatusPedido(pedidoId, StatusPedido.AGUARDANDO_PAGAMENTO);
         Pedido pedido = pedidoService.buscarPedidoPorId(pedidoId);
 
         redirectAttributes.addFlashAttribute("mensagemSucesso", true); // Indicador para abrir modal

@@ -49,6 +49,10 @@ public class ProdutoPedido {
         return subtotal;
     }
 
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
+    }
+
     private void atualizarSubtotal() {
         if (produto != null && quantidade != null) {
             this.subtotal = produto.getPreco() * quantidade;

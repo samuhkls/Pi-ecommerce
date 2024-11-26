@@ -92,11 +92,10 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="produtoPedido : ${pedido.produtos}">
-        <td th:text="${produtoPedido.produto.nome ?: 'Produto indisponível'}"></td>
-        <td th:text="${produtoPedido.quantidade ?: 0}"></td>
-        <td th:text="${produtoPedido.produto.preco}"></td>
-        <td th:text="${produtoPedido.subtotal}"></td>
+    <tr th:each="produto : ${produtos}">
+        <td th:text="${produto.produto.nome}"></td>
+        <td th:text="${produto.quantidade}"></td>
+        <td th:text="${produto.subtotal}"></td>
     </tr>
     </tbody>
 </table>
