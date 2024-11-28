@@ -31,7 +31,7 @@ public class Endereco {
     @NotBlank(message = "Estado é obrigatório.")
     private String uf;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editar Endereço</title>
+</head>
+<body>
+
+<h2>Editar Endereço</h2>
+
+<form action="#" th:action="@{/enderecos/editar/{id}(id=${endereco.id})}" method="post">
+    <label for="cep">CEP:</label>
+    <input type="text" id="cep" name="cep" th:value="${endereco.cep}" required><br>
+
+    <label for="logradouro">Logradouro:</label>
+    <input type="text" id="logradouro" name="logradouro" th:value="${endereco.logradouro}" required><br>
+
+    <label for="numero">Número:</label>
+    <input type="text" id="numero" name="numero" th:value="${endereco.numero}" required><br>
+
+    <label for="complemento">Complemento:</label>
+    <input type="text" id="complemento" name="complemento" th:value="${endereco.complemento}"><br>
+
+    <label for="bairro">Bairro:</label>
+    <input type="text" id="bairro" name="bairro" th:value="${endereco.bairro}" required><br>
+
+    <label for="localidade">Cidade:</label>
+    <input type="text" id="localidade" name="localidade" th:value="${endereco.localidade}" required><br>
+
+    <label for="uf">Estado:</label>
+    <input type="text" id="uf" name="uf" th:value="${endereco.uf}" required><br>
+
+    <button type="submit">Salvar</button>
+</form>
+
+</body>
+</html>

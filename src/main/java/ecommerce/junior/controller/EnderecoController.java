@@ -9,81 +9,133 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.hibernate.Hibernate;
 
 import jakarta.servlet.http.HttpSession;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class EnderecoController {
 
     @Autowired
-    private EnderecoService enderecoService;
+    private EnderecoRepository enderecoRepository;
 
     @Autowired
     private ClienteService clienteService;
 
     @Autowired
-    private EnderecoRepository enderecoRepository;
-
-    @Autowired
     private HttpSession session;
+
+    @GetMapping("/enderecos/editar/{id}")
+    public String exibirEditarForm(@PathVariable Long id, Model model) {
+        // Recupera o endereço pelo id
+        Endereco endereco = enderecoRepository.findById(id).orElse(null);
+
+        // Verifica se o endereço existe
+        if (endereco == null) {
+            return "redirect:/admin/produtos/home";  // Redireciona para a página inicial, caso não encontre o endereço
+        }
+
+        // Passa o objeto Endereco para a view, para que o Thymeleaf possa preencher o formulário
+        model.addAttribute("endereco", endereco);
+
+        return "editarEndereco";  // Retorna o nome da página do formulário de edição
+    }
+
+    @PostMapping("/enderecos/editar/{id}")
+    public String editarEndereco(@PathVariable Long id, @ModelAttribute Endereco endereco) {
+        // Recupera o endereço pelo id
+        Endereco enderecoExistente = enderecoRepository.findById(id).orElse(null);
+
+        // Verifica se o endereço existe
+        if (enderecoExistente == null) {
+            return "redirect:/admin/produtos/home";  // Redireciona para a página inicial, caso não encontre o endereço
+        }
+
+        // Atualiza os dados do endereço
+        enderecoExistente.setCep(endereco.getCep());
+        enderecoExistente.setLogradouro(endereco.getLogradouro());
+        enderecoExistente.setNumero(endereco.getNumero());
+        enderecoExistente.setComplemento(endereco.getComplemento());
+        enderecoExistente.setBairro(endereco.getBairro());
+        enderecoExistente.setLocalidade(endereco.getLocalidade());
+        enderecoExistente.setUf(endereco.getUf());
+
+        // Salva o endereço atualizado no banco de dados
+        enderecoRepository.save(enderecoExistente);
+
+        // Recupera o cliente logado da sessão usando o clienteId armazenado
+        Long clienteId = (Long) session.getAttribute("clienteId");  // Recupera o clienteId da sessão
+
+        // Verifica se o clienteId está presente na sessão
+        if (clienteId != null) {
+            // Recupera o cliente pelo ID
+            Cliente clienteLogado = clienteService.getClienteById(clienteId);
+
+            // Verifica se o cliente foi encontrado
+            if (clienteLogado != null) {
+                // Redireciona para o perfil do cliente
+                return "redirect:/admin/produtos/perfil/" + clienteLogado.getId();
+            }
+        }
+
+        // Caso o cliente não esteja logado ou o clienteId não esteja presente, redireciona para a página de login
+        return "redirect:/login";
+    }
+
+
+
 
     // Método para exibir o formulário de cadastro de endereço
     @GetMapping("/enderecos/cadastrar")
-    public String exibirFormEndereco(Model model) {
-        // Cria um novo objeto Endereco para o formulário
-        model.addAttribute("endereco", new Endereco());
-        return "cadastrarEndereco";  // Retorna o nome do template de cadastro de endereço
+    public String exibirFormularioEndereco(Model model) {
+        // Cria um objeto Endereco vazio para preencher o formulário
+        Endereco endereco = new Endereco();
+
+        // Passa o objeto Endereco para a view, para que o Thymeleaf possa renderizar o formulário
+        model.addAttribute("endereco", endereco);
+
+        // Retorna o nome da página do formulário (exemplo: "cadastrarEndereco.html")
+        return "cadastrarEndereco";
     }
 
-    // Método para cadastrar o endereço
     @PostMapping("/enderecos/cadastrar")
     public String cadastrarEndereco(@ModelAttribute Endereco endereco) {
-        // Obtém o cliente logado
-        Cliente clienteLogado = (Cliente) session.getAttribute("clienteLogado");
+        Long clienteId = (Long) session.getAttribute("clienteId");
 
-        if (clienteLogado != null) {
-            // Atribui o cliente ao endereço
-            endereco.setCliente(clienteLogado);
-            clienteLogado.getEnderecosEntrega().add(endereco);  // Adiciona o endereço na lista de endereços do cliente
+        // Verifica se o cliente está logado
+        Cliente clienteLogado;
+        if (clienteId != null) {
+            clienteLogado = clienteService.getClienteById(clienteId);
 
-            // Salva o endereço no banco de dados
-            enderecoRepository.save(endereco);
+            if (clienteLogado != null) {
+                // Atribui o cliente ao endereço
+                endereco.setCliente(clienteLogado);
 
-            // Salva o cliente com o novo endereço
-            clienteService.salvar(clienteLogado);
+                // Salva o endereço no banco de dados
+                enderecoRepository.save(endereco);
+
+                // Atualiza a lista de endereços no cliente, se necessário
+                if (clienteLogado.getEnderecosEntrega() == null) {
+                    clienteLogado.setEnderecosEntrega(new ArrayList<>());
+                }
+                clienteLogado.getEnderecosEntrega().add(endereco);
+
+                // Não é necessário salvar o cliente explicitamente, já que a relação foi persistida
+            }
+        } else {
+            // Se o cliente não estiver logado, redireciona para a página de login
+            return "redirect:/login";
         }
 
         // Redireciona para o perfil do cliente após cadastrar o endereço
-        return "redirect:/admin/produtos/home";
+        return "redirect:/admin/produtos/perfil/" + clienteLogado.getId();
     }
 
-
-    // Rota para editar um endereço
-    @GetMapping("/enderecos/editar/{id}")
-    public String editarEnderecoForm(@PathVariable Long id, Model model) {
-        Endereco endereco = enderecoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Endereço não encontrado: " + id));
-        model.addAttribute("endereco", endereco);
-        return "editarEndereco";  // Nome do template de edição de endereço
-    }
-
-    // Rota para salvar as alterações do endereço
-    @PostMapping("/enderecos/editar/{id}")
-    public String editarEndereco(@PathVariable Long id, @ModelAttribute Endereco enderecoAtualizado) {
-        Endereco endereco = enderecoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Endereço não encontrado: " + id));
-        endereco.setCep(enderecoAtualizado.getCep());
-        endereco.setLogradouro(enderecoAtualizado.getLogradouro());
-        endereco.setNumero(enderecoAtualizado.getNumero());
-        endereco.setComplemento(enderecoAtualizado.getComplemento());
-        endereco.setBairro(enderecoAtualizado.getBairro());
-        endereco.setLocalidade(enderecoAtualizado.getLocalidade());
-        endereco.setUf(enderecoAtualizado.getUf());
-        enderecoRepository.save(endereco);
-        return "redirect:/perfil";  // Redireciona para o perfil após a edição
-    }
 }
+
 
 
 

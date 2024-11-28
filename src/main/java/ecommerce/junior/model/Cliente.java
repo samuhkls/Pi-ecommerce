@@ -25,8 +25,9 @@ public class Cliente{
     @JoinColumn(name = "endereco_faturamento_id", nullable = false)
     private Endereco enderecoFaturamento;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Endereco> enderecosEntrega;
+
 
     public Cliente() {
     }
