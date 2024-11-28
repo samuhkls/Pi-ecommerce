@@ -104,6 +104,12 @@
             <!-- Exibe "Logout" se o usuário estiver logado -->
             <li th:if="${userRole != null}"><a th:href="@{/logout}">Logout</a></li>
 
+            <li>
+                <a th:href="@{/admin/produtos/perfil/{id}(id=${clienteId})}">Ir para o perfil</a>
+
+            </li>
+
+
             <li><a th:href="@{/carrinho}">Carrinho (<span th:text="${carrinho != null ? #lists.size(carrinho) : 0}">0</span>)</a></li>
         </ul>
     </nav>

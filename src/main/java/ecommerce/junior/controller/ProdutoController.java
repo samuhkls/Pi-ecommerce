@@ -1,5 +1,7 @@
 package ecommerce.junior.controller;
 
+import ecommerce.junior.model.Cliente;
+import ecommerce.junior.model.Endereco;
 import ecommerce.junior.model.Imagem;
 import ecommerce.junior.model.Produto;
 import ecommerce.junior.service.ImagemService;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
+import ecommerce.junior.service.ClienteService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 @Controller
 @RequestMapping("/admin/produtos")
 public class ProdutoController {
@@ -35,6 +40,9 @@ public class ProdutoController {
 
     @Autowired
     private ImagemService imagemService;
+
+    @Autowired
+    private ClienteService clienteService;
 
     @Autowired
     private HttpSession session;
@@ -101,6 +109,8 @@ public class ProdutoController {
         } else {
             produtos = produtoService.getAllProdutos(pageable);
         }
+
+
 
         model.addAttribute("produtos", produtos);
         model.addAttribute("nome", nome);
@@ -221,9 +231,17 @@ public class ProdutoController {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").descending());
         Page<Produto> produtos = produtoService.getAllProdutos(pageable);
 
+        // Recupera o clienteId da sessão
+        Long clienteId = (Long) session.getAttribute("clienteId");
+        if (clienteId != null) {
+            // Você pode usar o clienteId para personalizar o comportamento, se necessário
+            // Exemplo: Mostrar produtos recomendados para o cliente, produtos no carrinho, etc.
+            // Cliente cliente = clienteService.getClienteById(clienteId);
+        }
+
         List<Imagem> imagens = imagemService.getAllImagens();
         Imagem imagem = (imagens != null && !imagens.isEmpty()) ? imagens.get(0) : null;
-
+        model.addAttribute("clienteId", clienteId);
         model.addAttribute("imagem", imagem);
         model.addAttribute("produtos", produtos.getContent()); // Produtos da página atual
         model.addAttribute("currentPage", produtos.getNumber());
@@ -232,6 +250,7 @@ public class ProdutoController {
         return "home";
     }
 
+
     @PostMapping("/alterar-status/{id}")
     public ResponseEntity<Void> alterarStatus(@PathVariable("id") Long id) {
         boolean statusAlterado = produtoService.alterarStatus(id);
@@ -239,6 +258,21 @@ public class ProdutoController {
             return ResponseEntity.ok().build();  // Status alterado com sucesso
         }
         return ResponseEntity.notFound().build();  // Produto não encontrado
+    }
+
+    @GetMapping("/perfil/{id}")
+    public String exibirPerfil(@PathVariable Long id, Model model) {
+        try {
+            Cliente cliente = clienteService.getClienteById(id); // Obter o cliente pelo id
+            List<Endereco> enderecos = clienteService.listarEnderecos(id); // Listar os endereços do cliente
+            model.addAttribute("cliente", cliente);
+            model.addAttribute("enderecos", enderecos);
+            return "perfil"; // Nome do arquivo Thymeleaf para exibir o perfil
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("mensagemErro", "Erro ao carregar o perfil: " + e.getMessage());
+            return "erro"; // Página de erro caso haja algum problema
+        }
     }
 
 

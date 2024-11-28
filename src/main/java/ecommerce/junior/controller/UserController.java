@@ -154,6 +154,25 @@ public class UserController {
         }
     }
 
+    @GetMapping("/perfil")
+    public String perfil(Model model) {
+        // Obtém o cliente logado da sessão
+        Cliente clienteLogado = (Cliente) session.getAttribute("clienteLogado");
+
+        if (clienteLogado == null) {
+            return "redirect:/login"; // Redireciona para login se não estiver logado
+        }
+
+        // Adiciona o cliente logado no modelo para a página de perfil
+        model.addAttribute("cliente", clienteLogado);
+
+        // Adiciona os endereços para exibição
+        model.addAttribute("enderecos", clienteLogado.getEnderecosEntrega());
+
+        return "perfil";
+    }
+
+
     @PostMapping("/status/{id}")
     public String alterarStatus(@PathVariable Long id) {
         try {

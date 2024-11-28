@@ -1,17 +1,24 @@
 package ecommerce.junior.service;
 
+import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Endereco;
+import ecommerce.junior.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.List;
+
 @Service
 public class EnderecoService {
 
     @Autowired
     private static RestTemplate restTemplate;
+
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     @Autowired
     public EnderecoService(RestTemplateBuilder restTemplateBuilder) {
@@ -41,4 +48,20 @@ public class EnderecoService {
             return null; // Retorna nulo em caso de erro
         }
     }
-}
+
+    public EnderecoService(EnderecoRepository enderecoRepository) {
+        this.enderecoRepository = enderecoRepository;
+    }
+
+    public List<Endereco> listarEnderecosPorCliente(Cliente cliente) {
+        return enderecoRepository.findByCliente(cliente);
+    }
+
+    public Endereco salvarEndereco(Endereco endereco) {
+        return enderecoRepository.save(endereco);
+    }
+
+    public void deletarEndereco(Long id) {
+        enderecoRepository.deleteById(id);
+    }}
+

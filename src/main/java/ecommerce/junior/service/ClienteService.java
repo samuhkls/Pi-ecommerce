@@ -7,11 +7,13 @@ import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Endereco;
 import ecommerce.junior.model.User;
 import ecommerce.junior.repository.ClienteRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
@@ -20,10 +22,17 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    private final HttpSession session;
+
+    public ClienteService(HttpSession session) {
+        this.session = session;
+    }
+
+
     public Cliente authenticate(String email, String senha) {
         Cliente cliente = clienteRepository.findByEmail(email);
-        // if(cliente != null && passwordEncoder.matches(senha, cliente.getSenha())) {
         if (cliente != null && cliente.getSenha().equals(senha)) {
+            session.setAttribute("clienteLogado", cliente);
             return cliente;
         }
         return null;
@@ -54,7 +63,7 @@ public class ClienteService {
         }
 
         // Codifica a senha
-       // String senhaCodificada = passwordEncoder.encode(clienteForm.getSenha());
+        // String senhaCodificada = passwordEncoder.encode(clienteForm.getSenha());
 
         // Cria o cliente
         Cliente cliente = fromDTO(clienteForm);
@@ -64,6 +73,11 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
+    public List<Endereco> listarEnderecos(Long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado com ID: " + clienteId));
+        return cliente.getEnderecosEntrega();
+    }
 
     private boolean isNomeValido(String nome) {
         String[] palavras = nome.trim().split("\\s+");
