@@ -1,35 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title><!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-    <meta charset="UTF-8">
-    <title>Detalhes do Produto</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <title>Detalhes do Produto</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .produto-detalhe img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+        border-radius: 8px;
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #333;
+    }
+
+    p {
+        font-size: 16px;
+        color: #555;
+        margin-top: 10px;
+    }
+
+    h3 {
+        font-size: 20px;
+        color: #28a745;
+        margin-top: 15px;
+    }
+
+    .carrinho-btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .carrinho-btn:hover {
+        background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-4">
+<div class="container">
   <div class="produto-detalhe">
 
+    <!-- Exibir imagens -->
     <div th:each="imagem : ${imagens}">
-      <img th:if="${imagem != null}" th:src="@{/{url}(url=${imagem.url})}" alt="Imagem" />
+      <img th:if="${imagem != null}" th:src="@{/{url}(url=${imagem.url})}" alt="Imagem do Produto" />
     </div>
 
+    <!-- Nome do produto -->
     <h1 th:text="${produto.nome}">Nome do Produto</h1>
-    <p th:text="${produto.descricaoDetalhada}">Descrição do Produto</p>
+
+    <!-- Descrição detalhada -->
+    <p th:text="${produto.descricaoDetalhada}">Descrição detalhada do produto</p>
+
+    <!-- Preço -->
     <h3 th:text="${produto.preco}">Preço</h3>
+
+    <!-- Botão para adicionar ao carrinho -->
     <form th:action="@{/carrinho/adicionar/{id}(id=${produto.id})}" method="post">
       <button type="submit" class="carrinho-btn">Adicionar ao Carrinho</button>
     </form>
   </div>
 </div>
-</body>
-</html>
-</title>
-</head>
-<body>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      // Evento no botão de adicionar ao carrinho
+      const addButton = document.querySelector('.carrinho-btn');
+      addButton.addEventListener('click', function () {
+          alert('Produto adicionado ao carrinho com sucesso!');
+      });
+  });
+</script>
 </body>
 </html>

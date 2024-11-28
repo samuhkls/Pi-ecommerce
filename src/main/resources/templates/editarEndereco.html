@@ -2,35 +2,141 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Editar Endereço</title>
+  <meta charset="UTF-8">
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-top: 20px;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #28a745;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #218838;
+    }
+  </style>
 </head>
 <body>
 
 <h2>Editar Endereço</h2>
 
-<form action="#" th:action="@{/enderecos/editar/{id}(id=${endereco.id})}" method="post">
-  <label for="cep">CEP:</label>
-  <input type="text" id="cep" name="cep" th:value="${endereco.cep}" required><br>
-
-  <label for="logradouro">Logradouro:</label>
-  <input type="text" id="logradouro" name="logradouro" th:value="${endereco.logradouro}" required><br>
-
-  <label for="numero">Número:</label>
-  <input type="text" id="numero" name="numero" th:value="${endereco.numero}" required><br>
-
-  <label for="complemento">Complemento:</label>
-  <input type="text" id="complemento" name="complemento" th:value="${endereco.complemento}"><br>
-
-  <label for="bairro">Bairro:</label>
-  <input type="text" id="bairro" name="bairro" th:value="${endereco.bairro}" required><br>
-
-  <label for="localidade">Cidade:</label>
-  <input type="text" id="localidade" name="localidade" th:value="${endereco.localidade}" required><br>
-
-  <label for="uf">Estado:</label>
-  <input type="text" id="uf" name="uf" th:value="${endereco.uf}" required><br>
-
+<form th:action="@{/enderecos/editar/{id}(id=${endereco.id})}" method="post">
+  <div class="form-group">
+    <label for="cep">CEP:</label>
+    <input type="text" id="cep" name="cep" th:value="${endereco.cep}" required>
+  </div>
+  <div class="form-group">
+    <label for="logradouro">Logradouro:</label>
+    <input type="text" id="logradouro" name="logradouro" th:value="${endereco.logradouro}" required>
+  </div>
+  <div class="form-group">
+    <label for="numero">Número:</label>
+    <input type="text" id="numero" name="numero" th:value="${endereco.numero}" required>
+  </div>
+  <div class="form-group">
+    <label for="complemento">Complemento:</label>
+    <input type="text" id="complemento" name="complemento" th:value="${endereco.complemento}">
+  </div>
+  <div class="form-group">
+    <label for="bairro">Bairro:</label>
+    <input type="text" id="bairro" name="bairro" th:value="${endereco.bairro}" required>
+  </div>
+  <div class="form-group">
+    <label for="localidade">Cidade:</label>
+    <input type="text" id="localidade" name="localidade" th:value="${endereco.localidade}" required>
+  </div>
+  <div class="form-group">
+    <label for="uf">Estado:</label>
+    <input type="text" id="uf" name="uf" th:value="${endereco.uf}" required>
+  </div>
   <button type="submit">Salvar</button>
 </form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const cepInput = document.getElementById('cep');
+      const logradouroInput = document.getElementById('logradouro');
+      const bairroInput = document.getElementById('bairro');
+      const localidadeInput = document.getElementById('localidade');
+      const ufInput = document.getElementById('uf');
+
+      // Função para buscar o endereço pelo CEP
+      cepInput.addEventListener('blur', function () {
+          const cep = cepInput.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+          if (cep.length === 8) {
+              fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.erro) {
+                          alert('CEP não encontrado!');
+                      } else {
+                          logradouroInput.value = data.logradouro || '';
+                          bairroInput.value = data.bairro || '';
+                          localidadeInput.value = data.localidade || '';
+                          ufInput.value = data.uf || '';
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Erro ao buscar o CEP:', error);
+                      alert('Erro ao buscar o CEP. Tente novamente.');
+                  });
+          } else {
+              alert('CEP inválido! Digite um CEP com 8 dígitos.');
+          }
+      });
+  });
+</script>
 
 </body>
 </html>

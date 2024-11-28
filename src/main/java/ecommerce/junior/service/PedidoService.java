@@ -15,48 +15,85 @@ public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
-    // Método para buscar o pedido por ID
+    /**
+     * Busca um pedido por ID.
+     *
+     * @param id ID do pedido
+     * @return Pedido correspondente ou null se não encontrado
+     */
     public Pedido buscarPedidoPorId(Long id) {
         return pedidoRepository.findById(id).orElse(null);
     }
 
-    // Método para salvar ou atualizar o pedido no banco de dados
+    /**
+     * Salva ou atualiza o pedido no banco de dados.
+     *
+     * @param pedido Pedido a ser salvo
+     */
     public void salvarPedido(Pedido pedido) {
+        if (pedido == null) {
+            throw new IllegalArgumentException("O pedido não pode ser nulo.");
+        }
         pedidoRepository.save(pedido);
     }
 
-    // Método para atualizar a forma de pagamento do pedido
+    /**
+     * Associa uma forma de pagamento ao pedido.
+     *
+     * @param pedido        Pedido a ser atualizado
+     * @param formaPagamento Forma de pagamento a ser associada
+     */
     public void associarFormaPagamento(Pedido pedido, FormaPagamento formaPagamento) {
-        if (pedido != null && formaPagamento != null) {
-            pedido.setFormaPagamento(formaPagamento.getTipoPagamento());
-            salvarPedido(pedido); // Salvando o pedido com a forma de pagamento associada
-        } else {
-            throw new IllegalArgumentException("Pedido ou Forma de Pagamento não podem ser nulos");
+        if (pedido == null || formaPagamento == null) {
+            throw new IllegalArgumentException("Pedido ou Forma de Pagamento não podem ser nulos.");
         }
+        pedido.setFormaPagamento(formaPagamento.getTipoPagamento());
+        salvarPedido(pedido);
     }
 
+    /**
+     * Atualiza o status de um pedido.
+     *
+     * @param pedidoId  ID do pedido a ser atualizado
+     * @param novoStatus Novo status para o pedido
+     */
     public void atualizarStatusPedido(Long pedidoId, StatusPedido novoStatus) {
         Pedido pedido = buscarPedidoPorId(pedidoId);
-        if (pedido != null) {
-            pedido.setStatus(novoStatus);
-            salvarPedido(pedido);
-        } else {
+        if (pedido == null) {
             throw new IllegalArgumentException("Pedido não encontrado: ID " + pedidoId);
         }
+        pedido.setStatus(novoStatus);
+        salvarPedido(pedido);
     }
 
-    // Listar todos os pedidos
+    /**
+     * Lista todos os pedidos no sistema.
+     *
+     * @return Lista de pedidos
+     */
     public List<Pedido> listarPedidos() {
         return pedidoRepository.findAll();
     }
 
+    /**
+     * Lista todos os pedidos ordenados por data de criação (mais recentes primeiro).
+     *
+     * @return Lista de pedidos ordenados por data
+     */
     public List<Pedido> listarPedidosOrdenadosPorData() {
         return pedidoRepository.findAllByOrderByDataPedidoDesc();
     }
 
-    // Listar pedidos por cliente
+    /**
+     * Lista pedidos associados a um cliente específico.
+     *
+     * @param clienteId ID do cliente
+     * @return Lista de pedidos do cliente
+     */
     public List<Pedido> listarPedidosPorCliente(Long clienteId) {
+        if (clienteId == null) {
+            throw new IllegalArgumentException("O ID do cliente não pode ser nulo.");
+        }
         return pedidoRepository.findByClienteId(clienteId);
     }
-
 }

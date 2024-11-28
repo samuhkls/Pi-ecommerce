@@ -30,41 +30,31 @@ public class LoginController {
 
     @PostMapping("/login")
     public String login(@RequestParam String email, @RequestParam String senha, HttpSession session, Model model) {
-        // Verificar primeiro se é um cliente
         Cliente cliente = clienteService.authenticate(email, senha);
 
         if (cliente != null) {
-            // Guarda o cliente na sessão
             session.setAttribute("clienteId", cliente.getId());
-            // Aqui estamos guardando o objeto cliente na sessão
-
-            // Verifica o carrinho associado ao cliente
             Carrinho carrinho = carrinhoService.getCarrinhoByClienteId(cliente);
             if (carrinho == null) {
-                // Caso não tenha carrinho, criar um novo
                 carrinho = new Carrinho();
                 carrinho.setCliente(cliente);
                 carrinhoService.salvarCarrinho(carrinho);
-                // comentario magico
             }
 
-            // Salva o carrinhoId na sessão
-            session.setAttribute("carrinhoId", carrinho.getId());  // Aqui associamos o carrinho à sessão
+            session.setAttribute("carrinhoId", carrinho.getId());
 
-            return "redirect:/cliente-principal";  // Redireciona para a página principal do cliente
+            return "redirect:/admin/produtos/home";
         }
 
-        // Se não for cliente, verificar se é uxm usuário
         User user = userService.authenticate(email, senha);
         if (user != null) {
             session.setAttribute("userId", user.getId());
             session.setAttribute("usuario", user);
-            return "redirect:/principal";  // Redireciona para a página principal do usuário
+            return "redirect:/principal";
         }
 
-        // Se nenhum dos dois for encontrados, retorna para a página de login com erro
         model.addAttribute("erro", "Credenciais inválidas!");
-        return "login";  // Página de login com erro
+        return "login";
     }
 
 }

@@ -3,6 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <title>Perfil do Cliente</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+
+    h1, h2 {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    h1 span {
+        color: #007bff;
+    }
+
+    p {
+        text-align: center;
+        font-size: 18px;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        max-width: 600px;
+        margin: 20px auto;
+    }
+
+    li {
+        background: #fff;
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    li .endereco-detalhes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px; /* Espaço entre elementos */
+        align-items: center;
+    }
+
+    li .endereco-detalhes span {
+        white-space: nowrap; /* Evita quebras de linha dentro dos spans */
+    }
+
+    li a {
+        color: #fff; /* Deixa o texto branco */
+        background-color: #007bff; /* Fundo azul */
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    li a:hover {
+        background-color: #0056b3; /* Fundo azul escuro no hover */
+        text-decoration: none; /* Remove o sublinhado no hover */
+    }
+
+    a {
+        display: inline-block;
+        text-align: center;
+        margin: 10px auto;
+        padding: 10px 20px;
+        color: white;
+        background-color: #007bff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    a:hover {
+        background-color: #0056b3;
+    }
+
+    .logout {
+        background-color: #dc3545;
+    }
+
+    .logout:hover {
+        background-color: #c82333;
+    }
+
+    .pedido {
+        margin-top: 30px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .pedido ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .pedido li {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+  </style>
 </head>
 <body>
 <h1>Bem-vindo, <span th:text="${cliente.nome}">Nome do Cliente</span></h1>
@@ -11,18 +125,51 @@
 <h2>Seus Endereços</h2>
 <ul>
   <li th:each="endereco : ${enderecos}">
-    <span th:text="${endereco.logradouro}">Logradouro</span>,
-    <span th:text="${endereco.numero}">Número</span>,
-    <span th:text="${endereco.bairro}">Bairro</span> -
-    <span th:text="${endereco.localidade}">Cidade</span>/<span th:text="${endereco.uf}">Estado</span>
+    <div>
+      <span th:text="${endereco.logradouro}">Logradouro</span>,
+      <span th:text="${endereco.numero}">Número</span>,
+      <span th:text="${endereco.bairro}">Bairro</span> -
+      <span th:text="${endereco.localidade}">Cidade</span>/<span th:text="${endereco.uf}">Estado</span>
+    </div>
     <a th:href="@{/enderecos/editar/{id}(id=${endereco.id})}">Editar</a>
   </li>
 </ul>
 
-<a th:href="@{/enderecos/cadastrar}">Adicionar novo endereço</a>
-<a th:href="@{/admin/produtos/home}">Voltar as produtos</a>
+<h1>Meus Pedidos</h1>
+
+<div style="text-align: center;" th:if="${pedidos == null or pedidos.isEmpty()}">
+  <p>Você ainda não realizou nenhum pedido.</p>
+</div>
+
+<div class="tabela-pedidos" style="display: flex; justify-content: center; margin: 20px 0;" th:if="${pedidos != null and !pedidos.isEmpty()}">
+  <table style="width: 80%; max-width: 1000px; border-collapse: collapse;">
+    <thead>
+    <tr>
+      <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Número do Pedido</th>
+      <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Data</th>
+      <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Valor Total</th>
+      <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Status</th>
+      <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Detalhes</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pedido : ${pedidos}">
+      <td style="border: 1px solid #ddd; padding: 10px;" th:text="${pedido.id}"></td>
+      <td style="border: 1px solid #ddd; padding: 10px;" th:text="${pedido.dataPedido}"></td>
+      <td style="border: 1px solid #ddd; padding: 10px;" th:text="${pedido.valorTotal}"></td>
+      <td style="border: 1px solid #ddd; padding: 10px;" th:text="${pedido.status}"></td>
+      <td style="border: 1px solid #ddd; padding: 10px;">
+        <a th:href="@{'/pedido/detalhes/' + ${pedido.id}}"
+           style="color: white; background-color: #007bff; padding: 5px 10px; border-radius: 5px; text-decoration: none;">
+          Ver detalhes
+        </a>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
 
 
-<a th:href="@{/logout}">Logout</a>
 </body>
 </html>

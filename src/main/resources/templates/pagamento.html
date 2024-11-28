@@ -107,22 +107,22 @@
             <!-- Dados do Cartão de Crédito -->
             <h4>Cartão de Crédito</h4>
             <label for="numeroCartao">Número do Cartão:</label>
-            <input type="text" id="numeroCartao" name="numeroCartao" placeholder="1234 5678 9012 3456" required>
+            <input type="text" id="numeroCartao" name="numeroCartao" placeholder="1234 5678 9012 3456">
             <label for="nomeTitular">Nome do Titular:</label>
-            <input type="text" id="nomeTitular" name="nomeTitular" placeholder="Nome impresso no cartão" required>
+            <input type="text" id="nomeTitular" name="nomeTitular" placeholder="Nome impresso no cartão">
             <label for="validadeCartao">Validade:</label>
-            <input type="text" id="validadeCartao" name="validadeCartao" placeholder="MM/AA" required>
+            <input type="text" id="validadeCartao" name="validadeCartao" placeholder="MM/AA">
             <label for="codigoSeguranca">Código de Segurança:</label>
-            <input type="text" id="codigoSeguranca" name="codigoSeguranca" placeholder="CVV" required>
+            <input type="text" id="codigoSeguranca" name="codigoSeguranca" placeholder="CVV">
         </div>
 
         <div class="payment-details" id="detalhesDebito">
             <!-- Dados do Cartão de Débito -->
             <h4>Cartão de Débito</h4>
             <label for="numeroCartaoDebito">Número do Cartão:</label>
-            <input type="text" id="numeroCartaoDebito" name="numeroCartaoDebito" placeholder="1234 5678 9012 3456" required>
+            <input type="text" id="numeroCartaoDebito" name="numeroCartaoDebito" placeholder="1234 5678 9012 3456">
             <label for="nomeTitularDebito">Nome do Titular:</label>
-            <input type="text" id="nomeTitularDebito" name="nomeTitularDebito" placeholder="Nome impresso no cartão" required>
+            <input type="text" id="nomeTitularDebito" name="nomeTitularDebito" placeholder="Nome impresso no cartão">
         </div>
 
         <div class="payment-details" id="detalhesBoleto">
@@ -143,13 +143,43 @@
 </div>
 
 <script>
+    function verificarCamposPreenchidos(idDiv) {
+        const inputs = document.querySelectorAll(`#${idDiv} input`);
+        for (let i = 0; i < inputs.length; i++) {
+            if (inputs[i].value.trim() === "") {
+                return false; // Se algum campo estiver vazio, retorna falso
+            }
+        }
+        return true; // Se todos os campos estiverem preenchidos, retorna verdadeiro
+    }
+
+    function gerenciarRequired() {
+        const creditoPreenchido = verificarCamposPreenchidos('detalhesCredito');
+        const debitoPreenchido = verificarCamposPreenchidos('detalhesDebito');
+
+        const inputsCredito = document.querySelectorAll('#detalhesCredito input');
+        const inputsDebito = document.querySelectorAll('#detalhesDebito input');
+
+        // Se todos os campos de 'detalhesCredito' estiverem preenchidos, remove 'required' dos campos de 'detalhesDebito'
+        if (creditoPreenchido) {
+            inputsDebito.forEach(input => input.removeAttribute('required'));
+        } else {
+            inputsDebito.forEach(input => input.setAttribute('required', ''));
+        }
+
+        // Se todos os campos de 'detalhesDebito' estiverem preenchidos, remove 'required' dos campos de 'detalhesCredito'
+        if (debitoPreenchido) {
+            inputsCredito.forEach(input => input.removeAttribute('required'));
+        } else {
+            inputsCredito.forEach(input => input.setAttribute('required', ''));
+        }
+    }
+
     function mostrarDetalhesPagamento() {
-        // Esconde todos os campos
         document.getElementById("detalhesCredito").style.display = "none";
         document.getElementById("detalhesDebito").style.display = "none";
         document.getElementById("detalhesBoleto").style.display = "none";
 
-        // Exibe o campo correspondente à forma de pagamento
         const formaPagamento = document.getElementById("formaPagamento").value;
         if (formaPagamento === "credito") {
             document.getElementById("detalhesCredito").style.display = "block";
@@ -158,7 +188,13 @@
         } else if (formaPagamento === "boleto") {
             document.getElementById("detalhesBoleto").style.display = "block";
         }
+
+        gerenciarRequired();
     }
+
+    document.getElementById("detalhesCredito").addEventListener("input", gerenciarRequired);
+    document.getElementById("detalhesDebito").addEventListener("input", gerenciarRequired);
 </script>
+
 </body>
 </html>

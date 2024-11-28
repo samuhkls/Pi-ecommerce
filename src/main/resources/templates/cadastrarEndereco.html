@@ -3,11 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <title>Cadastrar Endereço</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 <h1>Cadastrar Novo Endereço</h1>
 
-<form action="/enderecos/cadastrar" method="post">
+<form th:action="@{/enderecos/cadastrar}" method="post">
     <div class="form-group">
         <label for="cep">CEP</label>
         <input type="text" id="cep" name="cep" class="form-control" required>
@@ -35,6 +109,41 @@
     <button type="submit" class="btn btn-success">Cadastrar</button>
 </form>
 
-<a th:href="@{/admin/produtos/home}">Voltar para o Perfil</a>
+<a th:href="@{/admin/produtos/home}">Voltar para a Home</a>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cepInput = document.getElementById('cep');
+        const logradouroInput = document.getElementById('logradouro');
+        const bairroInput = document.getElementById('bairro');
+        const localidadeInput = document.getElementById('localidade');
+        const ufInput = document.getElementById('uf');
+
+        cepInput.addEventListener('blur', function () {
+            const cep = cepInput.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.erro) {
+                            alert('CEP não encontrado!');
+                        } else {
+                            logradouroInput.value = data.logradouro || '';
+                            bairroInput.value = data.bairro || '';
+                            localidadeInput.value = data.localidade || '';
+                            ufInput.value = data.uf || '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar o CEP:', error);
+                        alert('Erro ao buscar o CEP. Tente novamente.');
+                    });
+            } else {
+                alert('CEP inválido! Digite um CEP com 8 dígitos.');
+            }
+        });
+    });
+</script>
 </body>
 </html>

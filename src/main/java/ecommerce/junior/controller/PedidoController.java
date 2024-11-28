@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -111,7 +112,6 @@ public class PedidoController {
         return "redirect:/pedido/resumo";
     }
 
-
     @PostMapping("/pedido/confirmar-compra")
     public String confirmarCompra(HttpSession session, RedirectAttributes redirectAttributes) {
         Long pedidoId = (Long) session.getAttribute("pedidoId");
@@ -133,12 +133,9 @@ public class PedidoController {
         if (usuarioLogado == null || usuarioLogado.getTipo() != Grupo.ESTOQUISTA) {
             return "redirect:/login?erro=acesso_negado";
         }
-        List<Pedido> pedidos = pedidoService.listarPedidosOrdenadosPorData();
-        model.addAttribute("pedidos", pedidos);
         return "listar-pedidos";
     }
 
-    // Listar pedidos do cliente
     @GetMapping("/meus-pedidos")
     public String listarPedidosDoCliente(HttpSession session, Model model) {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
@@ -154,4 +151,31 @@ public class PedidoController {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: ID " + id));
     }
+
+    @GetMapping("/pedido/detalhes/{id}")
+    public String exibirDetalhesPedido(@PathVariable Long id, Model model, HttpSession session) {
+        Cliente clienteLogado = (Cliente) session.getAttribute("clienteLogado");
+
+        if (clienteLogado == null) {
+            return "redirect:/login";  // Redireciona para o login se não estiver logado
+        }
+
+        try {
+            Pedido pedido = pedidoService.buscarPedidoPorId(id);
+
+            if (pedido == null || !pedido.getCliente().getId().equals(clienteLogado.getId())) {
+                model.addAttribute("error", "Pedido não encontrado ou acesso não autorizado.");
+                return "redirect:/usuarios/perfil";  // Redireciona para o perfil do usuário se o pedido não for encontrado ou o acesso for negado
+            }
+
+            model.addAttribute("pedido", pedido);
+            return "detalhes-pedido";  // Retorna para a página de detalhes do pedido
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Erro ao carregar o pedido. Tente novamente mais tarde.");
+            return "erro";  // Retorna para uma página de erro em caso de exceção
+        }
+    }
+
+
 }

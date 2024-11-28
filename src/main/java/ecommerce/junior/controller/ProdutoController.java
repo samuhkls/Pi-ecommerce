@@ -1,9 +1,6 @@
 package ecommerce.junior.controller;
 
-import ecommerce.junior.model.Cliente;
-import ecommerce.junior.model.Endereco;
-import ecommerce.junior.model.Imagem;
-import ecommerce.junior.model.Produto;
+import ecommerce.junior.model.*;
 import ecommerce.junior.service.ImagemService;
 import ecommerce.junior.service.ProdutoService;
 import jakarta.servlet.http.HttpSession;
@@ -261,19 +258,30 @@ public class ProdutoController {
     }
 
     @GetMapping("/perfil/{id}")
-    public String exibirPerfil(@PathVariable Long id, Model model) {
+    public String exibirPerfil(Model model) {
+        Cliente clienteLogado = (Cliente) session.getAttribute("clienteLogado");
+
+        if (clienteLogado == null) {
+            return "redirect:/login";  // Redireciona para o login caso não haja um cliente logado
+        }
+
         try {
-            Cliente cliente = clienteService.getClienteById(id); // Obter o cliente pelo id
-            List<Endereco> enderecos = clienteService.listarEnderecos(id); // Listar os endereços do cliente
-            model.addAttribute("cliente", cliente);
-            model.addAttribute("enderecos", enderecos);
-            return "perfil"; // Nome do arquivo Thymeleaf para exibir o perfil
+            // Recupera o cliente e os endereços do cliente logado
+            List<Endereco> enderecos = clienteService.listarEnderecos(clienteLogado.getId());
+            model.addAttribute("cliente", clienteLogado);
+            model.addAttribute("enderecos", enderecos != null ? enderecos : List.of());
+
+            // Recupera os pedidos do cliente logado
+            List<Pedido> pedidos = clienteService.listarPedidosPorCliente(clienteLogado.getId());
+            model.addAttribute("pedidos", pedidos != null ? pedidos : List.of());
         } catch (Exception e) {
             e.printStackTrace();
-            model.addAttribute("mensagemErro", "Erro ao carregar o perfil: " + e.getMessage());
-            return "erro"; // Página de erro caso haja algum problema
+            model.addAttribute("error", "Erro ao carregar o perfil: " + e.getMessage());
         }
+
+        return "perfil"; // Página de exibição do perfil
     }
+
 
 
     @GetMapping("/pedidos")

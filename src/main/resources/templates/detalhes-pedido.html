@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Pedido</title>
+
+    <!-- CSS Inline -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .pedido-info, .cliente-info, .produtos-info, .total-pedido {
+            background-color: #fff;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .btn-voltar, .btn-editar {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-voltar:hover, .btn-editar:hover {
+            background-color: #0056b3;
+        }
+
+        .acoes {
+            text-align: center; /* Centraliza os botões */
+            margin-top: 30px; /* Espaço extra acima dos botões */
+        }
+
+        .btn-voltar, .btn-editar {
+            margin: 0 10px; /* Espaçamento horizontal entre os botões */
+        }
+    </style>
+
+    <!-- JS Inline -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("Página de detalhes do pedido carregada com sucesso.");
+        });
+    </script>
+</head>
+<body>
+
+<h1>Detalhes do Pedido</h1>
+
+<div class="pedido-info">
+    <h2>Informações do Pedido</h2>
+    <p><strong>ID do Pedido:</strong> <span th:text="${pedido.id}"></span></p>
+    <p><strong>Status:</strong> <span th:text="${pedido.status}"></span></p>
+    <p><strong>Data do Pedido:</strong> <span th:text="${pedido.dataPedido}"></span></p>
+    <p><strong>Forma de Pagamento:</strong> <span th:text="${pedido.formaPagamento}"></span></p>
+</div>
+
+<div class="cliente-info">
+    <h2>Informações do Cliente</h2>
+    <p><strong>Nome:</strong> <span th:text="${pedido.cliente.nome}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${pedido.cliente.email}"></span></p>
+    <p><strong>Endereço de Entrega:</strong></p>
+    <ul>
+        <li><strong>Logradouro:</strong> <span th:text="${pedido.enderecoEntrega.logradouro}"></span></li>
+        <li><strong>Número:</strong> <span th:text="${pedido.enderecoEntrega.numero}"></span></li>
+        <li><strong>Complemento:</strong> <span th:text="${pedido.enderecoEntrega.complemento} ?: 'N/A'"></span></li>
+        <li><strong>Bairro:</strong> <span th:text="${pedido.enderecoEntrega.bairro}"></span></li>
+        <li><strong>Cidade:</strong> <span th:text="${pedido.enderecoEntrega.localidade}"></span></li>
+        <li><strong>Estado:</strong> <span th:text="${pedido.enderecoEntrega.uf}"></span></li>
+    </ul>
+</div>
+
+<!-- Lista de Produtos do Pedido -->
+<div class="produtos-info">
+    <h2>Produtos do Pedido</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Preço Unitário</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="produto : ${pedido.produtos}">
+            <td th:text="${produto.produto.nome}"></td>
+            <td th:text="${produto.quantidade}"></td>
+            <td th:text="${produto.produto.preco}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Total do Pedido -->
+<div class="total-pedido">
+    <h2>Total do Pedido</h2>
+    <!-- Formatação de valor total -->
+    <p><strong>Total:</strong> <span th:text="${pedido.valorTotal}"></span></p>
+</div>
+
+<!-- Botões de ação -->
+<div class="acoes">
+    <a href="#" class="btn-voltar" th:href="@{/admin/produtos/perfil/{id}(id=${pedido.cliente.id})}">Voltar para Meus Pedidos</a>
+</div>
+
+</body>
+</html>

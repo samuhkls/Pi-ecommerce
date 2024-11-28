@@ -5,6 +5,7 @@ import br.com.caelum.stella.validation.InvalidStateException;
 import ecommerce.junior.dto.ClienteForm;
 import ecommerce.junior.model.Cliente;
 import ecommerce.junior.model.Endereco;
+import ecommerce.junior.model.Pedido;
 import ecommerce.junior.model.User;
 import ecommerce.junior.repository.ClienteRepository;
 import jakarta.servlet.http.HttpSession;
@@ -20,6 +21,9 @@ public class ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private PedidoService pedidoService;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private final HttpSession session;
@@ -90,6 +94,19 @@ public class ClienteService {
             }
         }
         return true; // nome válido
+    }
+
+    public List<Pedido> listarPedidosPorCliente(Long clienteId) {
+        if (clienteId == null) {
+            throw new IllegalArgumentException("O ID do cliente não pode ser nulo.");
+        }
+
+        Cliente cliente = clienteRepository.findById(clienteId).orElse(null);
+        if (cliente == null) {
+            throw new IllegalArgumentException("Cliente não encontrado: ID " + clienteId);
+        }
+
+        return pedidoService.listarPedidosPorCliente(clienteId);
     }
 
     public Cliente getClienteById(Long clienteId) {
