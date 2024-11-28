@@ -104,13 +104,19 @@ public class CarrinhoController {
     @GetMapping("/carrinho/pagamento")
     public String exibirPagamento(HttpSession session, Model model) {
 
+        // Obtém o carrinho da sessão ou cria um novo caso não exista
         Carrinho carrinho = carrinhoService.obterOuCriarCarrinho(session);
+
+        // Obtém o cliente associado ao carrinho
         Cliente cliente = carrinho.getCliente();
 
+        // Adiciona o cliente e seus endereços de entrega ao modelo
         model.addAttribute("cliente", cliente);
+        model.addAttribute("enderecosEntrega", cliente.getEnderecosEntrega());
 
         return "pagamento";
     }
+
 
 
     @PostMapping("/carrinho/atualizar/{id}")

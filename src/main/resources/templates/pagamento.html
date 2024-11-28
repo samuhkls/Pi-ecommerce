@@ -79,13 +79,16 @@
 <div class="container">
     <h2>Pagamento</h2>
     <p><strong>Endereço de Entrega:</strong></p>
-    <p>
-        <span th:text="${cliente.enderecosEntrega[0].logradouro} + ', ' + ${cliente.enderecosEntrega[0].numero}"></span>,
-        <span th:text="${cliente.enderecosEntrega[0].bairro}"></span> -
-        <span th:text="${cliente.enderecosEntrega[0].localidade}"></span>/
-        <span th:text="${cliente.enderecosEntrega[0].uf}"></span>
-        <span th:if="${cliente.enderecosEntrega[0].complemento != null}" th:text="'(' + ${cliente.enderecosEntrega[0].complemento} + ')'"></span>
-    </p>
+    <form>
+        <label for="enderecoEntrega">Escolha um Endereço:</label>
+        <select name="enderecoEntrega" id="enderecoEntrega" required>
+            <option value="" disabled selected>Selecione o endereço</option>
+            <th:block th:each="endereco : ${cliente.enderecosEntrega}">
+                <option th:value="${endereco.id}" th:text="${endereco.logradouro + ', ' + endereco.numero + ', ' + endereco.bairro + ' - ' + endereco.localidade + '/' + endereco.uf}"></option>
+            </th:block>
+        </select>
+    </form>
+
 
     <div class="divider"></div>
 

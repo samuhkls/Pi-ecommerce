@@ -98,7 +98,7 @@ public class UserController {
 
             // Redireciona para o login após o cadastro bem-sucedido
             model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
-            return "redirect:/carrinho/pagamento";
+            return "redirect:/login";
         } catch (IllegalArgumentException e) {
             // Captura erros de validação
             model.addAttribute("mensagemErro", e.getMessage());
