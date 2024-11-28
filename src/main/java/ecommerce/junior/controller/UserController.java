@@ -98,7 +98,7 @@ public class UserController {
 
             // Redireciona para o login após o cadastro bem-sucedido
             model.addAttribute("mensagem", "Cliente cadastrado com sucesso!");
-            return "redirect:/carrinho/pagamento";
+            return "redirect:/admin/produtos/home";
         } catch (IllegalArgumentException e) {
             // Captura erros de validação
             model.addAttribute("mensagemErro", e.getMessage());
@@ -153,6 +153,25 @@ public class UserController {
             return "listar";
         }
     }
+
+    @GetMapping("/perfil")
+    public String perfil(Model model) {
+        // Obtém o cliente logado da sessão
+        Cliente clienteLogado = (Cliente) session.getAttribute("clienteLogado");
+
+        if (clienteLogado == null) {
+            return "redirect:/login"; // Redireciona para login se não estiver logado
+        }
+
+        // Adiciona o cliente logado no modelo para a página de perfil
+        model.addAttribute("cliente", clienteLogado);
+
+        // Adiciona os endereços para exibição
+        model.addAttribute("enderecos", clienteLogado.getEnderecosEntrega());
+
+        return "perfil";
+    }
+
 
     @PostMapping("/status/{id}")
     public String alterarStatus(@PathVariable Long id) {

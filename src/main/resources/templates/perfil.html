@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil do Cliente</title>
+</head>
+<body>
+<h1>Bem-vindo, <span th:text="${cliente.nome}">Nome do Cliente</span></h1>
+<p>Email: <span th:text="${cliente.email}">email@example.com</span></p>
+
+<h2>Seus Endereços</h2>
+<ul>
+    <li th:each="endereco : ${enderecos}">
+        <span th:text="${endereco.logradouro}">Logradouro</span>,
+        <span th:text="${endereco.numero}">Número</span>,
+        <span th:text="${endereco.bairro}">Bairro</span> -
+        <span th:text="${endereco.localidade}">Cidade</span>/<span th:text="${endereco.uf}">Estado</span>
+        <a th:href="@{/enderecos/editar/{id}(id=${endereco.id})}">Editar</a>
+    </li>
+</ul>
+
+<a th:href="@{/enderecos/cadastrar}">Adicionar novo endereço</a>
+
+
+<a th:href="@{/logout}">Logout</a>
+</body>
+</html>
