@@ -107,7 +107,7 @@
 <form action="/pedido/confirmar-compra" method="post">
     <button type="submit" class="btn btn-success" id="confirmarCompraBtn">Confirmar Compra</button>
 </form>
-
+<a th:href="@{/admin/produtos/home}" type="submit" class="btn btn-success">Voltar as produtos</a>
 
 <div id="pedidoModal" class="modal" th:if="${mensagemSucesso}">
     <div class="modal-content">
