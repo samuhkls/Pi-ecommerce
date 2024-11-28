@@ -28,6 +28,22 @@ public class EnderecoController {
     @Autowired
     private HttpSession session;
 
+    @Autowired
+    private EnderecoService enderecoService;
+
+
+    @GetMapping("/buscar-endereco")
+    @ResponseBody
+    public Endereco buscarEndereco(@RequestParam String cep) {
+        try {
+            String url = "https://viacep.com.br/ws/" + cep + "/json/";
+            return enderecoService.buscarEndereco(cep);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @GetMapping("/enderecos/editar/{id}")
     public String exibirEditarForm(@PathVariable Long id, Model model) {
         // Recupera o endereço pelo id
